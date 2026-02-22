@@ -12,12 +12,34 @@ interface Props {
   status: Status;
 }
 
-const phaseLabel: Record<string, string> = {
-  planner: "Planner · Generating research queries",
-  scout: "Scout · Searching the web",
-  critic: "Critic · Evaluating evidence",
-  writer: "Writer · Synthesizing memo",
+const steps = [
+  { key: "planner", label: "Research" },
+  { key: "scout", label: "Search" },
+  { key: "critic", label: "Validate" },
+  { key: "writer", label: "Write" },
+] as const;
+
+const phaseOrder: Record<string, number> = {
+  planner: 0,
+  scout: 1,
+  critic: 2,
+  writer: 3,
+  done: 4,
 };
+
+function statusDetail(status: Status): string | null {
+  if (status.phase === "planner") return "Generating research queries...";
+  if (status.phase === "scout") {
+    return status.evidenceCount > 0
+      ? `Searching the web · ${status.evidenceCount} sources found`
+      : "Searching the web...";
+  }
+  if (status.phase === "critic") {
+    return `Evaluating evidence · Iteration ${status.iteration} · ${Math.round(status.coverageScore * 100)}% coverage`;
+  }
+  if (status.phase === "writer") return "Synthesizing memo...";
+  return null;
+}
 
 export default function AgentStatus({ status }: Props) {
   if (status.phase === "done") return null;
@@ -30,22 +52,50 @@ export default function AgentStatus({ status }: Props) {
     );
   }
 
+  const currentIndex = phaseOrder[status.phase] ?? 0;
+  const detail = statusDetail(status);
+
   return (
     <div className="mb-10 font-sans">
-      <p className="text-xs text-muted tracking-wide">
-        ● {phaseLabel[status.phase] ?? status.phase}
-        {status.phase === "scout" && status.evidenceCount > 0 && (
-          <span className="ml-2">· {status.evidenceCount} sources found</span>
-        )}
-        {status.phase === "critic" && (
-          <span className="ml-2">
-            · Iteration {status.iteration} · Coverage{" "}
-            {Math.round(status.coverageScore * 100)}%
+      {/* Progress bar */}
+      <div className="flex items-center gap-1 mb-3">
+        {steps.map((step, i) => (
+          <div key={step.key} className="flex items-center flex-1">
+            <div
+              className={`h-1.5 w-full ${
+                i < currentIndex
+                  ? "bg-foreground"
+                  : i === currentIndex
+                    ? "bg-foreground/50"
+                    : "bg-border"
+              }`}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Step labels */}
+      <div className="flex gap-1 mb-4">
+        {steps.map((step, i) => (
+          <span
+            key={step.key}
+            className={`flex-1 text-xs ${
+              i <= currentIndex ? "text-foreground" : "text-muted/50"
+            }`}
+          >
+            {step.label}
           </span>
-        )}
-      </p>
+        ))}
+      </div>
+
+      {/* Detail text */}
+      {detail && (
+        <p className="text-xs text-muted">{detail}</p>
+      )}
+
+      {/* Critic feedback */}
       {status.phase === "critic" && status.feedback && (
-        <p className="text-xs text-muted mt-1 ml-3">{status.feedback}</p>
+        <p className="text-xs text-muted mt-1">{status.feedback}</p>
       )}
     </div>
   );

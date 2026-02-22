@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { streamAnalysis } from "@/lib/api";
 import AgentStatus, { type Status } from "@/components/AgentStatus";
+import PitchScore from "@/components/PitchScore";
 import MemoDocument from "@/components/MemoDocument";
 import type { MemoOutput } from "@/lib/types";
+import { savePitchResult } from "@/lib/pitchHistory";
 
 export default function AnalyzePage() {
   const router = useRouter();
@@ -45,6 +47,7 @@ export default function AnalyzePage() {
         if (event.type === "writer" && event.data.memo) {
           setMemo(event.data.memo);
           setStatus({ phase: "done" });
+          savePitchResult(stored, event.data.memo);
         }
         if (event.type === "error") {
           setStatus({ phase: "error", message: event.data.message });
@@ -79,7 +82,13 @@ export default function AnalyzePage() {
         <AgentStatus status={status} />
 
         {memo ? (
-          <MemoDocument memo={memo} />
+          <>
+            <PitchScore
+              pitchScore={memo.pitch_score}
+              subscores={memo.subscores}
+            />
+            <MemoDocument memo={memo} />
+          </>
         ) : status.phase !== "error" ? (
           <div className="space-y-4">
             <div className="h-4 w-3/4 bg-border" />

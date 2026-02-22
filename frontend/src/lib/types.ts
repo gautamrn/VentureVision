@@ -6,7 +6,17 @@ export const MarketCompetitorSchema = z.object({
   funding: z.string(),
 });
 
+export const SubscoresSchema = z.object({
+  market_size: z.number(),
+  competition: z.number(),
+  revenue_model: z.number(),
+  uniqueness: z.number(),
+});
+
 export const MemoOutputSchema = z.object({
+  pitch_score: z.number(),
+  subscores: SubscoresSchema,
+  strengthen_suggestions: z.array(z.string()),
   executive_summary: z.string(),
   market_matrix: z.array(MarketCompetitorSchema),
   risk_vectors: z.array(z.string()),
@@ -35,6 +45,7 @@ export const WriterEventSchema = z.object({
 });
 
 export type MarketCompetitor = z.infer<typeof MarketCompetitorSchema>;
+export type Subscores = z.infer<typeof SubscoresSchema>;
 export type MemoOutput = z.infer<typeof MemoOutputSchema>;
 export type PlannerEvent = z.infer<typeof PlannerEventSchema>;
 export type ScoutEvent = z.infer<typeof ScoutEventSchema>;

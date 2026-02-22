@@ -1,13 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
+import {
+  getPitchHistory,
+  type PitchHistoryEntry,
+} from "@/lib/pitchHistory";
 
 export default function Home() {
   const [pitch, setPitch] = useState("");
   const [error, setError] = useState("");
+  const [history, setHistory] = useState<PitchHistoryEntry[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    setHistory(getPitchHistory());
+  }, []);
 
   function handleSubmit(e: React.BaseSyntheticEvent) {
     e.preventDefault();
@@ -18,6 +27,11 @@ export default function Home() {
     }
     sessionStorage.setItem("vv_pitch", trimmed);
     router.push("/analyze");
+  }
+
+  function viewPastAnalysis(entry: PitchHistoryEntry) {
+    sessionStorage.setItem("vv_view_id", entry.id);
+    router.push("/analyze/view");
   }
 
   return (
@@ -48,9 +62,14 @@ export default function Home() {
             className="w-full bg-transparent text-foreground font-sans text-base resize-none outline-none border border-border p-4 placeholder:text-[#C4BFB8]"
           />
 
-          {error && (
-            <p className="text-sm text-muted font-sans">{error}</p>
-          )}
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-muted font-sans">
+              {pitch.length} / 300 recommended
+            </p>
+            {error && (
+              <p className="text-sm text-muted font-sans">{error}</p>
+            )}
+          </div>
 
           <div className="flex justify-end">
             <button
@@ -66,6 +85,47 @@ export default function Home() {
         <p className="mt-16 text-xs text-muted font-sans">
           Analysis takes 30–60 seconds. Results are grounded in real web sources.
         </p>
+
+        {/* Past analyses */}
+        {history.length > 0 && (
+          <div className="mt-12 border-t border-border pt-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-sans text-xs uppercase tracking-widest text-muted">
+                Past Analyses
+              </h2>
+              {history.length >= 2 && (
+                <button
+                  onClick={() => router.push("/compare")}
+                  className="text-xs font-sans text-muted hover:text-foreground"
+                >
+                  Compare
+                </button>
+              )}
+            </div>
+            <ul className="space-y-3">
+              {history.map((entry) => (
+                <li key={entry.id}>
+                  <button
+                    onClick={() => viewPastAnalysis(entry)}
+                    className="w-full text-left flex items-center justify-between border border-border p-3 hover:border-foreground/30"
+                  >
+                    <div className="min-w-0 flex-1 mr-4">
+                      <p className="font-sans text-sm text-foreground truncate">
+                        {entry.pitch.slice(0, 80)}{entry.pitch.length > 80 ? "…" : ""}
+                      </p>
+                      <p className="font-sans text-xs text-muted mt-1">
+                        {new Date(entry.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <span className="font-serif text-lg text-foreground shrink-0">
+                      {entry.pitchScore}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </main>
   );

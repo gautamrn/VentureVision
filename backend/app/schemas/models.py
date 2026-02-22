@@ -14,7 +14,17 @@ class MarketCompetitor(BaseModel):
     funding: str
 
 
+class Subscores(BaseModel):
+    market_size: int
+    competition: int
+    revenue_model: int
+    uniqueness: int
+
+
 class MemoOutput(BaseModel):
+    pitch_score: int
+    subscores: Subscores
+    strengthen_suggestions: list[str]
     executive_summary: str
     market_matrix: list[MarketCompetitor]
     risk_vectors: list[str]
