@@ -86,7 +86,6 @@ export default function Home() {
           Analysis takes 30–60 seconds. Results are grounded in real web sources.
         </p>
 
-        {/* Past analyses */}
         {history.length > 0 && (
           <div className="mt-12 border-t border-border pt-8">
             <div className="flex items-center justify-between mb-4">

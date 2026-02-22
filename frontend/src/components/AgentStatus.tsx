@@ -57,7 +57,6 @@ export default function AgentStatus({ status }: Props) {
 
   return (
     <div className="mb-10 font-sans">
-      {/* Progress bar */}
       <div className="flex items-center gap-1 mb-3">
         {steps.map((step, i) => (
           <div key={step.key} className="flex items-center flex-1">
@@ -74,7 +73,6 @@ export default function AgentStatus({ status }: Props) {
         ))}
       </div>
 
-      {/* Step labels */}
       <div className="flex gap-1 mb-4">
         {steps.map((step, i) => (
           <span
@@ -88,12 +86,10 @@ export default function AgentStatus({ status }: Props) {
         ))}
       </div>
 
-      {/* Detail text */}
       {detail && (
         <p className="text-xs text-muted">{detail}</p>
       )}
 
-      {/* Critic feedback */}
       {status.phase === "critic" && status.feedback && (
         <p className="text-xs text-muted mt-1">{status.feedback}</p>
       )}

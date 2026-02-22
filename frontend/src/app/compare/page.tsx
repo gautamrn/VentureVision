@@ -49,7 +49,6 @@ export default function ComparePage() {
           </p>
         </div>
 
-        {/* Selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           <div>
             <label className="font-sans text-xs uppercase tracking-widest text-muted mb-2 block">
@@ -85,7 +84,6 @@ export default function ComparePage() {
           </div>
         </div>
 
-        {/* Side-by-side comparison */}
         {left && right && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="border-r border-border pr-8">

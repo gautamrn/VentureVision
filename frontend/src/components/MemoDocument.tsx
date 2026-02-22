@@ -43,15 +43,12 @@ function competitorTableToText(memo: MemoOutput): string {
 export default function MemoDocument({ memo }: Props) {
   return (
     <article className="font-serif text-foreground">
-      {/* Full memo export button */}
       <div className="flex justify-end mb-6">
         <CopyButton text={memoToMarkdown(memo)} label="Copy as Markdown" />
       </div>
 
-      {/* Strengthen Your Pitch */}
       <StrengthenPitch suggestions={memo.strengthen_suggestions} />
 
-      {/* Executive Summary */}
       <section className="mb-12">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-sans text-xs uppercase tracking-widest text-muted">
@@ -62,7 +59,6 @@ export default function MemoDocument({ memo }: Props) {
         <p className="text-lg leading-relaxed">{memo.executive_summary}</p>
       </section>
 
-      {/* Competitive Landscape */}
       <section className="mb-12">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-sans text-xs uppercase tracking-widest text-muted">
@@ -104,7 +100,6 @@ export default function MemoDocument({ memo }: Props) {
         )}
       </section>
 
-      {/* Risk Vectors */}
       <section className="mb-12">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-sans text-xs uppercase tracking-widest text-muted">
@@ -121,7 +116,6 @@ export default function MemoDocument({ memo }: Props) {
         </ul>
       </section>
 
-      {/* Research Confidence */}
       <section className="mb-12">
         <h2 className="font-sans text-xs uppercase tracking-widest text-muted mb-4">
           Research Confidence
@@ -132,7 +126,6 @@ export default function MemoDocument({ memo }: Props) {
         </p>
       </section>
 
-      {/* Sources */}
       <section>
         <h2 className="font-sans text-xs uppercase tracking-widest text-muted mb-4">
           Sources
