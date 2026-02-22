@@ -1,0 +1,6 @@
+# Engineering Standards for Venture-Vision
+
+- **UI Guidelines:** No decorative effects (gradients, glows, blurs). Use high-density layouts. 4px border radius maximum.
+- **Component Pattern:** React Server Components (RSC) by default. Use Shadcn for form inputs and data tables.
+- **Type Safety:** 100% Zod coverage for frontend API calls. 100% Pydantic coverage for backend nodes.
+- **Agent Logic:** Nodes must be modular. Never combine the Critic and Scout logic into a single file.

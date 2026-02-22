@@ -1,0 +1,17 @@
+# General
+.env
+.DS_Store
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+
+# AI Context (Private)
+CLAUDE.local.md
+.claude/memory/
+
+# Build Outputs
+.next/
+dist/
+build/
+*.log
