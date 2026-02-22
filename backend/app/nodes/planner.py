@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 
 from app.graph.state import AgentState
 
@@ -8,7 +8,7 @@ class ResearchPlan(BaseModel):
     queries: list[str]
 
 
-llm = ChatAnthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=1024)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, max_tokens=1024)
 planner_llm = llm.with_structured_output(ResearchPlan)
 
 SYSTEM_PROMPT = """You are a due diligence research planner for a venture capital firm.

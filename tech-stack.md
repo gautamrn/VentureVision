@@ -4,7 +4,7 @@
 - **Language:** Python 3.12+
 - **Framework:** FastAPI (Asynchronous endpoints)
 - **Orchestration:** LangGraph (Stateful Agent Workflows)
-- **Model:** Claude 3.5 Sonnet
+- **Model:** GPT-4o Mini (via OpenAI)
 - **Search:** Tavily AI (Search API for LLMs)
 - **Validation:** Pydantic v2
 - **Logging:** LangSmith (Logic Observability)

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 
 from app.graph.state import AgentState
 
@@ -12,7 +12,7 @@ class CritiqueResult(BaseModel):
     feedback: str
 
 
-llm = ChatAnthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=1024)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, max_tokens=1024)
 critic_llm = llm.with_structured_output(CritiqueResult)
 
 SYSTEM_PROMPT = """You are a data quality auditor for a venture capital due diligence system.

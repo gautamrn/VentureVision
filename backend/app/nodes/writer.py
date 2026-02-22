@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from langchain_anthropic import ChatAnthropic
+from langchain_openai import ChatOpenAI
 
 from app.graph.state import AgentState
 from app.schemas.models import MarketCompetitor, MemoOutput
@@ -12,7 +12,7 @@ class MemoSynthesis(BaseModel):
     confidence_score: float
 
 
-llm = ChatAnthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=2048)
+llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, max_tokens=2048)
 writer_llm = llm.with_structured_output(MemoSynthesis)
 
 SYSTEM_PROMPT = """You are a senior venture capital analyst writing a formal due diligence memo.
