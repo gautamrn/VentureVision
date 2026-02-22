@@ -5,9 +5,13 @@ import { ExternalLink, Clipboard, Check } from "lucide-react";
 import type { MemoOutput } from "@/lib/types";
 import { memoToMarkdown } from "@/lib/exportMemo";
 import StrengthenPitch from "./StrengthenPitch";
+import PitchAnnotations from "./PitchAnnotations";
+import InvestorQA from "./InvestorQA";
+import DealContext from "./DealContext";
 
 interface Props {
   memo: MemoOutput;
+  pitch?: string;
 }
 
 function CopyButton({ text, label }: { text: string; label?: string }) {
@@ -40,12 +44,16 @@ function competitorTableToText(memo: MemoOutput): string {
   return [header, divider, ...rows].join("\n");
 }
 
-export default function MemoDocument({ memo }: Props) {
+export default function MemoDocument({ memo, pitch }: Props) {
   return (
     <article className="font-serif text-foreground">
       <div className="flex justify-end mb-6">
         <CopyButton text={memoToMarkdown(memo)} label="Copy as Markdown" />
       </div>
+
+      {pitch && (
+        <PitchAnnotations pitch={pitch} annotations={memo.pitch_annotations} />
+      )}
 
       <StrengthenPitch suggestions={memo.strengthen_suggestions} />
 
@@ -58,6 +66,8 @@ export default function MemoDocument({ memo }: Props) {
         </div>
         <p className="text-lg leading-relaxed">{memo.executive_summary}</p>
       </section>
+
+      <InvestorQA questions={memo.investor_questions} />
 
       <section className="mb-12">
         <div className="flex items-center justify-between mb-4">
@@ -115,6 +125,8 @@ export default function MemoDocument({ memo }: Props) {
           ))}
         </ul>
       </section>
+
+      <DealContext dealContext={memo.deal_context} />
 
       <section className="mb-12">
         <h2 className="font-sans text-xs uppercase tracking-widest text-muted mb-4">

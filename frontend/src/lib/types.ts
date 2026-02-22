@@ -13,6 +13,24 @@ export const SubscoresSchema = z.object({
   uniqueness: z.number(),
 });
 
+export const InvestorQuestionSchema = z.object({
+  question: z.string(),
+  why_it_matters: z.string(),
+});
+
+export const PitchAnnotationSchema = z.object({
+  excerpt: z.string(),
+  annotation_type: z.string(),
+  note: z.string(),
+});
+
+export const DealContextSchema = z.object({
+  typical_stage: z.string(),
+  typical_raise_range: z.string(),
+  typical_dilution: z.string(),
+  red_flags: z.array(z.string()),
+});
+
 export const MemoOutputSchema = z.object({
   pitch_score: z.number(),
   subscores: SubscoresSchema,
@@ -22,6 +40,9 @@ export const MemoOutputSchema = z.object({
   risk_vectors: z.array(z.string()),
   confidence_score: z.number(),
   citation_links: z.array(z.string()),
+  investor_questions: z.array(InvestorQuestionSchema),
+  pitch_annotations: z.array(PitchAnnotationSchema),
+  deal_context: DealContextSchema,
 });
 
 export const PlannerEventSchema = z.object({
@@ -46,6 +67,9 @@ export const WriterEventSchema = z.object({
 
 export type MarketCompetitor = z.infer<typeof MarketCompetitorSchema>;
 export type Subscores = z.infer<typeof SubscoresSchema>;
+export type InvestorQuestion = z.infer<typeof InvestorQuestionSchema>;
+export type PitchAnnotation = z.infer<typeof PitchAnnotationSchema>;
+export type DealContext = z.infer<typeof DealContextSchema>;
 export type MemoOutput = z.infer<typeof MemoOutputSchema>;
 export type PlannerEvent = z.infer<typeof PlannerEventSchema>;
 export type ScoutEvent = z.infer<typeof ScoutEventSchema>;

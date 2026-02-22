@@ -35,11 +35,40 @@ export function memoToMarkdown(memo: MemoOutput): string {
     lines.push("");
   }
 
+  if (memo.investor_questions.length > 0) {
+    lines.push("## Investor Q&A — Prepare for These");
+    for (const q of memo.investor_questions) {
+      lines.push(`- **${q.question}**`);
+      lines.push(`  ${q.why_it_matters}`);
+    }
+    lines.push("");
+  }
+
   lines.push("## Risk Vectors");
   for (const r of memo.risk_vectors) {
     lines.push(`- ${r}`);
   }
   lines.push("");
+
+  lines.push("## Deal Context");
+  lines.push(`- **Stage:** ${memo.deal_context.typical_stage}`);
+  lines.push(`- **Typical Raise:** ${memo.deal_context.typical_raise_range}`);
+  lines.push(`- **Expected Dilution:** ${memo.deal_context.typical_dilution}`);
+  if (memo.deal_context.red_flags.length > 0) {
+    lines.push("- **Watch out for:**");
+    for (const flag of memo.deal_context.red_flags) {
+      lines.push(`  - ${flag}`);
+    }
+  }
+  lines.push("");
+
+  if (memo.pitch_annotations.length > 0) {
+    lines.push("## Pitch Annotations");
+    for (const ann of memo.pitch_annotations) {
+      lines.push(`- [${ann.annotation_type}] "${ann.excerpt}" — ${ann.note}`);
+    }
+    lines.push("");
+  }
 
   lines.push(`## Research Confidence`);
   lines.push(

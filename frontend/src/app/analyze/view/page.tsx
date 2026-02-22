@@ -48,7 +48,7 @@ export default function ViewAnalysisPage() {
           pitchScore={entry.memo.pitch_score}
           subscores={entry.memo.subscores}
         />
-        <MemoDocument memo={entry.memo} />
+        <MemoDocument memo={entry.memo} pitch={entry.pitch} />
       </div>
     </main>
   );

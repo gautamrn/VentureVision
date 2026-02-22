@@ -91,14 +91,14 @@ export default function ComparePage() {
                 pitchScore={left.memo.pitch_score}
                 subscores={left.memo.subscores}
               />
-              <MemoDocument memo={left.memo} />
+              <MemoDocument memo={left.memo} pitch={left.pitch} />
             </div>
             <div>
               <PitchScore
                 pitchScore={right.memo.pitch_score}
                 subscores={right.memo.subscores}
               />
-              <MemoDocument memo={right.memo} />
+              <MemoDocument memo={right.memo} pitch={right.pitch} />
             </div>
           </div>
         )}

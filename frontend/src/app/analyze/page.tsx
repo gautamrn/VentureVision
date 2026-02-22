@@ -87,7 +87,7 @@ export default function AnalyzePage() {
               pitchScore={memo.pitch_score}
               subscores={memo.subscores}
             />
-            <MemoDocument memo={memo} />
+            <MemoDocument memo={memo} pitch={pitch} />
           </>
         ) : status.phase !== "error" ? (
           <div className="space-y-4">
