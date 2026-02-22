@@ -1,17 +1,39 @@
 # General
-.env
 .DS_Store
-node_modules/
+Thumbs.db
+
+# Environment & Secrets — NEVER commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
 .venv/
+venv/
+*.egg-info/
+.mypy_cache/
+.pytest_cache/
+
+# Node
+node_modules/
 
 # AI Context (Private)
 CLAUDE.local.md
-.claude/memory/
+.claude/
+.cursorrules
 
 # Build Outputs
 .next/
 dist/
 build/
 *.log
+
+# IDE
+.vscode/
+.idea/

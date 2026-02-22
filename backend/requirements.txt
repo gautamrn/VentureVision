@@ -1,0 +1,20 @@
+# Core
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+
+# Agent Orchestration
+langgraph==0.2.60
+langchain-anthropic==0.3.12
+langchain-community==0.3.14
+
+# Web Search
+tavily-python==0.5.0
+
+# Observability (optional — set LANGCHAIN_TRACING_V2=true to enable)
+langsmith==0.2.10
+
+# Utilities
+python-dotenv==1.0.1
+sse-starlette==2.2.1
+httpx==0.28.1

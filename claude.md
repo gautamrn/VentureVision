@@ -24,3 +24,7 @@ Venture-Vision is a professional due diligence engine. It is NOT a creative writ
 3. Implement the logic node in `backend/app/nodes/`.
 4. Update the graph in `backend/app/graph/workflow.py`.
 5. Expose the new state via a FastAPI endpoint.
+
+# More
+camel case
+explain each step like you are a teacher.
