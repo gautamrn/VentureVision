@@ -53,5 +53,6 @@ def critic_node(state: AgentState) -> dict:
     return {
         "is_validated": result.is_sufficient,
         "critique_feedback": result.feedback,
+        "coverage_score": result.coverage_score,
         "analysis_iteration": iteration + 1,
     }

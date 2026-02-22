@@ -10,4 +10,5 @@ class AgentState(TypedDict):
     analysis_iteration: int
     is_validated: bool
     critique_feedback: str
+    coverage_score: float
     final_memo: MemoOutput | None
