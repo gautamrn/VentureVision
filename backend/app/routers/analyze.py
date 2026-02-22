@@ -2,11 +2,12 @@ import asyncio
 import json
 import threading
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from sse_starlette.sse import EventSourceResponse
 
 from app.schemas.models import PitchRequest, RunResponse
 from app.graph.workflow import ventureGraph
+from app.middleware.rateLimiter import rateLimitGuard
 
 router = APIRouter()
 
@@ -50,7 +51,7 @@ def serializeNodeOutput(nodeName: str, nodeState: dict) -> dict:
     return {}
 
 
-@router.post("/analyze", response_model=RunResponse)
+@router.post("/analyze", response_model=RunResponse, dependencies=[Depends(rateLimitGuard)])
 async def analyze(request: PitchRequest):
     result = await asyncio.to_thread(
         ventureGraph.invoke, buildInitialState(request.pitch)
@@ -63,7 +64,7 @@ async def analyze(request: PitchRequest):
     )
 
 
-@router.post("/analyze/stream")
+@router.post("/analyze/stream", dependencies=[Depends(rateLimitGuard)])
 async def analyzeStream(request: PitchRequest):
     initialState = buildInitialState(request.pitch)
 

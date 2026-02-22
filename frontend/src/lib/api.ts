@@ -45,7 +45,13 @@ export async function streamAnalysis(
   });
 
   if (!response.ok || !response.body) {
-    onEvent({ type: "error", data: { message: "Failed to connect to analysis server." } });
+    if (response.status === 429) {
+      const body = await response.json().catch(() => null);
+      const detail = body?.detail ?? "Rate limit exceeded. Please try again later.";
+      onEvent({ type: "error", data: { message: detail } });
+    } else {
+      onEvent({ type: "error", data: { message: "Failed to connect to analysis server." } });
+    }
     onDone();
     return;
   }
