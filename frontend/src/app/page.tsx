@@ -80,7 +80,7 @@ export default function Home() {
             <p className={`text-xs font-sans ${
               pitch.length > 5000 ? "text-[#9B2C2C]" : pitch.length < 40 ? "text-muted" : "text-[#2D6A4F]"
             }`}>
-              {pitch.length} / 5,000 max · 40 min
+              {pitch.length} / 5,000 · at least 40 chars
             </p>
             {error && (
               <p className="text-sm text-[#9B2C2C] font-sans">{error}</p>
@@ -122,16 +122,10 @@ export default function Home() {
           </div>
         </form>
 
-        <div className="mt-16 flex items-center justify-between">
+        <div className="mt-16">
           <p className="text-xs text-muted font-sans">
             Analysis takes 30–60 seconds. Results are grounded in real web sources.
           </p>
-          <button
-            onClick={() => router.push("/admin")}
-            className="text-xs font-sans text-muted hover:text-foreground"
-          >
-            Admin
-          </button>
         </div>
 
         {history.length > 0 && (
