@@ -24,8 +24,9 @@ You will receive:
 Evaluate whether the evidence sufficiently covers the research plan.
 - coverage_score: 0.0 to 1.0 representing what fraction of queries have meaningful results
 - is_sufficient: true if coverage_score >= 0.8
-- feedback: if not sufficient, specify exactly what data gaps remain so the
-  search agent can refine its queries. Be specific (e.g. "missing competitor pricing data")."""
+- feedback: if not sufficient, output 2-4 NEW web search queries (comma-separated) that would fill the gaps. Write them as you would type into Google — specific and searchable. Example: "Stripe competitor Series A funding 2024, mobile payments Africa market size 2025, Square pricing small business"
+
+Do NOT output prose like "missing competitor pricing data". Output actual search queries the agent can run."""
 
 
 def critic_node(state: AgentState) -> dict:

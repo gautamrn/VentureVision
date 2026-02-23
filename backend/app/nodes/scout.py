@@ -11,22 +11,36 @@ def scout_node(state: AgentState) -> dict:
     feedback = state.get("critique_feedback", "")
 
     if feedback:
-        queries = [f"{q} {feedback}" for q in queries[:3]]
+        feedbackQueries = [q.strip() for q in feedback.split(",") if q.strip()]
+        if not feedbackQueries:
+            feedbackQueries = [feedback.strip()]
+        queries = feedbackQueries[:4]
 
     evidence: list[EvidenceItem] = state.get("raw_evidence", [])
 
     for query in queries:
         try:
-            response = tavily.search(query=query, max_results=2)
+            response = tavily.search(
+                query=query,
+                max_results=2,
+                include_answer=True,
+                topic="general",
+            )
         except Exception:
             continue
 
+        answer = response.get("answer", "")
+
         for result in response.get("results", []):
+            snippet = result.get("content", "")[:800]
+            if answer and len(snippet) < 200:
+                snippet = f"{snippet} | Summary: {answer[:300]}"
+
             evidence.append(
                 EvidenceItem(
                     query=query,
                     title=result.get("title", ""),
-                    snippet=result.get("content", "")[:500],
+                    snippet=snippet,
                     source_url=result.get("url", ""),
                 )
             )

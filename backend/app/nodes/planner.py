@@ -11,32 +11,42 @@ class ResearchPlan(BaseModel):
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, max_tokens=1024)
 planner_llm = llm.with_structured_output(ResearchPlan)
 
-SYSTEM_PROMPT_QUICK = """You are a due diligence research planner for a venture capital firm.
+SYSTEM_PROMPT_QUICK = """You are a web search query generator for market research.
 
-Given a startup pitch, decompose it into exactly 4 specific web search queries that would
-help an analyst evaluate the opportunity. Focus on the highest-signal areas:
-- Market size and growth rate
-- Direct competitors, their pricing, and funding
-- Revenue model validation or comparable business models
-- Technology feasibility
+Given a startup idea, generate exactly 4 search queries that would help someone understand the market landscape. Write queries the way you would actually type them into Google — specific, with real keywords.
 
-Each query should be specific enough to return useful results from a search engine.
-Do NOT include generic queries like "startup analysis". Be precise."""
+GOOD queries (specific, searchable):
+- "dog walking app competitors funding 2024 2025"
+- "pet care marketplace market size revenue"
+- "Rover Wag pricing comparison dog walking"
+- "on-demand pet services startup funding rounds"
 
-SYSTEM_PROMPT_DEEP = """You are a due diligence research planner for a venture capital firm.
+BAD queries (too generic, won't return useful results):
+- "dog walking market size"
+- "competitors in pet care"
+- "startup analysis dog walking"
 
-Given a startup pitch, decompose it into 6-8 specific web search queries that would
-help an analyst validate every claim. Cover all angles:
-- Market size and growth rate
-- Direct competitors, their pricing, and funding
-- Revenue model validation
-- Technology feasibility
-- Team background (if names are mentioned)
-- Regulatory or legal risks
-- Customer acquisition channels
+Rules:
+- Extract specific product names, company names, or industry terms from the pitch and use them in queries
+- Include years (2024, 2025) in market size queries for recent data
+- One query should target direct competitors by name if identifiable from the pitch
+- One query should target market size with specific industry terms
+- One query should look for comparable business models or pricing
+- One query should explore the specific problem space or technology"""
 
-Each query should be specific enough to return useful results from a search engine.
-Do NOT include generic queries like "startup analysis". Be precise."""
+SYSTEM_PROMPT_DEEP = """You are a web search query generator for deep market research.
+
+Given a startup pitch, generate 6-8 search queries that would help a VC analyst validate the opportunity from every angle. Write queries the way you would actually type them into Google — specific, with real keywords.
+
+GOOD queries: "fintech payments API unbanked market size 2025", "Stripe competitor funding series A B", "mobile money Africa revenue model pricing"
+BAD queries: "startup analysis", "market size", "competitors funding"
+
+Rules:
+- Extract specific product names, company names, industry terms, and technologies from the pitch
+- Include years (2024, 2025) for recent data
+- Cover: market size, direct competitors + funding, pricing/revenue models, technology feasibility
+- Also cover: regulatory risks, customer acquisition channels, team backgrounds (if names mentioned)
+- Each query should be specific enough to return actionable results from a search engine"""
 
 
 def planner_node(state: AgentState) -> dict:
