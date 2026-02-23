@@ -8,6 +8,7 @@ import StrengthenPitch from "./StrengthenPitch";
 import PitchAnnotations from "./PitchAnnotations";
 import InvestorQA from "./InvestorQA";
 import DealContext from "./DealContext";
+import FeatureSuggestions from "./FeatureSuggestions";
 
 interface Props {
   memo: MemoOutput;
@@ -127,6 +128,8 @@ export default function MemoDocument({ memo, pitch }: Props) {
       </section>
 
       <DealContext dealContext={memo.deal_context} />
+
+      <FeatureSuggestions suggestions={memo.feature_suggestions} />
 
       <section className="mb-12">
         <h2 className="font-sans text-xs uppercase tracking-widest text-muted mb-4">

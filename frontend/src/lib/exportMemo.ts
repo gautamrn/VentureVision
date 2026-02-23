@@ -70,6 +70,14 @@ export function memoToMarkdown(memo: MemoOutput): string {
     lines.push("");
   }
 
+  if (memo.feature_suggestions.length > 0) {
+    lines.push("## Features to Consider Building");
+    for (const s of memo.feature_suggestions) {
+      lines.push(`- ${s}`);
+    }
+    lines.push("");
+  }
+
   lines.push(`## Research Confidence`);
   lines.push(
     `${Math.round(memo.confidence_score * 100)}% — based on ${memo.citation_links.length} sources`

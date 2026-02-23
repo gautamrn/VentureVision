@@ -10,6 +10,7 @@ import {
 
 export default function Home() {
   const [pitch, setPitch] = useState("");
+  const [mode, setMode] = useState<"quick_check" | "investor_ready">("quick_check");
   const [error, setError] = useState("");
   const [history, setHistory] = useState<PitchHistoryEntry[]>([]);
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function Home() {
       return;
     }
     sessionStorage.setItem("vv_pitch", trimmed);
+    sessionStorage.setItem("vv_mode", mode);
     router.push("/analyze");
   }
 
@@ -71,7 +73,31 @@ export default function Home() {
             )}
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setMode("quick_check")}
+                className={`text-xs font-sans px-3 py-1.5 border ${
+                  mode === "quick_check"
+                    ? "border-foreground text-foreground"
+                    : "border-border text-muted"
+                }`}
+              >
+                Quick Check
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("investor_ready")}
+                className={`text-xs font-sans px-3 py-1.5 border ${
+                  mode === "investor_ready"
+                    ? "border-foreground text-foreground"
+                    : "border-border text-muted"
+                }`}
+              >
+                Investor Ready
+              </button>
+            </div>
             <button
               type="submit"
               className="flex items-center gap-2 text-sm font-sans text-foreground border border-foreground px-5 py-2"

@@ -5,6 +5,7 @@ from app.schemas.models import EvidenceItem, MemoOutput
 
 class AgentState(TypedDict):
     pitch: str
+    mode: str
     research_plan: list[str]
     raw_evidence: list[EvidenceItem]
     analysis_iteration: int

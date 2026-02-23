@@ -3,7 +3,7 @@ import threading
 
 from fastapi import Request, HTTPException
 
-MAX_REQUESTS = 5
+MAX_REQUESTS = 7
 WINDOW_SECONDS = 3600
 
 _requests: dict[str, list[float]] = {}

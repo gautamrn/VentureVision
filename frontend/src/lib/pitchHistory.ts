@@ -7,6 +7,7 @@ export interface PitchHistoryEntry {
   id: string;
   pitch: string;
   pitchScore: number;
+  mode: string;
   date: string;
   memo: MemoOutput;
 }
@@ -22,13 +23,14 @@ export function getPitchHistory(): PitchHistoryEntry[] {
   }
 }
 
-export function savePitchResult(pitch: string, memo: MemoOutput): void {
+export function savePitchResult(pitch: string, memo: MemoOutput, mode: string = "quick_check"): void {
   const history = getPitchHistory();
 
   const entry: PitchHistoryEntry = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     pitch,
     pitchScore: memo.pitch_score,
+    mode,
     date: new Date().toISOString(),
     memo,
   };

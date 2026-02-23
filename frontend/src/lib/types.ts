@@ -43,6 +43,7 @@ export const MemoOutputSchema = z.object({
   investor_questions: z.array(InvestorQuestionSchema),
   pitch_annotations: z.array(PitchAnnotationSchema),
   deal_context: DealContextSchema,
+  feature_suggestions: z.array(z.string()),
 });
 
 export const PlannerEventSchema = z.object({

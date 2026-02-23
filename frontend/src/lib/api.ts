@@ -35,13 +35,14 @@ function parseEvent(eventName: string, rawData: string): AgentEvent | null {
 
 export async function streamAnalysis(
   pitch: string,
+  mode: string,
   onEvent: (event: AgentEvent) => void,
   onDone: () => void
 ): Promise<void> {
   const response = await fetch(`${API_URL}/analyze/stream`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ pitch }),
+    body: JSON.stringify({ pitch, mode }),
   });
 
   if (!response.ok || !response.body) {

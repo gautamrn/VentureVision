@@ -51,10 +51,12 @@ class MemoOutput(BaseModel):
     investor_questions: list[InvestorQuestion]
     pitch_annotations: list[PitchAnnotation]
     deal_context: DealContext
+    feature_suggestions: list[str]
 
 
 class PitchRequest(BaseModel):
     pitch: str
+    mode: str = "quick_check"
 
 
 class RunResponse(BaseModel):

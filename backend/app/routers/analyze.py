@@ -12,9 +12,10 @@ from app.middleware.rateLimiter import rateLimitGuard
 router = APIRouter()
 
 
-def buildInitialState(pitch: str) -> dict:
+def buildInitialState(pitch: str, mode: str = "quick_check") -> dict:
     return {
         "pitch": pitch,
+        "mode": mode,
         "research_plan": [],
         "raw_evidence": [],
         "analysis_iteration": 0,
@@ -54,7 +55,7 @@ def serializeNodeOutput(nodeName: str, nodeState: dict) -> dict:
 @router.post("/analyze", response_model=RunResponse, dependencies=[Depends(rateLimitGuard)])
 async def analyze(request: PitchRequest):
     result = await asyncio.to_thread(
-        ventureGraph.invoke, buildInitialState(request.pitch)
+        ventureGraph.invoke, buildInitialState(request.pitch, request.mode)
     )
 
     return RunResponse(
@@ -66,7 +67,7 @@ async def analyze(request: PitchRequest):
 
 @router.post("/analyze/stream", dependencies=[Depends(rateLimitGuard)])
 async def analyzeStream(request: PitchRequest):
-    initialState = buildInitialState(request.pitch)
+    initialState = buildInitialState(request.pitch, request.mode)
 
     async def eventGenerator():
         queue: asyncio.Queue = asyncio.Queue()

@@ -14,6 +14,7 @@ export default function AnalyzePage() {
   const [status, setStatus] = useState<Status>({ phase: "planner" });
   const [memo, setMemo] = useState<MemoOutput | null>(null);
   const [pitch, setPitch] = useState<string>("");
+  const [mode, setMode] = useState<string>("quick_check");
 
   useEffect(() => {
     const stored = sessionStorage.getItem("vv_pitch");
@@ -22,9 +23,12 @@ export default function AnalyzePage() {
       return;
     }
     setPitch(stored);
+    const storedMode = sessionStorage.getItem("vv_mode") ?? "quick_check";
+    setMode(storedMode);
 
     streamAnalysis(
       stored,
+      storedMode,
       (event) => {
         if (event.type === "planner") {
           setStatus({ phase: "scout", evidenceCount: 0 });
@@ -47,7 +51,7 @@ export default function AnalyzePage() {
         if (event.type === "writer" && event.data.memo) {
           setMemo(event.data.memo);
           setStatus({ phase: "done" });
-          savePitchResult(stored, event.data.memo);
+          savePitchResult(stored, event.data.memo, storedMode);
         }
         if (event.type === "error") {
           setStatus({ phase: "error", message: event.data.message });
@@ -69,9 +73,14 @@ export default function AnalyzePage() {
           >
             ← VentureVision
           </button>
-          <p className="font-sans text-xs uppercase tracking-widest text-muted mb-2">
-            Investment Memo
-          </p>
+          <div className="flex items-center gap-3 mb-2">
+            <p className="font-sans text-xs uppercase tracking-widest text-muted">
+              Investment Memo
+            </p>
+            <span className="font-sans text-xs px-2 py-0.5 border border-border text-muted">
+              {mode === "investor_ready" ? "Investor Ready" : "Quick Check"}
+            </span>
+          </div>
           {pitch && (
             <p className="font-serif text-xl text-foreground leading-snug">
               {pitch.slice(0, 80)}{pitch.length > 80 ? "…" : ""}
