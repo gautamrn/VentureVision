@@ -52,14 +52,6 @@ export default function MemoDocument({ memo, pitch }: Props) {
         <CopyButton text={memoToMarkdown(memo)} label="Copy as Markdown" />
       </div>
 
-      {pitch && (
-        <PitchAnnotations pitch={pitch} annotations={memo.pitch_annotations} />
-      )}
-
-      <StrengthenPitch suggestions={memo.strengthen_suggestions} />
-
-      <FeatureSuggestions suggestions={memo.feature_suggestions} />
-
       <section className="mb-12">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-sans text-xs uppercase tracking-widest text-muted">
@@ -69,6 +61,14 @@ export default function MemoDocument({ memo, pitch }: Props) {
         </div>
         <p className="text-lg leading-relaxed">{memo.executive_summary}</p>
       </section>
+
+      <FeatureSuggestions suggestions={memo.feature_suggestions} />
+
+      <StrengthenPitch suggestions={memo.strengthen_suggestions} />
+
+      {pitch && (
+        <PitchAnnotations pitch={pitch} annotations={memo.pitch_annotations} />
+      )}
 
       <InvestorQA questions={memo.investor_questions} />
 

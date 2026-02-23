@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { streamAnalysis } from "@/lib/api";
 import AgentStatus, { type Status } from "@/components/AgentStatus";
@@ -15,8 +15,12 @@ export default function AnalyzePage() {
   const [memo, setMemo] = useState<MemoOutput | null>(null);
   const [pitch, setPitch] = useState<string>("");
   const [mode, setMode] = useState<string>("quick_check");
+  const hasStarted = useRef(false);
 
   useEffect(() => {
+    if (hasStarted.current) return;
+    hasStarted.current = true;
+
     const stored = sessionStorage.getItem("vv_pitch");
     if (!stored) {
       router.replace("/");
