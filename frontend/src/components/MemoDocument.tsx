@@ -58,6 +58,8 @@ export default function MemoDocument({ memo, pitch }: Props) {
 
       <StrengthenPitch suggestions={memo.strengthen_suggestions} />
 
+      <FeatureSuggestions suggestions={memo.feature_suggestions} />
+
       <section className="mb-12">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-sans text-xs uppercase tracking-widest text-muted">
@@ -128,8 +130,6 @@ export default function MemoDocument({ memo, pitch }: Props) {
       </section>
 
       <DealContext dealContext={memo.deal_context} />
-
-      <FeatureSuggestions suggestions={memo.feature_suggestions} />
 
       <section className="mb-12">
         <h2 className="font-sans text-xs uppercase tracking-widest text-muted mb-4">

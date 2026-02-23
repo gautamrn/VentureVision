@@ -44,6 +44,11 @@ export function savePitchResult(pitch: string, memo: MemoOutput, mode: string = 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
 }
 
+export function deletePitch(id: string): void {
+  const history = getPitchHistory().filter((e) => e.id !== id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+}
+
 export function getPitchById(id: string): PitchHistoryEntry | null {
   const history = getPitchHistory();
   return history.find((e) => e.id === id) ?? null;

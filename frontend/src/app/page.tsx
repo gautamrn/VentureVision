@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, X } from "lucide-react";
 import {
   getPitchHistory,
+  deletePitch,
   type PitchHistoryEntry,
 } from "@/lib/pitchHistory";
 
@@ -34,6 +35,12 @@ export default function Home() {
   function viewPastAnalysis(entry: PitchHistoryEntry) {
     sessionStorage.setItem("vv_view_id", entry.id);
     router.push("/analyze/view");
+  }
+
+  function handleDelete(e: React.MouseEvent, id: string) {
+    e.stopPropagation();
+    deletePitch(id);
+    setHistory(getPitchHistory());
   }
 
   return (
@@ -78,10 +85,10 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setMode("quick_check")}
-                className={`text-xs font-sans px-3 py-1.5 border ${
+                className={`text-xs font-sans px-3 py-1.5 border cursor-pointer active:scale-95 transition-transform ${
                   mode === "quick_check"
-                    ? "border-foreground text-foreground"
-                    : "border-border text-muted"
+                    ? "border-foreground text-foreground bg-foreground/5"
+                    : "border-border text-muted hover:border-foreground/30 hover:text-foreground"
                 }`}
               >
                 Quick Check
@@ -89,10 +96,10 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setMode("investor_ready")}
-                className={`text-xs font-sans px-3 py-1.5 border ${
+                className={`text-xs font-sans px-3 py-1.5 border cursor-pointer active:scale-95 transition-transform ${
                   mode === "investor_ready"
-                    ? "border-foreground text-foreground"
-                    : "border-border text-muted"
+                    ? "border-foreground text-foreground bg-foreground/5"
+                    : "border-border text-muted hover:border-foreground/30 hover:text-foreground"
                 }`}
               >
                 Investor Ready
@@ -100,7 +107,7 @@ export default function Home() {
             </div>
             <button
               type="submit"
-              className="flex items-center gap-2 text-sm font-sans text-foreground border border-foreground px-5 py-2"
+              className="flex items-center gap-2 text-sm font-sans text-foreground border border-foreground px-5 py-2 cursor-pointer hover:bg-foreground/5 active:scale-95 transition-transform"
             >
               Analyze pitch
               <ArrowRight size={14} />
@@ -108,9 +115,17 @@ export default function Home() {
           </div>
         </form>
 
-        <p className="mt-16 text-xs text-muted font-sans">
-          Analysis takes 30–60 seconds. Results are grounded in real web sources.
-        </p>
+        <div className="mt-16 flex items-center justify-between">
+          <p className="text-xs text-muted font-sans">
+            Analysis takes 30–60 seconds. Results are grounded in real web sources.
+          </p>
+          <button
+            onClick={() => router.push("/admin")}
+            className="text-xs font-sans text-muted hover:text-foreground"
+          >
+            Admin
+          </button>
+        </div>
 
         {history.length > 0 && (
           <div className="mt-12 border-t border-border pt-8">
@@ -142,9 +157,17 @@ export default function Home() {
                         {new Date(entry.date).toLocaleDateString()}
                       </p>
                     </div>
-                    <span className="font-serif text-lg text-foreground shrink-0">
-                      {entry.pitchScore}
-                    </span>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="font-serif text-lg text-foreground">
+                        {entry.pitchScore}
+                      </span>
+                      <button
+                        onClick={(e) => handleDelete(e, entry.id)}
+                        className="text-muted hover:text-foreground"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
                   </button>
                 </li>
               ))}
