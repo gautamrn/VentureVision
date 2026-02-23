@@ -1,4 +1,6 @@
-from pydantic import BaseModel, HttpUrl
+from typing import Literal
+
+from pydantic import BaseModel, Field, HttpUrl
 
 
 class EvidenceItem(BaseModel):
@@ -55,8 +57,8 @@ class MemoOutput(BaseModel):
 
 
 class PitchRequest(BaseModel):
-    pitch: str
-    mode: str = "quick_check"
+    pitch: str = Field(..., min_length=40, max_length=5000)
+    mode: Literal["quick_check", "investor_ready"] = "quick_check"
 
 
 class RunResponse(BaseModel):

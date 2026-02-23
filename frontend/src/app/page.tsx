@@ -24,7 +24,11 @@ export default function Home() {
     e.preventDefault();
     const trimmed = pitch.trim();
     if (trimmed.length < 40) {
-      setError("Please describe your startup in at least a few sentences.");
+      setError("Minimum 40 characters.");
+      return;
+    }
+    if (trimmed.length > 5000) {
+      setError("Maximum 5,000 characters.");
       return;
     }
     sessionStorage.setItem("vv_pitch", trimmed);
@@ -68,15 +72,18 @@ export default function Home() {
             }}
             placeholder="We are building a payments API for unbanked populations on Mars..."
             rows={7}
+            maxLength={5000}
             className="w-full bg-transparent text-foreground font-sans text-base resize-none outline-none border border-border p-4 placeholder:text-[#C4BFB8]"
           />
 
           <div className="flex items-center justify-between">
-            <p className="text-xs text-muted font-sans">
-              {pitch.length} / 300 recommended
+            <p className={`text-xs font-sans ${
+              pitch.length > 5000 ? "text-[#9B2C2C]" : pitch.length < 40 ? "text-muted" : "text-[#2D6A4F]"
+            }`}>
+              {pitch.length} / 5,000 max · 40 min
             </p>
             {error && (
-              <p className="text-sm text-muted font-sans">{error}</p>
+              <p className="text-sm text-[#9B2C2C] font-sans">{error}</p>
             )}
           </div>
 

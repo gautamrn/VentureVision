@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
+const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY ?? "";
 
 interface RunRecord {
   timestamp: number;
@@ -63,7 +64,9 @@ export default function AdminPage() {
   async function fetchMetrics() {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/admin/metrics`);
+      const res = await fetch(`${API_URL}/admin/metrics`, {
+        headers: ADMIN_KEY ? { "X-Admin-Key": ADMIN_KEY } : {},
+      });
       if (res.ok) {
         setMetrics(await res.json());
       }

@@ -1,9 +1,10 @@
 import asyncio
 import json
+import os
 import threading
 import time
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sse_starlette.sse import EventSourceResponse
 
 from app.schemas.models import PitchRequest, RunResponse
@@ -12,6 +13,15 @@ from app.middleware.rateLimiter import rateLimitGuard
 from app.middleware.metrics import recordRun, getMetrics
 
 router = APIRouter()
+
+ADMIN_KEY = os.getenv("ADMIN_KEY", "")
+MAX_CONCURRENT_STREAMS = 5
+_streamSemaphore = asyncio.Semaphore(MAX_CONCURRENT_STREAMS)
+
+
+async def verifyAdminKey(x_admin_key: str = Header(None)) -> None:
+    if not ADMIN_KEY or x_admin_key != ADMIN_KEY:
+        raise HTTPException(status_code=403, detail="Unauthorized")
 
 
 def buildInitialState(pitch: str, mode: str = "quick_check") -> dict:
@@ -54,7 +64,7 @@ def serializeNodeOutput(nodeName: str, nodeState: dict) -> dict:
     return {}
 
 
-@router.get("/admin/metrics")
+@router.get("/admin/metrics", dependencies=[Depends(verifyAdminKey)])
 async def adminMetrics():
     return getMetrics()
 
@@ -84,61 +94,65 @@ async def analyze(request: PitchRequest):
 
 @router.post("/analyze/stream", dependencies=[Depends(rateLimitGuard)])
 async def analyzeStream(request: PitchRequest):
+    if _streamSemaphore.locked():
+        raise HTTPException(status_code=503, detail="Server busy. Try again in a minute.")
+
     initialState = buildInitialState(request.pitch, request.mode)
     startTime = time.time()
 
     async def eventGenerator():
-        queue: asyncio.Queue = asyncio.Queue()
-        loop = asyncio.get_event_loop()
-        runMeta = {"iterations": 0, "evidenceCount": 0, "pitchScore": None, "status": "success"}
+        async with _streamSemaphore:
+            queue: asyncio.Queue = asyncio.Queue()
+            loop = asyncio.get_event_loop()
+            runMeta = {"iterations": 0, "evidenceCount": 0, "pitchScore": None, "status": "success"}
 
-        def runGraph():
-            try:
-                for chunk in ventureGraph.stream(initialState):
-                    nodeName = list(chunk.keys())[0]
-                    nodeState = chunk[nodeName]
-                    loop.call_soon_threadsafe(
-                        queue.put_nowait, (nodeName, nodeState, None)
-                    )
-            except Exception as e:
-                loop.call_soon_threadsafe(queue.put_nowait, (None, None, str(e)))
-            finally:
-                loop.call_soon_threadsafe(queue.put_nowait, None)
+            def runGraph():
+                try:
+                    for chunk in ventureGraph.stream(initialState):
+                        nodeName = list(chunk.keys())[0]
+                        nodeState = chunk[nodeName]
+                        loop.call_soon_threadsafe(
+                            queue.put_nowait, (nodeName, nodeState, None)
+                        )
+                except Exception as e:
+                    loop.call_soon_threadsafe(queue.put_nowait, (None, None, str(e)))
+                finally:
+                    loop.call_soon_threadsafe(queue.put_nowait, None)
 
-        thread = threading.Thread(target=runGraph, daemon=True)
-        thread.start()
+            thread = threading.Thread(target=runGraph, daemon=True)
+            thread.start()
 
-        while True:
-            item = await queue.get()
-            if item is None:
-                break
+            while True:
+                item = await queue.get()
+                if item is None:
+                    break
 
-            nodeName, nodeState, error = item
+                nodeName, nodeState, error = item
 
-            if error:
-                runMeta["status"] = "error"
-                yield {"event": "error", "data": json.dumps({"message": error})}
-                break
+                if error:
+                    runMeta["status"] = "error"
+                    yield {"event": "error", "data": json.dumps({"message": error})}
+                    break
 
-            if nodeName == "critic":
-                runMeta["iterations"] = nodeState.get("analysis_iteration", 0)
-            if nodeName == "scout":
-                runMeta["evidenceCount"] = len(nodeState.get("raw_evidence", []))
-            if nodeName == "writer":
-                memo = nodeState.get("final_memo")
-                if memo and hasattr(memo, "pitch_score"):
-                    runMeta["pitchScore"] = memo.pitch_score
+                if nodeName == "critic":
+                    runMeta["iterations"] = nodeState.get("analysis_iteration", 0)
+                if nodeName == "scout":
+                    runMeta["evidenceCount"] = len(nodeState.get("raw_evidence", []))
+                if nodeName == "writer":
+                    memo = nodeState.get("final_memo")
+                    if memo and hasattr(memo, "pitch_score"):
+                        runMeta["pitchScore"] = memo.pitch_score
 
-            payload = serializeNodeOutput(nodeName, nodeState)
-            yield {"event": nodeName, "data": json.dumps(payload)}
+                payload = serializeNodeOutput(nodeName, nodeState)
+                yield {"event": nodeName, "data": json.dumps(payload)}
 
-        recordRun(
-            startTime=startTime,
-            mode=request.mode,
-            pitchScore=runMeta["pitchScore"],
-            iterations=runMeta["iterations"],
-            evidenceCount=runMeta["evidenceCount"],
-            status=runMeta["status"],
-        )
+            recordRun(
+                startTime=startTime,
+                mode=request.mode,
+                pitchScore=runMeta["pitchScore"],
+                iterations=runMeta["iterations"],
+                evidenceCount=runMeta["evidenceCount"],
+                status=runMeta["status"],
+            )
 
     return EventSourceResponse(eventGenerator())

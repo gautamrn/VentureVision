@@ -50,6 +50,10 @@ export async function streamAnalysis(
       const body = await response.json().catch(() => null);
       const detail = body?.detail ?? "Rate limit exceeded. Please try again later.";
       onEvent({ type: "error", data: { message: detail } });
+    } else if (response.status === 503) {
+      onEvent({ type: "error", data: { message: "Server is busy. Please try again in a minute." } });
+    } else if (response.status === 422) {
+      onEvent({ type: "error", data: { message: "Pitch must be between 40 and 5,000 characters." } });
     } else {
       onEvent({ type: "error", data: { message: "Failed to connect to analysis server." } });
     }
