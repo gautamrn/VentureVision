@@ -145,9 +145,12 @@ export default function Home() {
             <ul className="space-y-3">
               {history.map((entry) => (
                 <li key={entry.id}>
-                  <button
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => viewPastAnalysis(entry)}
-                    className="w-full text-left flex items-center justify-between border border-border p-3 hover:border-foreground/30"
+                    onKeyDown={(e) => { if (e.key === "Enter") viewPastAnalysis(entry); }}
+                    className="w-full text-left flex items-center justify-between border border-border p-3 hover:border-foreground/30 cursor-pointer"
                   >
                     <div className="min-w-0 flex-1 mr-4">
                       <p className="font-sans text-sm text-foreground truncate">
@@ -163,12 +166,12 @@ export default function Home() {
                       </span>
                       <button
                         onClick={(e) => handleDelete(e, entry.id)}
-                        className="text-muted hover:text-foreground"
+                        className="text-muted hover:text-foreground active:scale-90 transition-transform"
                       >
                         <X size={14} />
                       </button>
                     </div>
-                  </button>
+                  </div>
                 </li>
               ))}
             </ul>
