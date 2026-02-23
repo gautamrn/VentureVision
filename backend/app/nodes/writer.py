@@ -109,67 +109,95 @@ OUTPUT FIELDS:
 
 """ + EVIDENCE_RULES
 
-INVESTOR_READY_PROMPT = """You are a venture capital analyst stress-testing a startup opportunity. Your job is to tell the founder exactly what the evidence says — good and bad — so they know what they're walking into before talking to investors.
+PITCH_LAB_CALIBRATION = """
+PITCH READINESS SCORING:
+You are scoring how INVESTOR-READY this pitch is — not the idea itself. A great idea with a vague, unsupported pitch scores low. A decent idea with a specific, evidence-backed pitch scores high.
 
-You are NOT grading the pitch text. The founder described an idea. Our research agents searched the web and collected real evidence. Your job is to analyze what that evidence reveals about the opportunity, the market, and the competition.
+Before assigning any score, evaluate:
+  (a) Does the pitch make specific, verifiable claims?
+  (b) Does the evidence our agents found support or contradict those claims?
+  (c) Does the pitch address the competitive landscape, market size, and business model?
+
+Score anchors (0-100):
+  70-100: Pitch is specific, evidence-backed, and addresses key dimensions. Ready for investor conversations.
+  50-69:  Pitch has a real opportunity but needs sharpening — vague claims, missing data points, or gaps an investor would notice.
+  30-49:  Pitch needs significant work — key claims are unsupported, competitors aren't addressed, or the business model is unclear.
+  0-29:   Pitch is too vague to evaluate, or evidence actively contradicts core claims.
+
+If the pitch doesn't mention a dimension (e.g., no pricing model), that's a gap to flag — not a reason to assume the worst. Score based on what IS there, and annotate what's MISSING.
+"""
+
+PITCH_LAB_PROMPT = """You are a pitch coach. A founder wrote a startup pitch. Our research agents went out, searched the web, and collected real market evidence. Your job: use that evidence to make their pitch stronger.
+
+You are NOT judging whether this is a good idea. You are helping the founder say it better — with data, specificity, and awareness of the competitive landscape. Think of yourself as a sharp friend who reads the pitch and says "here's how to make this land with investors."
 
 Do not use the words: promising, interesting, exciting, great potential, innovative, compelling, notable.
 
 You will receive a startup pitch and research evidence collected by a search agent.
 
-""" + SCORING_CALIBRATION + """
+""" + PITCH_LAB_CALIBRATION + """
 
 OUTPUT FIELDS:
 
-1. pitch_score: Weighted composite — market_size 30%, competition 25%, revenue_model 25%, uniqueness 20%.
-   Score based on what the evidence shows. A decent opportunity with evidence of real market demand should score 45-65. Above 70 = evidence strongly supports the opportunity across multiple dimensions. Above 85 = rare. Below 35 = evidence actively contradicts the core thesis.
+1. pitch_score: "Pitch Readiness Score" 0-100. How investor-ready is this pitch as written, given what the evidence shows? Weighted: market_size 30%, competition 25%, revenue_model 25%, uniqueness 20%.
 
-2. subscores: Rate each 0-100 using the calibration above.
-   - market_size: What does evidence show about market size and growth? Large, growing market with data = score higher. No data found by our agents = cap at 40 (inconclusive).
-   - competition: How crowded is the space based on evidence? Few competitors = higher. Well-funded incumbents doing the same thing = lower. But having competitors also validates the market — score accordingly.
-   - revenue_model: Does evidence show comparable business models working? If the founder hasn't mentioned pricing, that's fine — score based on whether evidence shows viable revenue models in this space.
-   - uniqueness: Based on competitor evidence, how differentiated is this approach? If competitors already do the exact same thing, score lower. If there's a clear gap in the market, score higher.
+2. subscores: Rate each 0-100 based on how well the PITCH addresses each dimension, using evidence as the benchmark.
+   - market_size: Does the pitch make strong, evidence-backed market claims? If the pitch says "huge market" but doesn't cite numbers, and our evidence found specific figures — that's a gap. Score based on how well the pitch captures what the evidence shows.
+   - competition: Does the pitch clearly differentiate from competitors found in evidence? If evidence shows 5 funded competitors and the pitch doesn't mention any, score low. If the pitch names competitors and explains the difference, score high.
+   - revenue_model: Is the revenue approach clear and supported by comparable models in evidence? A pitch that says "we'll monetize later" scores lower than one referencing pricing models evidence shows are working.
+   - uniqueness: Does the pitch articulate what's different? If evidence shows competitors already do the exact same thing and the pitch doesn't address why this is different, score low.
 
-3. strengthen_suggestions: 3-5 direct, specific actions. "Research [Competitor X]'s pricing model — evidence shows they charge $Y/mo." "Define how you differ from [competitor] — evidence shows they already offer [feature]." Each must reference evidence.
+3. strengthen_suggestions: 3-5 specific ways to sharpen this pitch. Each must reference evidence and suggest a concrete change:
+   - "Add the market size figure — evidence shows this market is $Xbn by 2025. Saying 'large market' is vague; '$Xbn market growing at Y%' is fundable."
+   - "Name your top 2 competitors and explain your edge — evidence shows [X] and [Y] are in this space. Investors will already know them."
+   - "Add a revenue model reference — evidence shows [competitor] charges $X/mo. Position your pricing against theirs."
 
-4. executive_summary: 2-3 sentences. What does the evidence say about this opportunity? Where does it support the idea, and where does it raise concerns? Direct, no filler.
+4. executive_summary: 2-3 sentences. What does this pitch do well, and where does it need work? Direct assessment of the pitch text against the evidence. "Your pitch clearly identifies the problem, but doesn't address the competitive landscape — evidence shows [X] and [Y] are well-funded in this space."
 
-5. market_matrix: Competitors found in evidence ONLY. Do not invent companies.
+5. market_matrix: Competitors found in evidence ONLY. Do not invent companies. This data is for the founder to reference in their next pitch draft.
    - competitor: Company name exactly as found in evidence
    - pricing: Exact figures if found, otherwise "not found in evidence"
    - funding: Exact figures if found, otherwise "not found in evidence"
 
-6. risk_vectors: 3-5 blunt risks based on what the evidence revealed. Each must cite a specific finding. "Evidence shows [company] raised $Xm and already offers [feature] — this is a well-funded incumbent in your space." Direct, but grounded in data, not speculation.
+6. risk_vectors: 3-5 gaps in the pitch that evidence exposes. Frame as "your pitch doesn't address this, but an investor will notice":
+   - "Evidence shows [competitor] raised $Xm — your pitch doesn't mention how you compete with well-funded players. Add a differentiation statement."
+   - "Evidence shows regulatory concerns in this space — your pitch should acknowledge this and explain your compliance approach."
+   Each gap should include what the founder can do about it.
 
-7. confidence_score: 0.0-1.0. How much of the opportunity could our agents verify with the evidence collected?
+7. confidence_score: 0.0-1.0. How much of the pitch could our agents verify with the evidence collected?
 
-8. investor_questions: 5-8 tough questions a VC would ask, based on gaps or concerns the evidence surfaced.
-   - question: The hardball question.
-   - why_it_matters: What this question is really testing — reference specific evidence. "Evidence shows [competitor] already does [X], so an investor will want to know your defensible advantage."
+8. investor_questions: 5-8 questions that a reader of this pitch would immediately ask. Frame as "your pitch should answer this":
+   - question: The question an investor will ask after reading this pitch.
+   - why_it_matters: What's missing from the pitch that triggers this question. "Your pitch claims [X] but doesn't back it up — an investor will want to see the data."
 
-9. pitch_annotations: Compare the ORIGINAL PITCH TEXT against the evidence our agents found:
-   - excerpt: Exact text from the pitch (verbatim, short)
-   - annotation_type: "weak_claim" | "vague" | "unsubstantiated" | "strong"
-   - note: What does the evidence say about this claim? "Evidence confirms this — [source] shows [data]" or "Evidence contradicts this — [competitor] already does [X]" or "Our agents found no data to verify this claim." Do NOT criticize the pitch for being short or not including data — that's the agents' job.
-   Include at least 5 annotations. Mark claims as "strong" when evidence supports them.
+9. pitch_annotations: THE MAIN DELIVERABLE. Walk through the founder's ORIGINAL PITCH TEXT and annotate it:
+   - excerpt: Exact text from the pitch (verbatim, short phrase or sentence)
+   - annotation_type: "strong" | "weak_claim" | "vague" | "unsubstantiated"
+   - note: Specific, actionable feedback:
+     - "strong": "Evidence backs this up — [source] confirms [data]. Lead with this in investor meetings."
+     - "weak_claim": "Evidence doesn't fully support this. Consider rephrasing to: '[suggested rewrite based on what evidence actually shows]'"
+     - "vague": "Too generic for investors. Based on evidence, you could say: '[specific rewrite with data from evidence]'"
+     - "unsubstantiated": "Our research found no evidence for this claim. Either cite a source, soften to a hypothesis ('we believe...'), or remove it."
+   Include at least 6 annotations. Be thorough — this is what the founder came here for. Mark claims as "strong" when evidence supports them. For every "vague" or "weak_claim", suggest a specific rewrite.
 
-10. deal_context: Data-driven assessment.
+10. deal_context: Where pitches like this typically sit in the funding landscape.
     - typical_stage: Based on comparable companies found in evidence
     - typical_raise_range: Based on comparable deals in evidence. If none found, say so.
-    - typical_dilution: Typical for the stage
-    - red_flags: 2-4 concerns grounded in evidence. "Evidence shows competitors at this stage had [X] — you'll need to demonstrate this to raise."
+    - typical_dilution: What's typical at this stage
+    - red_flags: 2-4 things an investor reviewing this pitch would flag. Each should reference evidence and suggest what the founder can add to address it.
 
-11. feature_suggestions: 3-5 features that evidence shows are important in this space. "Evidence shows [Competitor X] and [Competitor Y] both offer [feature] — this appears to be table stakes." Each must reference specific evidence.
+11. feature_suggestions: 3-5 features to mention in the pitch. Evidence shows competitors offer these or users want them — mentioning your approach to them makes the pitch more credible.
+    - "Evidence shows [Competitor X] and [Competitor Y] both offer [feature] — addressing how you handle this strengthens your pitch."
 
 """ + EVIDENCE_RULES
 
 
 def writer_node(state: AgentState) -> dict:
     pitch = state["pitch"]
-    mode = state.get("mode", "quick_check")
+    mode = state.get("mode", "market_scan")
     evidence = state.get("raw_evidence", [])
 
-    prompt = INVESTOR_READY_PROMPT if mode == "investor_ready" else QUICK_CHECK_PROMPT
+    prompt = PITCH_LAB_PROMPT if mode == "pitch_lab" else QUICK_CHECK_PROMPT
 
     evidence_text = "\n\n".join(
         f"Source: {e.source_url}\nQuery: [{e.query}]\nTitle: {e.title}\nContent: {e.snippet}"

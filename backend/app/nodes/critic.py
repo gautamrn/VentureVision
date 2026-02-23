@@ -3,7 +3,8 @@ from langchain_openai import ChatOpenAI
 
 from app.graph.state import AgentState
 
-MAX_ITERATIONS = 3
+QUICK_MAX_ITERATIONS = 3
+DEEP_MAX_ITERATIONS = 4
 
 
 class CritiqueResult(BaseModel):
@@ -31,8 +32,10 @@ Do NOT output prose like "missing competitor pricing data". Output actual search
 
 def critic_node(state: AgentState) -> dict:
     iteration = state.get("analysis_iteration", 0)
+    mode = state.get("mode", "market_scan")
+    maxIterations = DEEP_MAX_ITERATIONS if mode == "pitch_lab" else QUICK_MAX_ITERATIONS
 
-    if iteration >= MAX_ITERATIONS:
+    if iteration >= maxIterations:
         return {"is_validated": True, "analysis_iteration": iteration}
 
     plan = state["research_plan"]

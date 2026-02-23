@@ -157,7 +157,7 @@ export default function AdminPage() {
                   {Object.entries(metrics.modeBreakdown).map(([mode, count]) => (
                     <div key={mode} className="flex items-center justify-between border border-border p-3">
                       <span className="font-sans text-sm text-foreground">
-                        {mode === "investor_ready" ? "Investor Ready" : "Quick Check"}
+                        {mode === "pitch_lab" ? "Pitch Lab" : "Market Scan"}
                       </span>
                       <span className="font-serif text-lg text-foreground">{count}</span>
                     </div>
@@ -206,7 +206,7 @@ export default function AdminPage() {
                             {new Date(run.timestamp * 1000).toLocaleString()}
                           </td>
                           <td className="py-3 font-sans">
-                            {run.mode === "investor_ready" ? "Investor" : "Quick"}
+                            {run.mode === "pitch_lab" ? "Pitch Lab" : "Scan"}
                           </td>
                           <td className="py-3 font-serif">
                             {run.pitchScore ?? "—"}

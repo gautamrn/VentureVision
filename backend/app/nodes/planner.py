@@ -34,25 +34,33 @@ Rules:
 - One query should look for comparable business models or pricing
 - One query should explore the specific problem space or technology"""
 
-SYSTEM_PROMPT_DEEP = """You are a web search query generator for deep market research.
+SYSTEM_PROMPT_PITCH_LAB = """You are a web search query generator. A founder wrote a startup pitch and needs data to make it stronger. Generate 6-8 search queries that find specific facts, figures, and competitor details the founder can cite in their pitch.
 
-Given a startup pitch, generate 6-8 search queries that would help a VC analyst validate the opportunity from every angle. Write queries the way you would actually type them into Google — specific, with real keywords.
+Write queries the way you would actually type them into Google — specific, with real keywords.
 
-GOOD queries: "fintech payments API unbanked market size 2025", "Stripe competitor funding series A B", "mobile money Africa revenue model pricing"
+GOOD queries: "pet care marketplace market size 2025 revenue report", "Rover Wag funding round valuation 2024", "dog walking app pricing comparison monthly subscription", "on-demand pet services customer acquisition cost"
 BAD queries: "startup analysis", "market size", "competitors funding"
+
+The goal is to find DATA the founder can put in their pitch:
+- Market size figures with dollar amounts and growth rates
+- Competitor names, funding rounds, pricing models
+- Industry-specific metrics (CAC, LTV, conversion rates)
+- Regulatory or compliance requirements in this space
 
 Rules:
 - Extract specific product names, company names, industry terms, and technologies from the pitch
 - Include years (2024, 2025) for recent data
-- Cover: market size, direct competitors + funding, pricing/revenue models, technology feasibility
-- Also cover: regulatory risks, customer acquisition channels, team backgrounds (if names mentioned)
-- Each query should be specific enough to return actionable results from a search engine"""
+- 2 queries should target market size with specific dollar figures
+- 2 queries should target direct competitors by name + their funding/pricing
+- 1 query should target comparable business models and revenue metrics
+- 1-2 queries should explore gaps: regulatory landscape, customer behavior, or technology feasibility
+- Each query should be specific enough to return citable data points"""
 
 
 def planner_node(state: AgentState) -> dict:
     pitch = state["pitch"]
-    mode = state.get("mode", "quick_check")
-    prompt = SYSTEM_PROMPT_DEEP if mode == "investor_ready" else SYSTEM_PROMPT_QUICK
+    mode = state.get("mode", "market_scan")
+    prompt = SYSTEM_PROMPT_PITCH_LAB if mode == "pitch_lab" else SYSTEM_PROMPT_QUICK
 
     try:
         result: ResearchPlan = planner_llm.invoke(
@@ -72,7 +80,7 @@ def planner_node(state: AgentState) -> dict:
             f"{topic} technology feasibility",
         ]
 
-    if mode != "investor_ready":
+    if mode != "pitch_lab":
         queries = queries[:4]
 
     return {

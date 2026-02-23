@@ -24,7 +24,7 @@ async def verifyAdminKey(x_admin_key: str = Header(None)) -> None:
         raise HTTPException(status_code=403, detail="Unauthorized")
 
 
-def buildInitialState(pitch: str, mode: str = "quick_check") -> dict:
+def buildInitialState(pitch: str, mode: str = "market_scan") -> dict:
     return {
         "pitch": pitch,
         "mode": mode,

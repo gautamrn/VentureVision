@@ -11,7 +11,7 @@ import {
 
 export default function Home() {
   const [pitch, setPitch] = useState("");
-  const [mode, setMode] = useState<"quick_check" | "investor_ready">("quick_check");
+  const [mode, setMode] = useState<"market_scan" | "pitch_lab">("market_scan");
   const [error, setError] = useState("");
   const [history, setHistory] = useState<PitchHistoryEntry[]>([]);
   const router = useRouter();
@@ -91,25 +91,25 @@ export default function Home() {
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => setMode("quick_check")}
+                onClick={() => setMode("market_scan")}
                 className={`text-xs font-sans px-3 py-1.5 border cursor-pointer active:scale-95 transition-transform ${
-                  mode === "quick_check"
+                  mode === "market_scan"
                     ? "border-foreground text-foreground bg-foreground/5"
                     : "border-border text-muted hover:border-foreground/30 hover:text-foreground"
                 }`}
               >
-                Quick Check
+                Market Scan
               </button>
               <button
                 type="button"
-                onClick={() => setMode("investor_ready")}
+                onClick={() => setMode("pitch_lab")}
                 className={`text-xs font-sans px-3 py-1.5 border cursor-pointer active:scale-95 transition-transform ${
-                  mode === "investor_ready"
+                  mode === "pitch_lab"
                     ? "border-foreground text-foreground bg-foreground/5"
                     : "border-border text-muted hover:border-foreground/30 hover:text-foreground"
                 }`}
               >
-                Investor Ready
+                Pitch Lab
               </button>
             </div>
             <button

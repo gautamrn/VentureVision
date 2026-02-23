@@ -23,7 +23,7 @@ export function getPitchHistory(): PitchHistoryEntry[] {
   }
 }
 
-export function savePitchResult(pitch: string, memo: MemoOutput, mode: string = "quick_check"): void {
+export function savePitchResult(pitch: string, memo: MemoOutput, mode: string = "market_scan"): void {
   const history = getPitchHistory();
 
   const entry: PitchHistoryEntry = {

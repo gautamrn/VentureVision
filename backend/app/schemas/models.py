@@ -58,7 +58,7 @@ class MemoOutput(BaseModel):
 
 class PitchRequest(BaseModel):
     pitch: str = Field(..., min_length=40, max_length=5000)
-    mode: Literal["quick_check", "investor_ready"] = "quick_check"
+    mode: Literal["market_scan", "pitch_lab"] = "market_scan"
 
 
 class RunResponse(BaseModel):

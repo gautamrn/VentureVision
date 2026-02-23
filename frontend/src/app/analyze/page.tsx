@@ -14,7 +14,7 @@ export default function AnalyzePage() {
   const [status, setStatus] = useState<Status>({ phase: "planner" });
   const [memo, setMemo] = useState<MemoOutput | null>(null);
   const [pitch, setPitch] = useState<string>("");
-  const [mode, setMode] = useState<string>("quick_check");
+  const [mode, setMode] = useState<string>("market_scan");
   const hasStarted = useRef(false);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function AnalyzePage() {
       return;
     }
     setPitch(stored);
-    const storedMode = sessionStorage.getItem("vv_mode") ?? "quick_check";
+    const storedMode = sessionStorage.getItem("vv_mode") ?? "market_scan";
     setMode(storedMode);
 
     streamAnalysis(
@@ -82,7 +82,7 @@ export default function AnalyzePage() {
               Investment Memo
             </p>
             <span className="font-sans text-xs px-2 py-0.5 border border-border text-muted">
-              {mode === "investor_ready" ? "Investor Ready" : "Quick Check"}
+              {mode === "pitch_lab" ? "Pitch Lab" : "Market Scan"}
             </span>
           </div>
           {pitch && (
