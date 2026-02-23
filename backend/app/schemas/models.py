@@ -64,4 +64,4 @@ class PitchRequest(BaseModel):
 class RunResponse(BaseModel):
     status: str
     iterations: int
-    memo: MemoOutput
+    memo: MemoOutput | None

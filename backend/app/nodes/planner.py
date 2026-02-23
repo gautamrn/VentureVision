@@ -44,14 +44,24 @@ def planner_node(state: AgentState) -> dict:
     mode = state.get("mode", "quick_check")
     prompt = SYSTEM_PROMPT_DEEP if mode == "investor_ready" else SYSTEM_PROMPT_QUICK
 
-    result: ResearchPlan = planner_llm.invoke(
-        [
-            ("system", prompt),
-            ("human", f"Here is the startup pitch:\n\n{pitch}"),
+    try:
+        result: ResearchPlan = planner_llm.invoke(
+            [
+                ("system", prompt),
+                ("human", f"Here is the startup pitch:\n\n{pitch}"),
+            ]
+        )
+        queries = result.queries
+    except Exception:
+        words = pitch.split()[:6]
+        topic = " ".join(words)
+        queries = [
+            f"{topic} market size",
+            f"{topic} competitors funding",
+            f"{topic} revenue model",
+            f"{topic} technology feasibility",
         ]
-    )
 
-    queries = result.queries
     if mode != "investor_ready":
         queries = queries[:4]
 

@@ -85,6 +85,9 @@ async def analyze(request: PitchRequest):
         evidenceCount=len(result.get("raw_evidence", [])),
     )
 
+    if memo is None:
+        raise HTTPException(status_code=502, detail="Analysis failed. Please try again.")
+
     return RunResponse(
         status="complete",
         iterations=result["analysis_iteration"],

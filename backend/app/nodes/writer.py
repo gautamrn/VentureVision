@@ -174,15 +174,18 @@ def writer_node(state: AgentState) -> dict:
         for e in evidence
     )
 
-    result: MemoSynthesis = writer_llm.invoke(
-        [
-            ("system", prompt),
-            (
-                "human",
-                f"Startup Pitch:\n{pitch}\n\nResearch Evidence:\n{evidence_text}",
-            ),
-        ]
-    )
+    try:
+        result: MemoSynthesis = writer_llm.invoke(
+            [
+                ("system", prompt),
+                (
+                    "human",
+                    f"Startup Pitch:\n{pitch}\n\nResearch Evidence:\n{evidence_text}",
+                ),
+            ]
+        )
+    except Exception:
+        return {"final_memo": None}
 
     citation_links = list({str(e.source_url) for e in evidence})
 

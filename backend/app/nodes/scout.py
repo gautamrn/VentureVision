@@ -16,7 +16,10 @@ def scout_node(state: AgentState) -> dict:
     evidence: list[EvidenceItem] = state.get("raw_evidence", [])
 
     for query in queries:
-        response = tavily.search(query=query, max_results=2)
+        try:
+            response = tavily.search(query=query, max_results=2)
+        except Exception:
+            continue
 
         for result in response.get("results", []):
             evidence.append(
