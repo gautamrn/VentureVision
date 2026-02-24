@@ -28,6 +28,13 @@ CLAUDE.local.md
 .claude/
 .cursorrules
 
+# Planning/Spec Docs (keep local, exclude from public repo)
+spec.md
+structure.md
+schema.md
+tech-stack.md
+claude.md
+
 # Build Outputs
 .next/
 dist/
