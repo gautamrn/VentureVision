@@ -116,6 +116,49 @@ def testQuoteMatchIgnoresCaseAndWhitespace():
     assert audited.pitch_annotations[0].annotation_type == "strong"
 
 
+def testQuoteOfTruncatedClauseWithAddedPeriodIsAccepted():
+    item = evidenceItem(snippet="The global DevOps market was valued at USD 16.2 billion in 2025 and is projected to grow.")
+    truncated = citation(quote="The global DevOps market was valued at USD 16.2 billion in 2025.")
+
+    audited = audit(memoWith([annotation("strong", truncated)]), evidence=[item])
+
+    assert audited.pitch_annotations[0].annotation_type == "strong"
+
+
+def testQuoteWithTypographicPunctuationIsAccepted():
+    item = evidenceItem(snippet="Rover's walkers aren't employees, they are contractors.")
+    curly = citation(quote="Rover\u2019s walkers aren\u2019t employees")
+
+    audited = audit(memoWith([annotation("strong", curly)]), evidence=[item])
+
+    assert audited.pitch_annotations[0].annotation_type == "strong"
+
+
+def testQuoteFromEvidenceTitleIsAccepted():
+    titled = EvidenceItem(
+        query="q", title="Buildkite vs GitHub Actions | CI platform comparison", snippet="Pricing table.",
+        source_url=ROVER_URL, retrieved_at=RETRIEVED_AT,
+    )
+
+    audited = audit(memoWith([annotation("strong", citation(quote="Buildkite vs GitHub Actions"))]), evidence=[titled])
+
+    assert audited.pitch_annotations[0].annotation_type == "strong"
+
+
+def testQuoteShorterThanThreeWordsIsRejected():
+    audited = audit(memoWith([annotation("strong", citation(quote="$310M."))]))
+
+    assert audited.pitch_annotations[0].annotation_type == "needs_research"
+
+
+def testQuoteWithChangedWordsIsStillRejected():
+    reworded = citation(quote="Rover has raised $310M over six rounds.")
+
+    audited = audit(memoWith([annotation("strong", reworded)]))
+
+    assert audited.pitch_annotations[0].annotation_type == "needs_research"
+
+
 def testUncitedNoEvidenceVerdictIsNotCountedAsDowngrade():
     audited = audit(memoWith([annotation("needs_research")]))
 
