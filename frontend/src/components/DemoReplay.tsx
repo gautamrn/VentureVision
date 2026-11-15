@@ -79,7 +79,12 @@ export default function DemoReplay({ run }: { run: ParsedDemoRun }) {
           <>
             <ShareActions kind="memo" memos={[{ pitch: run.pitch, mode: run.mode, memo }]} printOnly />
             <PitchScore pitchScore={memo.pitch_score} subscores={memo.subscores} />
-            <MemoDocument memo={memo} pitch={run.pitch} source={{ kind: "demo", recordedAt: run.recordedAt }} />
+            <MemoDocument
+              memo={memo}
+              pitch={run.pitch}
+              source={{ kind: "demo", recordedAt: run.recordedAt }}
+              feedback={{ mode: run.mode, demoSampleId: run.id }}
+            />
             <div className="border-t border-border pt-6 mt-4 print:hidden">
               <Link href="/#live" className="font-sans text-sm text-foreground hover:underline">
                 Run your own pitch live &rarr;

@@ -5,6 +5,7 @@ import { ExternalLink, Clipboard, Check } from "lucide-react";
 import type { Groundedness, MarketCompetitor, MemoOutput, RunSource } from "@/lib/types";
 import RunSourceBadge from "./RunSourceBadge";
 import RunFooter from "./RunFooter";
+import type { FeedbackSource } from "@/lib/api";
 import { memoToMarkdown } from "@/lib/exportMemo";
 import { annotationsInPitch, numberCitations } from "@/lib/citations";
 import { CitationMarker, CitationQuote } from "./Citation";
@@ -18,6 +19,7 @@ interface Props {
   memo: MemoOutput;
   pitch?: string;
   source: RunSource;
+  feedback?: Omit<FeedbackSource, "pitch" | "memo">;
 }
 
 function CopyButton({ text, label }: { text: string; label?: string }) {
@@ -129,7 +131,7 @@ function CompetitorTable({
   );
 }
 
-export default function MemoDocument({ memo, pitch, source }: Props) {
+export default function MemoDocument({ memo, pitch, source, feedback }: Props) {
   const shownAnnotations = pitch ? annotationsInPitch(pitch, memo.pitch_annotations) : [];
   const citationNumbers = numberCitations([
     ...shownAnnotations.map((a) => a.citation),
@@ -163,7 +165,17 @@ export default function MemoDocument({ memo, pitch, source }: Props) {
       <StrengthenPitch suggestions={memo.strengthen_suggestions} />
 
       {pitch && (
-        <PitchAnnotations pitch={pitch} annotations={shownAnnotations} citationNumbers={annotationNumbers} />
+        <PitchAnnotations
+          pitch={pitch}
+          annotations={shownAnnotations}
+          citationNumbers={annotationNumbers}
+          feedback={
+            feedback && {
+              source: { ...feedback, pitch, memo },
+              memoIndexes: shownAnnotations.map((a) => memo.pitch_annotations.indexOf(a)),
+            }
+          }
+        />
       )}
 
       <InvestorQA questions={memo.investor_questions} />

@@ -299,6 +299,49 @@ export const EvalSummarySchema = z.object({
   history: z.array(EvalRunSummarySchema),
 });
 
+export const UserVerdictSchema = z.enum(["correct", "wrong"]);
+export const ReviewStatusSchema = z.enum(["pending", "accepted", "rejected"]);
+
+export const FeedbackCreatedSchema = z.object({
+  feedback_id: z.number(),
+  verified: z.boolean(),
+});
+
+export const FeedbackRecordSchema = z.object({
+  feedback_id: z.number(),
+  created_at: z.string(),
+  origin: z.enum(["live", "demo"]),
+  verified: z.boolean(),
+  mode: AnalysisModeSchema,
+  pitch_excerpt: z.string(),
+  claim: z.string(),
+  evidence_quote: z.string().nullable(),
+  evidence_url: z.string().nullable(),
+  model_verdict: z.string(),
+  downgraded_from: z.string().nullable(),
+  user_verdict: UserVerdictSchema,
+  status: ReviewStatusSchema,
+  gold_label: EvalLabelSchema.nullable(),
+  reviewer_note: z.string(),
+  reviewed_at: z.string().nullable(),
+  exported_at: z.string().nullable(),
+});
+
+export const FeedbackListSchema = z.object({
+  counts: z.object({
+    total: z.number(),
+    disagreements: z.number(),
+    pending: z.number(),
+    accepted: z.number(),
+    rejected: z.number(),
+    exported: z.number(),
+  }),
+  records: z.array(FeedbackRecordSchema),
+});
+
+export type UserVerdict = z.infer<typeof UserVerdictSchema>;
+export type FeedbackRecord = z.infer<typeof FeedbackRecordSchema>;
+export type FeedbackList = z.infer<typeof FeedbackListSchema>;
 export type EvalLabel = z.infer<typeof EvalLabelSchema>;
 export type EvalRunSummary = z.infer<typeof EvalRunSummarySchema>;
 export type LatestEvalRun = z.infer<typeof LatestEvalRunSchema>;

@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import type { FeedbackSource } from "@/lib/api";
 import type { PitchAnnotation } from "@/lib/types";
 import { CitationMarker, CitationQuote } from "./Citation";
+import VerdictFeedback from "./VerdictFeedback";
 
 interface Props {
   pitch: string;
   annotations: PitchAnnotation[];
   citationNumbers: (number | null)[];
+  feedback?: { source: FeedbackSource; memoIndexes: number[] };
 }
 
 const RED = { bg: "bg-[#9B2C2C]/10", border: "border-[#9B2C2C]/30", text: "text-foreground" };
@@ -64,7 +67,7 @@ function buildAnnotatedPitch(pitch: string, annotations: PitchAnnotation[]) {
   return segments;
 }
 
-export default function PitchAnnotations({ pitch, annotations, citationNumbers }: Props) {
+export default function PitchAnnotations({ pitch, annotations, citationNumbers, feedback }: Props) {
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 
   if (annotations.length === 0) return null;
@@ -138,6 +141,9 @@ export default function PitchAnnotations({ pitch, annotations, citationNumbers }
                   <div className={expanded.has(i) ? "" : "hidden print:block"}>
                     <CitationQuote number={number} citation={ann.citation} />
                   </div>
+                )}
+                {feedback && feedback.memoIndexes[i] >= 0 && (
+                  <VerdictFeedback source={feedback.source} annotationIndex={feedback.memoIndexes[i]} />
                 )}
               </div>
             </li>

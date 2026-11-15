@@ -8,6 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from app.middleware.bodyLimit import limitRequestBody
 from app.routers.analyze import router as analyzeRouter
+from app.routers.feedback import router as feedbackRouter
 from app.routers.shares import router as sharesRouter
 
 app = FastAPI(
@@ -38,6 +39,7 @@ app.middleware("http")(limitRequestBody)
 
 app.include_router(analyzeRouter)
 app.include_router(sharesRouter)
+app.include_router(feedbackRouter)
 
 
 @app.get("/health")

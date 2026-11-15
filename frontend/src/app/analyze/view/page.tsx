@@ -52,7 +52,12 @@ export default function ViewAnalysisPage() {
           pitchScore={entry.memo.pitch_score}
           subscores={entry.memo.subscores}
         />
-        <MemoDocument memo={entry.memo} pitch={entry.pitch} source={{ kind: "live" }} />
+        <MemoDocument
+          memo={entry.memo}
+          pitch={entry.pitch}
+          source={{ kind: "live" }}
+          feedback={{ mode: entry.mode ?? "market_scan", seal: entry.seal }}
+        />
       </div>
     </main>
   );

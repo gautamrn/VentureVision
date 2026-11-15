@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { RefreshCw } from "lucide-react";
 import { MetricsSchema, type Metrics, type RunRecord } from "@/lib/types";
 import { NODE_LABELS, formatDuration, formatTokens, formatUsd } from "@/lib/formatRun";
+import FeedbackQueue from "@/components/FeedbackQueue";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
 const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY ?? "";
@@ -238,6 +239,8 @@ export default function AdminPage() {
             </div>
           </>
         )}
+
+        <FeedbackQueue adminKey={ADMIN_KEY} />
       </div>
     </main>
   );

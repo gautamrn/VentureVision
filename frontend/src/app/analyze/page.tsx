@@ -127,7 +127,7 @@ export default function AnalyzePage() {
           <>
             <ShareActions kind="memo" memos={[{ pitch, mode, memo, seal }]} />
             <PitchScore pitchScore={memo.pitch_score} subscores={memo.subscores} />
-            <MemoDocument memo={memo} pitch={pitch} source={{ kind: "live" }} />
+            <MemoDocument memo={memo} pitch={pitch} source={{ kind: "live" }} feedback={{ mode, seal }} />
           </>
         )}
       </div>

@@ -1,3 +1,4 @@
+import type { z } from "zod";
 import {
   AgentEvent,
   CancelResponseSchema,
@@ -6,15 +7,22 @@ import {
   CriticEventSchema,
   ErrorEventSchema,
   EvidenceEventSchema,
+  FeedbackCreatedSchema,
+  FeedbackListSchema,
+  FeedbackRecordSchema,
   PlannerEventSchema,
   RunEventSchema,
   ScoutEventSchema,
   ShareCreatedSchema,
   ShareViewSchema,
   WriterEventSchema,
+  type EvalLabel,
+  type FeedbackList,
+  type FeedbackRecord,
   type MemoOutput,
   type ShareSeal,
   type ShareView,
+  type UserVerdict,
 } from "./types";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
@@ -191,6 +199,78 @@ export async function fetchShare(shareId: string): Promise<FetchShareResult> {
   return parsed.success
     ? { status: "found", share: parsed.data }
     : { status: "error", message: "The shared memo did not match the expected format." };
+}
+
+export interface FeedbackSource {
+  pitch: string;
+  mode: string;
+  memo: MemoOutput;
+  seal?: ShareSeal | null;
+  demoSampleId?: string;
+}
+
+type Result<T> = { ok: true; data: T } | { ok: false; message: string };
+
+async function requestJson<T>(path: string, init: RequestInit, schema: z.ZodType<T>, what: string): Promise<Result<T>> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}${path}`, { cache: "no-store", ...init });
+  } catch {
+    return { ok: false, message: `Could not reach the server at ${API_URL}.` };
+  }
+  const body: unknown = await response.json().catch(() => null);
+  if (!response.ok) {
+    const detail = (body as { detail?: unknown } | null)?.detail;
+    const messages: Record<number, string> = {
+      403: typeof detail === "string" ? detail : "The server refused this request (HTTP 403).",
+      429: "Too many requests. Please try again later.",
+    };
+    return {
+      ok: false,
+      message: messages[response.status] ?? (typeof detail === "string" ? detail : `The server returned HTTP ${response.status}.`),
+    };
+  }
+  const parsed = schema.safeParse(body);
+  return parsed.success ? { ok: true, data: parsed.data } : { ok: false, message: `The server's response was not a valid ${what}.` };
+}
+
+const jsonHeaders = (adminKey?: string): HeadersInit => ({
+  "Content-Type": "application/json",
+  ...(adminKey ? { "X-Admin-Key": adminKey } : {}),
+});
+
+export function submitFeedback(
+  source: FeedbackSource,
+  annotationIndex: number,
+  userVerdict: UserVerdict
+): Promise<Result<z.infer<typeof FeedbackCreatedSchema>>> {
+  const body = {
+    pitch: source.pitch,
+    mode: source.mode,
+    memo: source.memo,
+    ...(source.seal ? { seal: source.seal } : {}),
+    ...(source.demoSampleId ? { demo_sample_id: source.demoSampleId } : {}),
+    annotation_index: annotationIndex,
+    user_verdict: userVerdict,
+  };
+  return requestJson("/feedback", { method: "POST", headers: jsonHeaders(), body: JSON.stringify(body) }, FeedbackCreatedSchema, "feedback receipt");
+}
+
+export function fetchFeedback(adminKey: string, view: "disagreements" | "all"): Promise<Result<FeedbackList>> {
+  return requestJson(`/admin/feedback?view=${view}`, { headers: jsonHeaders(adminKey) }, FeedbackListSchema, "feedback list");
+}
+
+export function reviewFeedback(
+  adminKey: string,
+  feedbackId: number,
+  review: { status: "accepted" | "rejected"; gold_label?: EvalLabel; note?: string }
+): Promise<Result<FeedbackRecord>> {
+  return requestJson(
+    `/admin/feedback/${feedbackId}/review`,
+    { method: "POST", headers: jsonHeaders(adminKey), body: JSON.stringify(review) },
+    FeedbackRecordSchema,
+    "feedback record"
+  );
 }
 
 export async function cancelRun(runId: string): Promise<boolean> {
