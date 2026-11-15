@@ -4,7 +4,7 @@ import os
 import threading
 import time
 import uuid
-from typing import Literal
+from typing import Callable, Literal
 
 from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
@@ -17,11 +17,11 @@ from app.middleware.rateLimiter import rateLimitGuard
 from app.runs.events import serializeNodeOutput
 from app.runs.executor import executeAttempt, registry
 from app.runs.registry import RunBusyError, RunHandle, RunStateError
-from app.schemas.models import PitchRequest, RunResponse
+from app.schemas.models import MemoOutput, PitchRequest, RunResponse
 from app.telemetry.budget import configuredBudgetUsd
 from app.telemetry.summary import RunAccumulator
 
-__all__ = ["router", "buildInitialState", "serializeNodeOutput"]
+__all__ = ["router", "buildInitialState", "runToCompletion", "serializeNodeOutput"]
 
 router = APIRouter()
 
@@ -57,13 +57,16 @@ def buildInitialState(pitch: str, mode: str = "market_scan", budgetUsd: float | 
     }
 
 
-def runToCompletion(initialState: dict) -> tuple[RunAccumulator, dict | None, NodeFailure | None]:
+def runToCompletion(
+    initialState: dict, onNode: Callable[[str], None] = lambda _: None
+) -> tuple[RunAccumulator, MemoOutput | None, NodeFailure | None]:
     accumulator = RunAccumulator()
     finalMemo = None
     try:
         for chunk in ventureGraph.stream(initialState, stream_mode="updates"):
             for nodeName, update in chunk.items():
                 accumulator.apply(update)
+                onNode(nodeName)
                 if nodeName == "citation_audit":
                     finalMemo = update.get("final_memo")
     except NodeFailure as exc:

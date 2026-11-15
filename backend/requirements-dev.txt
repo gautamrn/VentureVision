@@ -1,4 +1,5 @@
 -r requirements.txt
+-r ../mcp/requirements.txt
 
 # Testing
 pytest==8.3.4

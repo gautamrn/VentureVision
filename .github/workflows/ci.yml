@@ -29,6 +29,7 @@ jobs:
           cache-dependency-path: |
             backend/requirements.txt
             backend/requirements-dev.txt
+            mcp/requirements.txt
 
       - name: Install dependencies
         run: pip install -r requirements-dev.txt
