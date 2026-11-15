@@ -67,6 +67,51 @@ class DealContext(BaseModel):
     red_flags: list[str]
 
 
+class LlmCall(BaseModel):
+    node: str
+    model: str
+    prompt_tokens: int
+    completion_tokens: int
+    cost_usd: float
+
+
+class SearchCall(BaseModel):
+    node: str
+    query: str
+    result_count: int
+    credits: int
+    cost_usd: float
+    error: str | None = None
+
+
+class NodeTiming(BaseModel):
+    node: str
+    duration_ms: int
+
+
+class NodeLatency(BaseModel):
+    node: str
+    runs: int
+    total_ms: int
+
+
+class RunTelemetry(BaseModel):
+    agent_count: int
+    duration_ms: int
+    llm_calls: int
+    prompt_tokens: int
+    completion_tokens: int
+    search_calls: int
+    failed_searches: int
+    llm_cost_usd: float
+    search_cost_usd: float
+    total_cost_usd: float
+    budget_usd: float
+    budget_exit_reason: str | None = None
+    nodes: list[NodeLatency]
+    pricing_as_of: str
+
+
 class MemoOutput(BaseModel):
     pitch_score: int
     subscores: Subscores
@@ -81,6 +126,7 @@ class MemoOutput(BaseModel):
     deal_context: DealContext
     feature_suggestions: list[str]
     groundedness: Groundedness | None = None
+    telemetry: RunTelemetry | None = None
 
 
 class PitchRequest(BaseModel):

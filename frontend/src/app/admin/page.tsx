@@ -3,30 +3,71 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { RefreshCw } from "lucide-react";
+import { MetricsSchema, type Metrics, type RunRecord } from "@/lib/types";
+import { NODE_LABELS, formatDuration, formatTokens, formatUsd } from "@/lib/formatRun";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
 const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY ?? "";
+const TIMED_NODES = ["planner", "scout", "critic", "writer"] as const;
 
-interface RunRecord {
-  timestamp: number;
-  durationMs: number;
-  mode: string;
-  pitchScore: number | null;
-  iterations: number;
-  evidenceCount: number;
-  status: string;
+function statusColor(status: string): string {
+  if (status === "error") return "text-[#9B2C2C]";
+  if (status === "cancelled") return "text-[#B08B2D]";
+  return "text-[#2D6A4F]";
 }
 
-interface Metrics {
-  totalRuns: number;
-  totalErrors: number;
-  avgDurationMs: number;
-  avgScore: number;
-  avgIterations: number;
-  avgEvidence: number;
-  modeBreakdown: Record<string, number>;
-  scoreDistribution: { low: number; mid: number; high: number };
-  recentRuns: RunRecord[];
+function RecentRunsTable({ runs }: { runs: RunRecord[] }) {
+  const cell = "py-2 pr-3 font-sans whitespace-nowrap";
+  const head = "font-sans text-left pb-2 pr-3 text-muted font-normal whitespace-nowrap";
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs min-w-[820px]">
+        <thead>
+          <tr className="border-b border-border">
+            <th className={head}>Time</th>
+            <th className={head}>Mode</th>
+            <th className={head}>Status</th>
+            <th className={head}>Score</th>
+            <th className={head}>Total</th>
+            {TIMED_NODES.map((node) => (
+              <th key={node} className={head}>{NODE_LABELS[node]}</th>
+            ))}
+            <th className={head}>Rounds</th>
+            <th className={head}>Tokens (in/out)</th>
+            <th className={head}>Searches</th>
+            <th className={head}>Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          {runs.map((run) => (
+            <tr key={run.runId} className="border-b border-border" title={run.budgetExitReason ?? undefined}>
+              <td className={`${cell} text-muted`}>{new Date(run.timestamp * 1000).toLocaleString()}</td>
+              <td className={cell}>{run.mode === "pitch_lab" ? "Pitch Lab" : "Scan"}</td>
+              <td className={`${cell} ${statusColor(run.status)}`}>{run.status}</td>
+              <td className={`${cell} font-serif`}>{run.pitchScore ?? "—"}</td>
+              <td className={`${cell} text-muted`}>{formatDuration(run.durationMs)}</td>
+              {TIMED_NODES.map((node) => (
+                <td key={node} className={`${cell} text-muted`}>
+                  {run.nodeMs[node] != null ? formatDuration(run.nodeMs[node]) : "—"}
+                </td>
+              ))}
+              <td className={`${cell} text-muted`}>
+                {run.iterations}
+                {run.budgetExitReason && <span className="text-[#B08B2D]"> · budget stop</span>}
+              </td>
+              <td className={`${cell} text-muted`}>
+                {run.promptTokens != null && run.completionTokens != null
+                  ? `${formatTokens(run.promptTokens)} / ${formatTokens(run.completionTokens)}`
+                  : "—"}
+              </td>
+              <td className={`${cell} text-muted`}>{run.searchCalls ?? "—"}</td>
+              <td className={cell}>{run.costUsd != null ? formatUsd(run.costUsd) : "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
@@ -60,6 +101,7 @@ export default function AdminPage() {
   const router = useRouter();
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   async function fetchMetrics() {
     setLoading(true);
@@ -68,10 +110,13 @@ export default function AdminPage() {
         headers: ADMIN_KEY ? { "X-Admin-Key": ADMIN_KEY } : {},
       });
       if (res.ok) {
-        setMetrics(await res.json());
+        setMetrics(MetricsSchema.parse(await res.json()));
+        setLoadError(null);
+      } else {
+        setLoadError(res.status === 403 ? "The admin key was rejected (HTTP 403)." : `The backend returned HTTP ${res.status}.`);
       }
     } catch {
-      setMetrics(null);
+      setLoadError(`Could not reach the backend at ${API_URL}.`);
     }
     setLoading(false);
   }
@@ -111,32 +156,34 @@ export default function AdminPage() {
               disabled={loading}
               className="flex items-center gap-2 text-xs font-sans text-muted border border-border px-3 py-1.5 hover:border-foreground/30"
             >
-              <RefreshCw size={12} className={loading ? "animate-spin" : ""} />
-              Refresh
+              <RefreshCw size={12} />
+              {loading ? "Loading metrics…" : "Refresh"}
             </button>
           </div>
         </div>
 
-        {!metrics && !loading && (
-          <p className="font-sans text-sm text-muted">
-            Could not connect to the backend.
-          </p>
+        {loadError && !loading && (
+          <p className="font-sans text-sm text-[#9B2C2C] mb-6">{loadError}</p>
         )}
 
         {metrics && (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
               <StatCard label="Total Runs" value={metrics.totalRuns} />
               <StatCard label="Errors" value={metrics.totalErrors} />
               <StatCard
                 label="Avg Duration"
-                value={metrics.avgDurationMs > 0 ? `${(metrics.avgDurationMs / 1000).toFixed(1)}s` : "—"}
+                value={metrics.avgDurationMs > 0 ? formatDuration(metrics.avgDurationMs) : "—"}
               />
-              <StatCard
-                label="Avg Score"
-                value={metrics.avgScore > 0 ? metrics.avgScore : "—"}
-              />
+              <StatCard label="Avg Cost" value={metrics.avgCostUsd > 0 ? formatUsd(metrics.avgCostUsd) : "—"} />
+              <StatCard label="Total Spend" value={formatUsd(metrics.totalCostUsd)} />
             </div>
+            <p className="font-sans text-xs text-muted mb-12">
+              Avg per successful run:{" "}
+              {TIMED_NODES.map((node) => `${NODE_LABELS[node]} ${formatDuration(metrics.avgNodeMs[node] ?? 0)}`).join(" · ")}{" "}
+              · {formatTokens(metrics.avgTokensPerRun)} tokens · score {metrics.avgScore > 0 ? metrics.avgScore : "—"} ·{" "}
+              {metrics.budgetExits} budget stops
+            </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
               <div>
@@ -186,46 +233,7 @@ export default function AdminPage() {
               {metrics.recentRuns.length === 0 ? (
                 <p className="font-sans text-sm text-muted">No runs recorded yet.</p>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm min-w-[600px]">
-                    <thead>
-                      <tr className="border-b border-border">
-                        <th className="font-sans text-left pb-2 text-muted font-normal">Time</th>
-                        <th className="font-sans text-left pb-2 text-muted font-normal">Mode</th>
-                        <th className="font-sans text-left pb-2 text-muted font-normal">Score</th>
-                        <th className="font-sans text-left pb-2 text-muted font-normal">Duration</th>
-                        <th className="font-sans text-left pb-2 text-muted font-normal">Iterations</th>
-                        <th className="font-sans text-left pb-2 text-muted font-normal">Evidence</th>
-                        <th className="font-sans text-left pb-2 text-muted font-normal">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {metrics.recentRuns.map((run, i) => (
-                        <tr key={i} className="border-b border-border">
-                          <td className="py-3 font-sans text-muted">
-                            {new Date(run.timestamp * 1000).toLocaleString()}
-                          </td>
-                          <td className="py-3 font-sans">
-                            {run.mode === "pitch_lab" ? "Pitch Lab" : "Scan"}
-                          </td>
-                          <td className="py-3 font-serif">
-                            {run.pitchScore ?? "—"}
-                          </td>
-                          <td className="py-3 font-sans text-muted">
-                            {(run.durationMs / 1000).toFixed(1)}s
-                          </td>
-                          <td className="py-3 font-sans text-muted">{run.iterations}</td>
-                          <td className="py-3 font-sans text-muted">{run.evidenceCount}</td>
-                          <td className="py-3 font-sans">
-                            <span className={run.status === "error" ? "text-[#9B2C2C]" : "text-[#2D6A4F]"}>
-                              {run.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <RecentRunsTable runs={metrics.recentRuns} />
               )}
             </div>
           </>

@@ -2,7 +2,12 @@ from pydantic import BaseModel
 from langchain_openai import ChatOpenAI
 
 from app.graph.state import AgentState
-from app.schemas.models import Citation, EvidenceItem, Groundedness
+from app.nodes import writer
+from app.nodes.queries import parseFeedbackQueries
+from app.schemas.models import Citation, EvidenceItem, Groundedness, LlmCall
+from app.telemetry.budget import budgetExitReason, configuredBudgetUsd, spentUsd
+from app.telemetry.pricing import llmCostUsd, searchCostUsd
+from app.telemetry.usage import invokeStructured, structuredOutput
 
 QUICK_MAX_ITERATIONS = 3
 DEEP_MAX_ITERATIONS = 4
@@ -21,7 +26,7 @@ class CritiqueResult(BaseModel):
 
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, max_tokens=1024)
-critic_llm = llm.with_structured_output(CritiqueResult)
+critic_llm = structuredOutput(llm, CritiqueResult)
 
 SYSTEM_PROMPT = """You are a data quality auditor for a venture capital due diligence system.
 
@@ -52,21 +57,27 @@ def critic_node(state: AgentState) -> dict:
     )
 
     try:
-        result: CritiqueResult = critic_llm.invoke(
+        result, call = invokeStructured(
+            critic_llm,
             [
                 ("system", SYSTEM_PROMPT),
                 (
                     "human",
                     f"Research Plan:\n{chr(10).join(plan)}\n\nEvidence Collected:\n{evidence_text}",
                 ),
-            ]
+            ],
         )
-        return {
+        update = {
             "is_validated": result.is_sufficient,
             "critique_feedback": result.feedback,
             "coverage_score": result.coverage_score,
             "analysis_iteration": iteration + 1,
         }
+        if not result.is_sufficient:
+            reason = budgetStopReason(state, call, result.feedback, completedRounds=iteration + 1)
+            if reason:
+                update.update(is_validated=True, budget_exit_reason=reason)
+        return update
     except Exception:
         return {
             "is_validated": True,
@@ -74,6 +85,19 @@ def critic_node(state: AgentState) -> dict:
             "coverage_score": 0.0,
             "analysis_iteration": iteration + 1,
         }
+
+
+def budgetStopReason(state: AgentState, criticCall: LlmCall, feedback: str, completedRounds: int) -> str | None:
+    spentSoFar = spentUsd(state.get("llm_calls", []), state.get("search_calls", [])) + criticCall.cost_usd
+    nextRound = searchCostUsd(len(parseFeedbackQueries(feedback))) + criticCall.cost_usd
+    writerReserve = llmCostUsd(writer.llm.model_name, 0, writer.llm.max_tokens)
+    return budgetExitReason(
+        spentSoFarUsd=spentSoFar,
+        nextRoundUsd=nextRound,
+        writerReserveUsd=writerReserve,
+        budgetUsd=state.get("budget_usd", configuredBudgetUsd()),
+        completedRounds=completedRounds,
+    )
 
 
 def _normalize(text: str) -> str:

@@ -4,6 +4,7 @@ import { Fragment, useState } from "react";
 import { ExternalLink, Clipboard, Check } from "lucide-react";
 import type { Groundedness, MarketCompetitor, MemoOutput, RunSource } from "@/lib/types";
 import RunSourceBadge from "./RunSourceBadge";
+import RunFooter from "./RunFooter";
 import { memoToMarkdown } from "@/lib/exportMemo";
 import { annotationsInPitch, numberCitations } from "@/lib/citations";
 import { CitationMarker, CitationQuote } from "./Citation";
@@ -230,6 +231,8 @@ export default function MemoDocument({ memo, pitch, source }: Props) {
           ))}
         </ul>
       </section>
+
+      {memo.telemetry && <RunFooter telemetry={memo.telemetry} />}
     </article>
   );
 }

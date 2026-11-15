@@ -1,5 +1,6 @@
 import type { Citation, MemoOutput, RunSource } from "./types";
 import { retrievalDate } from "./citations";
+import { formatDuration, formatUsd } from "./formatRun";
 
 function citationLine(citation: Citation | null | undefined): string | null {
   if (!citation) return null;
@@ -114,6 +115,16 @@ export function memoToMarkdown(memo: MemoOutput, source: RunSource): string {
     for (const url of memo.citation_links) {
       lines.push(`- ${url}`);
     }
+  }
+
+  if (memo.telemetry) {
+    const t = memo.telemetry;
+    lines.push("");
+    lines.push(
+      `This analysis: ${t.agent_count} agents, ${formatDuration(t.duration_ms)}, ~${formatUsd(t.total_cost_usd)}` +
+        ` (${t.prompt_tokens + t.completion_tokens} tokens, ${t.search_calls} web searches; prices as of ${t.pricing_as_of})`
+    );
+    if (t.budget_exit_reason) lines.push(t.budget_exit_reason);
   }
 
   return lines.join("\n");

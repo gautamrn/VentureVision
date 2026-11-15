@@ -46,6 +46,29 @@ export const DealContextSchema = z.object({
   red_flags: z.array(z.string()),
 });
 
+export const NodeLatencySchema = z.object({
+  node: z.string(),
+  runs: z.number(),
+  total_ms: z.number(),
+});
+
+export const RunTelemetrySchema = z.object({
+  agent_count: z.number(),
+  duration_ms: z.number(),
+  llm_calls: z.number(),
+  prompt_tokens: z.number(),
+  completion_tokens: z.number(),
+  search_calls: z.number(),
+  failed_searches: z.number(),
+  llm_cost_usd: z.number(),
+  search_cost_usd: z.number(),
+  total_cost_usd: z.number(),
+  budget_usd: z.number(),
+  budget_exit_reason: z.string().nullish(),
+  nodes: z.array(NodeLatencySchema),
+  pricing_as_of: z.string(),
+});
+
 export const MemoOutputSchema = z.object({
   pitch_score: z.number(),
   subscores: SubscoresSchema,
@@ -60,6 +83,7 @@ export const MemoOutputSchema = z.object({
   deal_context: DealContextSchema,
   feature_suggestions: z.array(z.string()),
   groundedness: GroundednessSchema.nullish(),
+  telemetry: RunTelemetrySchema.nullish(),
 });
 
 export const PlannerEventSchema = z.object({
@@ -104,10 +128,48 @@ export const DemoRunSchema = z.object({
   ),
 });
 
+export const RunRecordSchema = z.object({
+  runId: z.string(),
+  timestamp: z.number(),
+  durationMs: z.number(),
+  mode: z.string(),
+  pitchScore: z.number().nullable(),
+  iterations: z.number(),
+  evidenceCount: z.number(),
+  status: z.string(),
+  costUsd: z.number().nullable(),
+  promptTokens: z.number().nullable(),
+  completionTokens: z.number().nullable(),
+  llmCalls: z.number().nullable(),
+  searchCalls: z.number().nullable(),
+  nodeMs: z.record(z.string(), z.number()),
+  budgetExitReason: z.string().nullable(),
+});
+
+export const MetricsSchema = z.object({
+  totalRuns: z.number(),
+  totalErrors: z.number(),
+  avgDurationMs: z.number(),
+  avgScore: z.number(),
+  avgIterations: z.number(),
+  avgEvidence: z.number(),
+  totalCostUsd: z.number(),
+  avgCostUsd: z.number(),
+  avgTokensPerRun: z.number(),
+  avgNodeMs: z.record(z.string(), z.number()),
+  budgetExits: z.number(),
+  modeBreakdown: z.record(z.string(), z.number()),
+  scoreDistribution: z.object({ low: z.number(), mid: z.number(), high: z.number() }),
+  recentRuns: z.array(RunRecordSchema),
+});
+
+export type RunRecord = z.infer<typeof RunRecordSchema>;
+export type Metrics = z.infer<typeof MetricsSchema>;
 export type DemoRun = z.infer<typeof DemoRunSchema>;
 export type RunSource = { kind: "demo"; recordedAt: string } | { kind: "live" };
 export type Citation = z.infer<typeof CitationSchema>;
 export type Groundedness = z.infer<typeof GroundednessSchema>;
+export type RunTelemetry = z.infer<typeof RunTelemetrySchema>;
 export type MarketCompetitor = z.infer<typeof MarketCompetitorSchema>;
 export type Subscores = z.infer<typeof SubscoresSchema>;
 export type InvestorQuestion = z.infer<typeof InvestorQuestionSchema>;

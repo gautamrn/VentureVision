@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from langchain_openai import ChatOpenAI
 
 from app.graph.state import AgentState
+from app.telemetry.usage import invokeStructured, structuredOutput
 
 
 class ResearchPlan(BaseModel):
@@ -9,7 +10,7 @@ class ResearchPlan(BaseModel):
 
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, max_tokens=1024)
-planner_llm = llm.with_structured_output(ResearchPlan)
+planner_llm = structuredOutput(llm, ResearchPlan)
 
 SYSTEM_PROMPT_QUICK = """You are a web search query generator for market research.
 
@@ -63,11 +64,12 @@ def planner_node(state: AgentState) -> dict:
     prompt = SYSTEM_PROMPT_PITCH_LAB if mode == "pitch_lab" else SYSTEM_PROMPT_QUICK
 
     try:
-        result: ResearchPlan = planner_llm.invoke(
+        result, _ = invokeStructured(
+            planner_llm,
             [
                 ("system", prompt),
                 ("human", f"Here is the startup pitch:\n\n{pitch}"),
-            ]
+            ],
         )
         queries = result.queries
     except Exception:

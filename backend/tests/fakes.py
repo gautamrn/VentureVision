@@ -23,6 +23,7 @@ class FakeOpenAI:
         self.scripts: dict[str, list[Any]] = {}
         self.calls: list[dict] = []
         self.unscripted: list[str] = []
+        self.usage = {"prompt_tokens": 1, "completion_tokens": 1}
 
     def script(self, schemaName: str, *replies: Any) -> None:
         self.scripts[schemaName] = list(replies)
@@ -77,7 +78,7 @@ class FakeOpenAI:
                 "choices": [
                     {"index": 0, "message": message, "finish_reason": "stop", "logprobs": None}
                 ],
-                "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2},
+                "usage": {**self.usage, "total_tokens": sum(self.usage.values())},
             },
         )
 
@@ -116,7 +117,9 @@ class FakeTavily:
         }
 
 
-def runGraph(pitch: str = SAMPLE_PITCH, mode: str = "market_scan") -> tuple[list[str], dict]:
+def runGraph(
+    pitch: str = SAMPLE_PITCH, mode: str = "market_scan", budgetUsd: float | None = None
+) -> tuple[list[str], dict]:
     """Runs the real compiled graph; returns the node visit order and the final state."""
     from app.graph.workflow import ventureGraph
     from app.routers.analyze import buildInitialState
@@ -124,7 +127,7 @@ def runGraph(pitch: str = SAMPLE_PITCH, mode: str = "market_scan") -> tuple[list
     order: list[str] = []
     finalState: dict = {}
     for streamMode, chunk in ventureGraph.stream(
-        buildInitialState(pitch, mode), stream_mode=["updates", "values"]
+        buildInitialState(pitch, mode, budgetUsd), stream_mode=["updates", "values"]
     ):
         if streamMode == "updates":
             order.extend(chunk.keys())

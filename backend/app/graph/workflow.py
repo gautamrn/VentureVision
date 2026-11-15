@@ -1,5 +1,6 @@
 from langgraph.graph import StateGraph, START, END
 
+from app.graph.instrumentation import instrumentNode
 from app.graph.state import AgentState
 from app.nodes.planner import planner_node
 from app.nodes.scout import scout_node
@@ -16,11 +17,11 @@ def routeAfterCritic(state: AgentState) -> str:
 def buildGraph():
     graph = StateGraph(AgentState)
 
-    graph.add_node("planner", planner_node)
-    graph.add_node("scout", scout_node)
-    graph.add_node("critic", critic_node)
-    graph.add_node("writer", writer_node)
-    graph.add_node("citation_audit", citation_audit_node)
+    graph.add_node("planner", instrumentNode("planner", planner_node))
+    graph.add_node("scout", instrumentNode("scout", scout_node))
+    graph.add_node("critic", instrumentNode("critic", critic_node))
+    graph.add_node("writer", instrumentNode("writer", writer_node))
+    graph.add_node("citation_audit", instrumentNode("citation_audit", citation_audit_node))
 
     graph.add_edge(START, "planner")
     graph.add_edge("planner", "scout")

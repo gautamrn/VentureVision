@@ -28,8 +28,9 @@ from langchain_openai import ChatOpenAI
 from tavily import TavilyClient
 
 from app.main import app
-from app.middleware import rateLimiter
+from app.middleware import metrics, rateLimiter
 from app.nodes import critic, planner, scout, writer
+from app.telemetry.usage import structuredOutput
 from tests.fakes import FakeOpenAI, FakeTavily
 
 _LOOPBACK_HOSTS = {"127.0.0.1", "::1", "localhost"}
@@ -57,13 +58,20 @@ def resetRateLimiter():
     rateLimiter._requests.clear()
 
 
+@pytest.fixture(autouse=True)
+def resetMetrics(monkeypatch):
+    metrics._records.clear()
+    monkeypatch.setattr(metrics, "_totalRuns", 0)
+    monkeypatch.setattr(metrics, "_totalErrors", 0)
+
+
 @pytest.fixture
 def fakeOpenAI(monkeypatch):
     fake = FakeOpenAI()
     chat = fake.chatModel()
-    monkeypatch.setattr(planner, "planner_llm", chat.with_structured_output(planner.ResearchPlan))
-    monkeypatch.setattr(critic, "critic_llm", chat.with_structured_output(critic.CritiqueResult))
-    monkeypatch.setattr(writer, "writer_llm", chat.with_structured_output(writer.MemoSynthesis))
+    monkeypatch.setattr(planner, "planner_llm", structuredOutput(chat, planner.ResearchPlan))
+    monkeypatch.setattr(critic, "critic_llm", structuredOutput(chat, critic.CritiqueResult))
+    monkeypatch.setattr(writer, "writer_llm", structuredOutput(chat, writer.MemoSynthesis))
     yield fake
     assert not fake.unscripted, f"OpenAI called without a scripted reply for: {fake.unscripted}"
 
@@ -92,7 +100,7 @@ def liveClients(monkeypatch):
             max_tokens=module.llm.max_tokens,
             api_key=LIVE_KEYS["OPENAI_API_KEY"],
         )
-        monkeypatch.setattr(module, attr, realChat.with_structured_output(schema))
+        monkeypatch.setattr(module, attr, structuredOutput(realChat, schema))
 
     monkeypatch.setattr(scout, "tavily", TavilyClient(api_key=LIVE_KEYS["TAVILY_API_KEY"]))
 

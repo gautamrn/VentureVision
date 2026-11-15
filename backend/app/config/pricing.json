@@ -1,0 +1,18 @@
+{
+  "as_of": "2026-11-15",
+  "sources": {
+    "models": "https://openai.com/api/pricing",
+    "search": "https://www.tavily.com/pricing (pay-as-you-go credits; set usd_per_credit to 0 on the free tier)"
+  },
+  "models": {
+    "gpt-4o-mini": {
+      "input_per_million_tokens": 0.15,
+      "output_per_million_tokens": 0.6
+    }
+  },
+  "search": {
+    "provider": "tavily",
+    "usd_per_credit": 0.008,
+    "credits_per_basic_search": 1
+  }
+}

@@ -13,6 +13,7 @@ from app.schemas.models import (
     PitchAnnotation,
     DealContext,
 )
+from app.telemetry.usage import invokeStructured, structuredOutput
 
 
 class AnnotationDraft(BaseModel):
@@ -46,7 +47,7 @@ class MemoSynthesis(BaseModel):
 
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, max_tokens=4096)
-writer_llm = llm.with_structured_output(MemoSynthesis)
+writer_llm = structuredOutput(llm, MemoSynthesis)
 
 EVIDENCE_RULES = """
 EVIDENCE RULES (non-negotiable):
@@ -258,14 +259,15 @@ def writer_node(state: AgentState) -> dict:
     )
 
     try:
-        result: MemoSynthesis = writer_llm.invoke(
+        result, _ = invokeStructured(
+            writer_llm,
             [
                 ("system", prompt),
                 (
                     "human",
                     f"Startup Pitch:\n{pitch}\n\nResearch Evidence:\n{evidence_text}",
                 ),
-            ]
+            ],
         )
     except Exception:
         return {"final_memo": None}
