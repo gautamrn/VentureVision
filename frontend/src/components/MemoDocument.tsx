@@ -2,7 +2,8 @@
 
 import { Fragment, useState } from "react";
 import { ExternalLink, Clipboard, Check } from "lucide-react";
-import type { Groundedness, MarketCompetitor, MemoOutput } from "@/lib/types";
+import type { Groundedness, MarketCompetitor, MemoOutput, RunSource } from "@/lib/types";
+import RunSourceBadge from "./RunSourceBadge";
 import { memoToMarkdown } from "@/lib/exportMemo";
 import { annotationsInPitch, numberCitations } from "@/lib/citations";
 import { CitationMarker, CitationQuote } from "./Citation";
@@ -15,6 +16,7 @@ import FeatureSuggestions from "./FeatureSuggestions";
 interface Props {
   memo: MemoOutput;
   pitch?: string;
+  source: RunSource;
 }
 
 function CopyButton({ text, label }: { text: string; label?: string }) {
@@ -125,7 +127,7 @@ function CompetitorTable({
   );
 }
 
-export default function MemoDocument({ memo, pitch }: Props) {
+export default function MemoDocument({ memo, pitch, source }: Props) {
   const shownAnnotations = pitch ? annotationsInPitch(pitch, memo.pitch_annotations) : [];
   const citationNumbers = numberCitations([
     ...shownAnnotations.map((a) => a.citation),
@@ -137,8 +139,11 @@ export default function MemoDocument({ memo, pitch }: Props) {
   return (
     <article className="font-serif text-foreground">
       <div className="flex items-center justify-between gap-4 mb-6 pb-3 border-b border-border">
-        {memo.groundedness ? <GroundednessLine groundedness={memo.groundedness} /> : <span />}
-        <CopyButton text={memoToMarkdown(memo)} label="Copy as Markdown" />
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <RunSourceBadge source={source} />
+          {memo.groundedness && <GroundednessLine groundedness={memo.groundedness} />}
+        </div>
+        <CopyButton text={memoToMarkdown(memo, source)} label="Copy as Markdown" />
       </div>
 
       <section className="mb-12">

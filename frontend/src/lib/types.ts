@@ -86,6 +86,26 @@ export const CitationAuditEventSchema = z.object({
   memo: MemoOutputSchema,
 });
 
+export const DemoRunSchema = z.object({
+  id: z.string(),
+  category: z.string(),
+  title: z.string(),
+  tagline: z.string(),
+  pitch: z.string(),
+  mode: z.enum(["market_scan", "pitch_lab"]),
+  recordedAt: z.string(),
+  durationMs: z.number(),
+  events: z.array(
+    z.object({
+      event: z.string(),
+      atMs: z.number(),
+      data: z.unknown(),
+    })
+  ),
+});
+
+export type DemoRun = z.infer<typeof DemoRunSchema>;
+export type RunSource = { kind: "demo"; recordedAt: string } | { kind: "live" };
 export type Citation = z.infer<typeof CitationSchema>;
 export type Groundedness = z.infer<typeof GroundednessSchema>;
 export type MarketCompetitor = z.infer<typeof MarketCompetitorSchema>;

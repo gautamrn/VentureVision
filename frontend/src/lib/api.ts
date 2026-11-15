@@ -1,3 +1,4 @@
+import { z } from "zod";
 import {
   AgentEvent,
   PlannerEventSchema,
@@ -11,8 +12,14 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
 
 function parseEvent(eventName: string, rawData: string): AgentEvent | null {
   try {
-    const data = JSON.parse(rawData);
+    return toAgentEvent(eventName, JSON.parse(rawData));
+  } catch {
+    return null;
+  }
+}
 
+export function toAgentEvent(eventName: string, data: unknown): AgentEvent | null {
+  try {
     if (eventName === "planner") {
       return { type: "planner", data: PlannerEventSchema.parse(data) };
     }
@@ -29,7 +36,7 @@ function parseEvent(eventName: string, rawData: string): AgentEvent | null {
       return { type: "citation_audit", data: CitationAuditEventSchema.parse(data) };
     }
     if (eventName === "error") {
-      return { type: "error", data };
+      return { type: "error", data: z.object({ message: z.string() }).parse(data) };
     }
   } catch {
     return null;

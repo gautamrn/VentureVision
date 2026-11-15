@@ -8,6 +8,7 @@ import PitchScore from "@/components/PitchScore";
 import MemoDocument from "@/components/MemoDocument";
 import type { MemoOutput } from "@/lib/types";
 import { savePitchResult } from "@/lib/pitchHistory";
+import { statusForEvent } from "@/lib/agentEvents";
 
 export default function AnalyzePage() {
   const router = useRouter();
@@ -34,37 +35,10 @@ export default function AnalyzePage() {
       stored,
       storedMode,
       (event) => {
-        if (event.type === "planner") {
-          setStatus({ phase: "scout", evidenceCount: 0 });
-        }
-        if (event.type === "scout") {
-          setStatus({ phase: "scout", evidenceCount: event.data.evidenceCount });
-        }
-        if (event.type === "critic") {
-          if (event.data.isValidated) {
-            setStatus({ phase: "writer" });
-          } else {
-            setStatus({
-              phase: "critic",
-              iteration: event.data.iteration,
-              coverageScore: event.data.coverageScore,
-              feedback: event.data.feedback,
-            });
-          }
-        }
-        if (event.type === "writer" && event.data.memoReady) {
-          setStatus({ phase: "audit" });
-        }
+        setStatus(statusForEvent(event));
         if (event.type === "citation_audit") {
           setMemo(event.data.memo);
-          setStatus({ phase: "done" });
           savePitchResult(stored, event.data.memo, storedMode);
-        }
-        if (event.type === "writer" && !event.data.memoReady) {
-          setStatus({ phase: "error", message: "Analysis failed. Please try again." });
-        }
-        if (event.type === "error") {
-          setStatus({ phase: "error", message: event.data.message });
         }
       },
       () => {
@@ -106,7 +80,7 @@ export default function AnalyzePage() {
               pitchScore={memo.pitch_score}
               subscores={memo.subscores}
             />
-            <MemoDocument memo={memo} pitch={pitch} />
+            <MemoDocument memo={memo} pitch={pitch} source={{ kind: "live" }} />
           </>
         ) : status.phase !== "error" ? (
           <div className="space-y-4">

@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { ArrowRight, X } from "lucide-react";
+import { DEMO_SAMPLES } from "@/data/demo/samples";
 import {
   getPitchHistory,
   deletePitch,
@@ -48,7 +50,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
+    <main className="min-h-screen bg-background flex flex-col items-center justify-center px-6 py-16">
       <div className="w-full max-w-2xl">
         <div className="mb-12">
           <h1 className="font-serif text-5xl text-foreground leading-tight mb-4">
@@ -61,6 +63,39 @@ export default function Home() {
             Describe your startup. Our agents will research the market,
             validate your claims, and write an investment memo.
           </p>
+        </div>
+
+        <section className="mb-14" aria-labelledby="demo-heading">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 id="demo-heading" className="font-sans text-xs uppercase tracking-widest text-foreground">
+              Try the demo
+            </h2>
+            <p className="font-sans text-xs text-muted">No API key, no sign-up</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {DEMO_SAMPLES.map((sample) => (
+              <Link
+                key={sample.id}
+                href={`/demo/${sample.id}`}
+                className="flex flex-col border border-border p-3 rounded-sm hover:border-foreground"
+              >
+                <span className="font-sans text-[11px] uppercase tracking-widest text-muted">{sample.category}</span>
+                <span className="font-serif text-lg text-foreground mt-1">{sample.title}</span>
+                <span className="font-sans text-xs text-muted mt-1 leading-snug">{sample.tagline}</span>
+                <span className="font-sans text-xs text-foreground mt-3 flex items-center gap-1">
+                  View memo <ArrowRight size={12} />
+                </span>
+              </Link>
+            ))}
+          </div>
+          <p className="font-sans text-xs text-muted mt-3">
+            Recorded runs of the real pipeline on three sample one-pagers, replayed in your browser.
+          </p>
+        </section>
+
+        <div id="live" className="flex items-baseline justify-between mb-3 scroll-mt-8">
+          <h2 className="font-sans text-xs uppercase tracking-widest text-foreground">Live mode: analyze your pitch</h2>
+          <p className="font-sans text-xs text-muted">5 runs per hour per visitor</p>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

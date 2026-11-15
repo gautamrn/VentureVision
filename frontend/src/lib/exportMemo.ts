@@ -1,4 +1,4 @@
-import type { Citation, MemoOutput } from "./types";
+import type { Citation, MemoOutput, RunSource } from "./types";
 import { retrievalDate } from "./citations";
 
 function citationLine(citation: Citation | null | undefined): string | null {
@@ -6,10 +6,15 @@ function citationLine(citation: Citation | null | undefined): string | null {
   return `  > "${citation.quote}" — ${citation.source_url} (retrieved ${retrievalDate(citation)})`;
 }
 
-export function memoToMarkdown(memo: MemoOutput): string {
+export function memoToMarkdown(memo: MemoOutput, source: RunSource): string {
   const lines: string[] = [];
 
   lines.push(`# Pitch Analysis — Score: ${memo.pitch_score}/100`);
+  lines.push(
+    source.kind === "demo"
+      ? `Demo data: recorded pipeline run from ${source.recordedAt.slice(0, 10)}`
+      : "Live run"
+  );
   if (memo.groundedness) {
     const { cited_claims, total_claims, downgraded_claims } = memo.groundedness;
     lines.push(

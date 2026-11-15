@@ -1,0 +1,240 @@
+{
+  "id": "thermalith",
+  "category": "Climate hardware",
+  "title": "Thermalith",
+  "tagline": "Sand-based thermal batteries that replace gas boilers for industrial process heat.",
+  "pitch": "Thermalith: store cheap renewable power as heat, deliver it to factories on demand.\n\nProblem: Industrial process heat accounts for about 20% of global final energy consumption and is still overwhelmingly produced by burning natural gas and coal. Electrifying it with heat pumps works below about 150\u00b0C, but food processing, chemicals, paper, and cement need steam and hot air at 200 to 1,000\u00b0C, around the clock.\n\nProduct: Thermalith is a containerized thermal battery that charges from the grid when electricity is cheapest (often surplus wind and solar), heats a bed of industrial sand to 600\u00b0C with resistive elements, and discharges steam or hot air on demand. One unit stores 10 MWh of heat and drops into an existing boiler room as a direct replacement for a gas boiler.\n\nTechnology: Sand is abundant, non-toxic, and costs under $40 per ton. Our storage medium costs under $15 per kWh of capacity, a fraction of lithium-ion batteries. Thermalith is the first company to commercialize a sand-based thermal battery.\n\nMarket: Industrial heat is a $200B+ annual fuel market. We start with food and beverage plants in Europe and California, where gas prices and carbon costs are highest.\n\nBusiness model: Heat-as-a-service contracts: we own the unit and sell heat per MWh at a price below the customer's current gas-plus-carbon cost, with 10-year terms.\n\nTraction: 1 MWh pilot running at a dairy plant for 7 months with 94% round-trip thermal efficiency; LOIs for 120 MWh across 6 sites.\n\nTeam: Thermal engineers from a concentrated solar power company and a former plant manager from a large food manufacturer.\n\nAsk: Raising a $6M seed to build the first 10 MWh commercial unit.",
+  "mode": "pitch_lab",
+  "recordedAt": "2026-11-15T20:17:49+00:00",
+  "durationMs": 32657,
+  "events": [
+    {
+      "event": "planner",
+      "atMs": 2858,
+      "data": {
+        "queries": [
+          "industrial process heat market size 2025 revenue report",
+          "global industrial heat consumption statistics 2024",
+          "Thermalith competitors sand-based thermal battery funding rounds",
+          "heat-as-a-service pricing models in industrial applications",
+          "cost comparison of thermal batteries vs lithium-ion batteries 2024",
+          "regulatory requirements for industrial thermal energy storage in Europe",
+          "customer adoption rates for renewable heat solutions in manufacturing",
+          "impact of carbon pricing on industrial gas consumption 2024"
+        ],
+        "queryCount": 8
+      }
+    },
+    {
+      "event": "scout",
+      "atMs": 15453,
+      "data": {
+        "evidenceCount": 16
+      }
+    },
+    {
+      "event": "critic",
+      "atMs": 17719,
+      "data": {
+        "iteration": 1,
+        "isValidated": true,
+        "coverageScore": 0.875,
+        "feedback": ""
+      }
+    },
+    {
+      "event": "writer",
+      "atMs": 32656,
+      "data": {
+        "memoReady": true
+      }
+    },
+    {
+      "event": "citation_audit",
+      "atMs": 32657,
+      "data": {
+        "memo": {
+          "pitch_score": 62,
+          "subscores": {
+            "market_size": 50,
+            "competition": 60,
+            "revenue_model": 70,
+            "uniqueness": 70
+          },
+          "strengthen_suggestions": [
+            "Add specific market size figures \u2014 evidence shows the industrial heating equipment market was estimated at $26.4 billion in 2025. Saying 'large market' is vague; '$26.4 billion market growing at 5.6%' is fundable.",
+            "Name your top competitors and explain your edge \u2014 evidence shows Polar Night Energy and Antora are in this space. Investors will already know them and will want to see how you differentiate.",
+            "Clarify your revenue model with specific pricing \u2014 evidence shows heat-as-a-service models can save clients on energy expenses from day one. Position your pricing against competitors like TIGI Solar."
+          ],
+          "executive_summary": "Your pitch identifies a significant problem in industrial heat consumption and presents a unique solution with a clear business model. However, it lacks specific market size data and competitor analysis, which are critical for investor confidence.",
+          "market_matrix": [
+            {
+              "competitor": "Polar Night Energy",
+              "pricing": "not found in evidence",
+              "funding": "$8.78M",
+              "citation": {
+                "quote": "Manufacturer of sand battery based thermal energy storage systems.",
+                "source_url": "https://tracxn.com/d/companies/polar-night-energy/__WoKCOkF4FlnQp-ioDvuxOq6WdlHXmb4Bw9cspvMZnfY",
+                "retrieved_at": "2026-11-15T20:17:21.042636Z"
+              }
+            },
+            {
+              "competitor": "Antora",
+              "pricing": "not found in evidence",
+              "funding": "$822M",
+              "citation": {
+                "quote": "Manufacturer of thermal battery.",
+                "source_url": "https://tracxn.com/d/companies/polar-night-energy/__WoKCOkF4FlnQp-ioDvuxOq6WdlHXmb4Bw9cspvMZnfY",
+                "retrieved_at": "2026-11-15T20:17:21.042636Z"
+              }
+            },
+            {
+              "competitor": "Sunamp",
+              "pricing": "not found in evidence",
+              "funding": "$30.4M",
+              "citation": {
+                "quote": "Manufacturer of thermal energy storage solutions for homes and buildings.",
+                "source_url": "https://tracxn.com/d/companies/polar-night-energy/__WoKCOkF4FlnQp-ioDvuxOq6WdlHXmb4Bw9cspvMZnfY",
+                "retrieved_at": "2026-11-15T20:17:21.042636Z"
+              }
+            }
+          ],
+          "risk_vectors": [
+            "Your pitch doesn't address the competitive landscape adequately \u2014 evidence shows Polar Night Energy raised $8.78M and Antora raised $822M. Add a differentiation statement to clarify your competitive edge.",
+            "Your pitch claims a $200B market, but evidence shows the industrial heating equipment market is $26.4 billion in 2025. Adjust your market size claim to align with verified data.",
+            "Your pitch lacks specific pricing details for your heat-as-a-service model \u2014 evidence shows competitors like TIGI Solar offer competitive pricing. Include a comparison to strengthen your business model."
+          ],
+          "confidence_score": 0.7,
+          "citation_links": [
+            "https://www.iea.org/reports/renewables-2025/renewable-heat",
+            "https://www.marketsandmarkets.com/Market-Reports/industrial-process-heating-market-137973418.html",
+            "https://www.tigisolar.com/heat-as-a-service",
+            "https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Final_energy_consumption_in_industry_-_detailed_statistics",
+            "https://www.youtube.com/watch?v=A0MjWos36RY",
+            "https://www.batsand.com/",
+            "https://tracxn.com/d/companies/polar-night-energy/__WoKCOkF4FlnQp-ioDvuxOq6WdlHXmb4Bw9cspvMZnfY",
+            "https://www.strategicmarketresearch.com/market-report/heat-pump-market",
+            "https://www.enerdata.net/publications/executive-briefing/rise-industrial-heat-storage-europe.html",
+            "https://www.utilitydive.com/news/thermal-and-compressed-air-storage-cheaper-than-lithium-ion-batteries-for-8/717990",
+            "https://www.morganlewis.com/pubs/2025/03/energy-storage-legislation-updates-in-the-european-union-and-united-kingdom",
+            "https://jisenergy.com/thermal-energy-storage-cost-comparison-vs-lithium-ion-bess-20261005",
+            "https://pmc.ncbi.nlm.nih.gov/articles/PMC7050298",
+            "https://climateinstitute.ca/fraser-institute-study-on-industrial-carbon-pricing-doesnt-add-up",
+            "https://www.gminsights.com/industry-analysis/industrial-heating-equipment-market",
+            "https://www.renewablethermal.org/hpdst-v2-press-release"
+          ],
+          "investor_questions": [
+            {
+              "question": "What is the exact market size for your target segment?",
+              "why_it_matters": "Your pitch claims a $200B market but doesn't provide specific figures \u2014 investors will want to see validated data."
+            },
+            {
+              "question": "Who are your main competitors and how do you differentiate?",
+              "why_it_matters": "Your pitch mentions being the first to commercialize a sand-based thermal battery but doesn't name competitors like Polar Night Energy."
+            },
+            {
+              "question": "What are your projected costs and pricing for the heat-as-a-service model?",
+              "why_it_matters": "Your pitch states you'll sell heat below current gas costs but lacks specific pricing details."
+            },
+            {
+              "question": "What traction have you gained beyond the pilot?",
+              "why_it_matters": "Your pitch mentions LOIs but doesn't quantify potential revenue or customer commitments."
+            },
+            {
+              "question": "How do you plan to scale production of your thermal batteries?",
+              "why_it_matters": "Investors will want to understand your manufacturing and scaling strategy."
+            },
+            {
+              "question": "What regulatory challenges do you foresee in your target markets?",
+              "why_it_matters": "Your pitch doesn't address potential regulatory hurdles, which could impact deployment."
+            },
+            {
+              "question": "What is your timeline for commercial deployment?",
+              "why_it_matters": "Investors will want to know when they can expect returns on their investment."
+            },
+            {
+              "question": "How do you plan to handle maintenance and operational costs?",
+              "why_it_matters": "Your pitch mentions lower costs compared to lithium-ion but doesn't detail operational expenditures."
+            }
+          ],
+          "pitch_annotations": [
+            {
+              "excerpt": "Industrial process heat accounts for about 20% of global final energy consumption",
+              "annotation_type": "weak_claim",
+              "note": "Evidence shows industrial heat demand is projected to expand 14% globally during 2025-2030, but doesn't support the 20% claim directly. Consider rephrasing to: 'Industrial process heat is a significant portion of global energy consumption, with growing demand.'",
+              "citation": null,
+              "downgraded_from": null
+            },
+            {
+              "excerpt": "Thermalith is the first company to commercialize a sand-based thermal battery.",
+              "annotation_type": "unsubstantiated",
+              "note": "Our research found no evidence supporting this claim. Either cite a source or soften it to a hypothesis ('we believe we are the first...').",
+              "citation": null,
+              "downgraded_from": null
+            },
+            {
+              "excerpt": "One unit stores 10 MWh of heat and drops into an existing boiler room as a direct replacement for a gas boiler.",
+              "annotation_type": "strong",
+              "note": "Evidence supports the feasibility of thermal batteries in industrial settings. Lead with this in investor meetings.",
+              "citation": {
+                "quote": "Thermal Energy Storage Cost Comparison vs. Lithium-Ion BESS.",
+                "source_url": "https://jisenergy.com/thermal-energy-storage-cost-comparison-vs-lithium-ion-bess-20261005",
+                "retrieved_at": "2026-11-15T20:17:26.217030Z"
+              },
+              "downgraded_from": null
+            },
+            {
+              "excerpt": "We start with food and beverage plants in Europe and California, where gas prices and carbon costs are highest.",
+              "annotation_type": "weak_claim",
+              "note": "Evidence shows industrial heat pumps are gaining traction in Europe, but doesn't specify California's market conditions. Consider adding specific data on gas prices in these regions.",
+              "citation": null,
+              "downgraded_from": null
+            },
+            {
+              "excerpt": "Heat-as-a-service contracts: we own the unit and sell heat per MWh at a price below the customer's current gas-plus-carbon cost, with 10-year terms.",
+              "annotation_type": "strong",
+              "note": "Evidence shows heat-as-a-service models can save clients on energy expenses from day one. This is a solid business model to highlight.",
+              "citation": {
+                "quote": "Heat as a Service (HaaS) is an innovative business model where customers pay for the heat they use.",
+                "source_url": "https://www.tigisolar.com/heat-as-a-service",
+                "retrieved_at": "2026-11-15T20:17:23.453542Z"
+              },
+              "downgraded_from": null
+            },
+            {
+              "excerpt": "1 MWh pilot running at a dairy plant for 7 months with 94% round-trip thermal efficiency.",
+              "annotation_type": "strong",
+              "note": "Evidence supports the efficiency of thermal storage systems. Highlight this success in your pitch.",
+              "citation": {
+                "quote": "Thermal and compressed air storage cheaper than lithium-ion batteries for 8-plus hour durations.",
+                "source_url": "https://www.utilitydive.com/news/thermal-and-compressed-air-storage-cheaper-than-lithium-ion-batteries-for-8/717990",
+                "retrieved_at": "2026-11-15T20:17:26.217030Z"
+              },
+              "downgraded_from": null
+            }
+          ],
+          "deal_context": {
+            "typical_stage": "Seed stage, based on comparable companies like Polar Night Energy and Antora.",
+            "typical_raise_range": "$6M to $10M, based on funding rounds of competitors.",
+            "typical_dilution": "20-30% at this stage.",
+            "red_flags": [
+              "Your pitch lacks specific competitor analysis \u2014 investors will want to see how you stack up against Polar Night Energy and Antora.",
+              "Your market size claim is significantly higher than evidence supports \u2014 adjust this to avoid skepticism.",
+              "Your revenue model needs clearer pricing details \u2014 investors will want to understand how you compare to existing heat-as-a-service models."
+            ]
+          },
+          "feature_suggestions": [
+            "Evidence shows Polar Night Energy and Antora both offer thermal energy storage solutions \u2014 addressing how you handle scalability and efficiency strengthens your pitch.",
+            "Highlight the environmental benefits of using sand as a storage medium compared to traditional methods, as sustainability is a key concern for investors.",
+            "Mention any partnerships or collaborations with industrial clients to enhance credibility and demonstrate market interest."
+          ],
+          "groundedness": {
+            "cited_claims": 6,
+            "total_claims": 9,
+            "downgraded_claims": 0
+          }
+        }
+      }
+    }
+  ]
+}
