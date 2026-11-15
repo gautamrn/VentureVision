@@ -141,23 +141,52 @@ def critique(coverageScore: float, isSufficient: bool, feedback: str = "") -> di
     return {"is_sufficient": isSufficient, "coverage_score": coverageScore, "feedback": feedback}
 
 
-def memoSynthesis(pitchScore: int = 64) -> dict:
+def annotationDraft(
+    annotationType: str,
+    excerpt: str = "vetted local walkers",
+    evidenceRef: int | None = None,
+    evidenceQuote: str | None = None,
+) -> dict:
+    return {
+        "excerpt": excerpt,
+        "annotation_type": annotationType,
+        "note": f"{annotationType} note",
+        "evidence_ref": evidenceRef,
+        "evidence_quote": evidenceQuote,
+    }
+
+
+def competitorDraft(
+    competitor: str = "Rover", evidenceRef: int | None = None, evidenceQuote: str | None = None
+) -> dict:
+    return {
+        "competitor": competitor,
+        "pricing": "not found in evidence",
+        "funding": "$310M",
+        "evidence_ref": evidenceRef,
+        "evidence_quote": evidenceQuote,
+    }
+
+
+def memoSynthesis(
+    pitchScore: int = 64,
+    annotations: list[dict] | None = None,
+    competitors: list[dict] | None = None,
+) -> dict:
     return {
         "pitch_score": pitchScore,
         "subscores": {"market_size": 70, "competition": 55, "revenue_model": 62, "uniqueness": 48},
         "strengthen_suggestions": ["Look into Rover's walker vetting process."],
         "executive_summary": "Evidence shows an established market with funded incumbents.",
-        "market_matrix": [
-            {"competitor": "Rover", "pricing": "not found in evidence", "funding": "$310M"}
-        ],
+        "market_matrix": competitors if competitors is not None else [competitorDraft()],
         "risk_vectors": ["Well-funded incumbents dominate urban markets."],
         "confidence_score": 0.7,
         "investor_questions": [
             {"question": "How do you acquire walkers?", "why_it_matters": "Supply drives liquidity."}
         ],
-        "pitch_annotations": [
-            {"excerpt": "vetted local walkers", "annotation_type": "strong", "note": "Supported."}
-        ],
+        "pitch_annotations": (
+            annotations if annotations is not None else [annotationDraft("needs_research")]
+        ),
         "deal_context": {
             "typical_stage": "Pre-seed",
             "typical_raise_range": "not found in evidence",

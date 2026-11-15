@@ -11,14 +11,14 @@ def testRouteAfterCriticSendsUnvalidatedStateBackToScout():
     assert routeAfterCritic({}) == "scout"
 
 
-def testGraphRunsPlannerScoutCriticWriterInOrder(fakeOpenAI, fakeTavily):
+def testGraphRunsPlannerScoutCriticWriterAuditInOrder(fakeOpenAI, fakeTavily):
     fakeOpenAI.script("ResearchPlan", researchPlan(["dog walking app competitors", "pet care market size"]))
     fakeOpenAI.script("CritiqueResult", critique(0.9, True))
     fakeOpenAI.script("MemoSynthesis", memoSynthesis())
 
     order, finalState = runGraph()
 
-    assert order == ["planner", "scout", "critic", "writer"]
+    assert order == ["planner", "scout", "critic", "writer", "citation_audit"]
     assert finalState["analysis_iteration"] == 1
     assert finalState["final_memo"] is not None
 
@@ -68,7 +68,7 @@ def testPlannerFallsBackToPitchDerivedQueriesWhenOpenAIOutputIsUnusable(fakeOpen
     order, _ = runGraph()
 
     topic = " ".join(SAMPLE_PITCH.split()[:6])
-    assert order == ["planner", "scout", "critic", "writer"]
+    assert order == ["planner", "scout", "critic", "writer", "citation_audit"]
     assert fakeTavily.queries == [
         f"{topic} market size",
         f"{topic} competitors funding",

@@ -1,9 +1,16 @@
 import { z } from "zod";
 
+export const CitationSchema = z.object({
+  quote: z.string(),
+  source_url: z.string(),
+  retrieved_at: z.string(),
+});
+
 export const MarketCompetitorSchema = z.object({
   competitor: z.string(),
   pricing: z.string(),
   funding: z.string(),
+  citation: CitationSchema.nullish(),
 });
 
 export const SubscoresSchema = z.object({
@@ -22,6 +29,14 @@ export const PitchAnnotationSchema = z.object({
   excerpt: z.string(),
   annotation_type: z.string(),
   note: z.string(),
+  citation: CitationSchema.nullish(),
+  downgraded_from: z.string().nullish(),
+});
+
+export const GroundednessSchema = z.object({
+  cited_claims: z.number(),
+  total_claims: z.number(),
+  downgraded_claims: z.number(),
 });
 
 export const DealContextSchema = z.object({
@@ -44,6 +59,7 @@ export const MemoOutputSchema = z.object({
   pitch_annotations: z.array(PitchAnnotationSchema),
   deal_context: DealContextSchema,
   feature_suggestions: z.array(z.string()),
+  groundedness: GroundednessSchema.nullish(),
 });
 
 export const PlannerEventSchema = z.object({
@@ -63,9 +79,15 @@ export const CriticEventSchema = z.object({
 });
 
 export const WriterEventSchema = z.object({
+  memoReady: z.boolean(),
+});
+
+export const CitationAuditEventSchema = z.object({
   memo: MemoOutputSchema,
 });
 
+export type Citation = z.infer<typeof CitationSchema>;
+export type Groundedness = z.infer<typeof GroundednessSchema>;
 export type MarketCompetitor = z.infer<typeof MarketCompetitorSchema>;
 export type Subscores = z.infer<typeof SubscoresSchema>;
 export type InvestorQuestion = z.infer<typeof InvestorQuestionSchema>;
@@ -76,10 +98,12 @@ export type PlannerEvent = z.infer<typeof PlannerEventSchema>;
 export type ScoutEvent = z.infer<typeof ScoutEventSchema>;
 export type CriticEvent = z.infer<typeof CriticEventSchema>;
 export type WriterEvent = z.infer<typeof WriterEventSchema>;
+export type CitationAuditEvent = z.infer<typeof CitationAuditEventSchema>;
 
 export type AgentEvent =
   | { type: "planner"; data: PlannerEvent }
   | { type: "scout"; data: ScoutEvent }
   | { type: "critic"; data: CriticEvent }
   | { type: "writer"; data: WriterEvent }
+  | { type: "citation_audit"; data: CitationAuditEvent }
   | { type: "error"; data: { message: string } };

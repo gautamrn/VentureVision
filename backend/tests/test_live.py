@@ -39,13 +39,16 @@ def testLiveFullPipelineProducesGroundedMemo(liveClients):
     order, finalState = runGraph()
 
     assert order[:3] == ["planner", "scout", "critic"]
-    assert order[-1] == "writer"
+    assert order[-2:] == ["writer", "citation_audit"]
     assert finalState["coverage_score"] > 0, "critic fell back; OpenAI call failed"
 
     memo = finalState["final_memo"]
     assert memo is not None, "writer failed to produce a memo"
     assert 0 <= memo.pitch_score <= 100
     assert 0.0 <= memo.confidence_score <= 1.0
+
+    assert memo.groundedness is not None
+    assert memo.groundedness.total_claims == len(memo.pitch_annotations) + len(memo.market_matrix)
 
     evidenceUrls = {str(e.source_url) for e in finalState["raw_evidence"]}
     assert {str(u) for u in memo.citation_links} <= evidenceUrls

@@ -52,10 +52,16 @@ export default function AnalyzePage() {
             });
           }
         }
-        if (event.type === "writer" && event.data.memo) {
+        if (event.type === "writer" && event.data.memoReady) {
+          setStatus({ phase: "audit" });
+        }
+        if (event.type === "citation_audit") {
           setMemo(event.data.memo);
           setStatus({ phase: "done" });
           savePitchResult(stored, event.data.memo, storedMode);
+        }
+        if (event.type === "writer" && !event.data.memoReady) {
+          setStatus({ phase: "error", message: "Analysis failed. Please try again." });
         }
         if (event.type === "error") {
           setStatus({ phase: "error", message: event.data.message });

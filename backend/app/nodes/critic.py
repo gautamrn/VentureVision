@@ -2,9 +2,13 @@ from pydantic import BaseModel
 from langchain_openai import ChatOpenAI
 
 from app.graph.state import AgentState
+from app.schemas.models import Citation, EvidenceItem, Groundedness
 
 QUICK_MAX_ITERATIONS = 3
 DEEP_MAX_ITERATIONS = 4
+
+CITATION_REQUIRED_VERDICTS = {"strong", "contradicted"}
+NO_EVIDENCE_VERDICT = {"market_scan": "needs_research", "pitch_lab": "unsubstantiated"}
 
 
 class CritiqueResult(BaseModel):
@@ -67,3 +71,68 @@ def critic_node(state: AgentState) -> dict:
             "coverage_score": 0.0,
             "analysis_iteration": iteration + 1,
         }
+
+
+def _normalize(text: str) -> str:
+    return " ".join(text.lower().split())
+
+
+def isCitationGrounded(citation: Citation | None, evidence: list[EvidenceItem]) -> bool:
+    if citation is None:
+        return False
+    quote = _normalize(citation.quote)
+    if not quote:
+        return False
+    return any(
+        str(item.source_url) == str(citation.source_url) and quote in _normalize(item.snippet)
+        for item in evidence
+    )
+
+
+def citation_audit_node(state: AgentState) -> dict:
+    memo = state.get("final_memo")
+    if memo is None:
+        return {"final_memo": None}
+
+    evidence = state.get("raw_evidence", [])
+    noEvidenceVerdict = NO_EVIDENCE_VERDICT.get(state.get("mode", "market_scan"), "needs_research")
+    downgraded = 0
+
+    annotations = []
+    for annotation in memo.pitch_annotations:
+        citation = annotation.citation if isCitationGrounded(annotation.citation, evidence) else None
+        if annotation.annotation_type in CITATION_REQUIRED_VERDICTS and citation is None:
+            downgraded += 1
+            annotations.append(
+                annotation.model_copy(
+                    update={
+                        "annotation_type": noEvidenceVerdict,
+                        "citation": None,
+                        "downgraded_from": annotation.annotation_type,
+                    }
+                )
+            )
+        else:
+            annotations.append(annotation.model_copy(update={"citation": citation}))
+
+    competitors = [
+        row.model_copy(update={"citation": row.citation if isCitationGrounded(row.citation, evidence) else None})
+        for row in memo.market_matrix
+    ]
+
+    claims = [*annotations, *competitors]
+    groundedness = Groundedness(
+        cited_claims=sum(1 for claim in claims if claim.citation is not None),
+        total_claims=len(claims),
+        downgraded_claims=downgraded,
+    )
+
+    return {
+        "final_memo": memo.model_copy(
+            update={
+                "pitch_annotations": annotations,
+                "market_matrix": competitors,
+                "groundedness": groundedness,
+            }
+        )
+    }

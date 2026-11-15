@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from tavily import TavilyClient
 from app.graph.state import AgentState
 from app.schemas.models import EvidenceItem
@@ -29,6 +31,7 @@ def scout_node(state: AgentState) -> dict:
         except Exception:
             continue
 
+        retrievedAt = datetime.now(timezone.utc)
         answer = response.get("answer", "")
 
         for result in response.get("results", []):
@@ -42,6 +45,7 @@ def scout_node(state: AgentState) -> dict:
                     title=result.get("title", ""),
                     snippet=snippet,
                     source_url=result.get("url", ""),
+                    retrieved_at=retrievedAt,
                 )
             )
 

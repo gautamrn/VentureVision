@@ -1,9 +1,22 @@
-import type { MemoOutput } from "./types";
+import type { Citation, MemoOutput } from "./types";
+import { retrievalDate } from "./citations";
+
+function citationLine(citation: Citation | null | undefined): string | null {
+  if (!citation) return null;
+  return `  > "${citation.quote}" — ${citation.source_url} (retrieved ${retrievalDate(citation)})`;
+}
 
 export function memoToMarkdown(memo: MemoOutput): string {
   const lines: string[] = [];
 
   lines.push(`# Pitch Analysis — Score: ${memo.pitch_score}/100`);
+  if (memo.groundedness) {
+    const { cited_claims, total_claims, downgraded_claims } = memo.groundedness;
+    lines.push(
+      `Groundedness: ${cited_claims} of ${total_claims} claims cited` +
+        (downgraded_claims > 0 ? ` · ${downgraded_claims} downgraded for missing citations` : "")
+    );
+  }
   lines.push("");
 
   lines.push("## Subscores");
@@ -33,6 +46,11 @@ export function memoToMarkdown(memo: MemoOutput): string {
       lines.push(`| ${c.competitor} | ${c.pricing} | ${c.funding} |`);
     }
     lines.push("");
+    const citedRows = memo.market_matrix.filter((c) => c.citation);
+    for (const c of citedRows) {
+      lines.push(`- ${c.competitor}`, citationLine(c.citation) ?? "");
+    }
+    if (citedRows.length > 0) lines.push("");
   }
 
   if (memo.investor_questions.length > 0) {
@@ -66,6 +84,8 @@ export function memoToMarkdown(memo: MemoOutput): string {
     lines.push("## Pitch Annotations");
     for (const ann of memo.pitch_annotations) {
       lines.push(`- [${ann.annotation_type}] "${ann.excerpt}" — ${ann.note}`);
+      const cite = citationLine(ann.citation);
+      if (cite) lines.push(cite);
     }
     lines.push("");
   }

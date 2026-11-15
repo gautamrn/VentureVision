@@ -5,6 +5,7 @@ type Status =
   | { phase: "scout"; evidenceCount: number }
   | { phase: "critic"; iteration: number; coverageScore: number; feedback: string }
   | { phase: "writer" }
+  | { phase: "audit" }
   | { phase: "done" }
   | { phase: "error"; message: string };
 
@@ -17,6 +18,7 @@ const steps = [
   { key: "scout", label: "Search" },
   { key: "critic", label: "Validate" },
   { key: "writer", label: "Write" },
+  { key: "audit", label: "Verify" },
 ] as const;
 
 const phaseOrder: Record<string, number> = {
@@ -24,7 +26,8 @@ const phaseOrder: Record<string, number> = {
   scout: 1,
   critic: 2,
   writer: 3,
-  done: 4,
+  audit: 4,
+  done: 5,
 };
 
 function statusDetail(status: Status): string | null {
@@ -38,6 +41,7 @@ function statusDetail(status: Status): string | null {
     return `Evaluating evidence · Iteration ${status.iteration} · ${Math.round(status.coverageScore * 100)}% coverage`;
   }
   if (status.phase === "writer") return "Synthesizing memo...";
+  if (status.phase === "audit") return "Checking every claim against its cited source...";
   return null;
 }
 

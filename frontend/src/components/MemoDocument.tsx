@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { ExternalLink, Clipboard, Check } from "lucide-react";
-import type { MemoOutput } from "@/lib/types";
+import type { Groundedness, MarketCompetitor, MemoOutput } from "@/lib/types";
 import { memoToMarkdown } from "@/lib/exportMemo";
+import { annotationsInPitch, numberCitations } from "@/lib/citations";
+import { CitationMarker, CitationQuote } from "./Citation";
 import StrengthenPitch from "./StrengthenPitch";
 import PitchAnnotations from "./PitchAnnotations";
 import InvestorQA from "./InvestorQA";
@@ -45,10 +47,97 @@ function competitorTableToText(memo: MemoOutput): string {
   return [header, divider, ...rows].join("\n");
 }
 
+function GroundednessLine({ groundedness }: { groundedness: Groundedness }) {
+  const { cited_claims, total_claims, downgraded_claims } = groundedness;
+  return (
+    <p className="font-sans text-xs text-muted">
+      <span className="uppercase tracking-widest">Groundedness</span>
+      <span className="text-foreground ml-2">
+        {cited_claims} of {total_claims} claims cited
+      </span>
+      {downgraded_claims > 0 && (
+        <span>
+          {" "}
+          &middot; {downgraded_claims} downgraded for missing citations
+        </span>
+      )}
+    </p>
+  );
+}
+
+function CompetitorTable({
+  competitors,
+  citationNumbers,
+}: {
+  competitors: MarketCompetitor[];
+  citationNumbers: (number | null)[];
+}) {
+  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+
+  function toggle(index: number) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm min-w-[400px]">
+        <thead>
+          <tr className="border-b border-border">
+            <th className="font-sans text-left pb-2 text-muted font-normal">Company</th>
+            <th className="font-sans text-left pb-2 text-muted font-normal">Pricing</th>
+            <th className="font-sans text-left pb-2 text-muted font-normal">Funding</th>
+          </tr>
+        </thead>
+        <tbody>
+          {competitors.map((c, i) => {
+            const number = citationNumbers[i];
+            const isOpen = number != null && c.citation && expanded.has(i);
+            return (
+              <Fragment key={i}>
+                <tr className={isOpen ? "" : "border-b border-border"}>
+                  <td className="py-3">
+                    {c.competitor}
+                    {number != null && (
+                      <CitationMarker number={number} expanded={expanded.has(i)} onToggle={() => toggle(i)} />
+                    )}
+                  </td>
+                  <td className="py-3 text-muted font-sans">{c.pricing}</td>
+                  <td className="py-3 text-muted font-sans">{c.funding}</td>
+                </tr>
+                {isOpen && c.citation && (
+                  <tr className="border-b border-border">
+                    <td colSpan={3} className="pb-3">
+                      <CitationQuote number={number} citation={c.citation} />
+                    </td>
+                  </tr>
+                )}
+              </Fragment>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function MemoDocument({ memo, pitch }: Props) {
+  const shownAnnotations = pitch ? annotationsInPitch(pitch, memo.pitch_annotations) : [];
+  const citationNumbers = numberCitations([
+    ...shownAnnotations.map((a) => a.citation),
+    ...memo.market_matrix.map((c) => c.citation),
+  ]);
+  const annotationNumbers = citationNumbers.slice(0, shownAnnotations.length);
+  const competitorNumbers = citationNumbers.slice(shownAnnotations.length);
+
   return (
     <article className="font-serif text-foreground">
-      <div className="flex justify-end mb-6">
+      <div className="flex items-center justify-between gap-4 mb-6 pb-3 border-b border-border">
+        {memo.groundedness ? <GroundednessLine groundedness={memo.groundedness} /> : <span />}
         <CopyButton text={memoToMarkdown(memo)} label="Copy as Markdown" />
       </div>
 
@@ -67,7 +156,7 @@ export default function MemoDocument({ memo, pitch }: Props) {
       <StrengthenPitch suggestions={memo.strengthen_suggestions} />
 
       {pitch && (
-        <PitchAnnotations pitch={pitch} annotations={memo.pitch_annotations} />
+        <PitchAnnotations pitch={pitch} annotations={shownAnnotations} citationNumbers={annotationNumbers} />
       )}
 
       <InvestorQA questions={memo.investor_questions} />
@@ -84,32 +173,7 @@ export default function MemoDocument({ memo, pitch }: Props) {
         {memo.market_matrix.length === 0 ? (
           <p className="text-base text-muted">No competitor data found.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[400px]">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="font-sans text-left pb-2 text-muted font-normal">
-                    Company
-                  </th>
-                  <th className="font-sans text-left pb-2 text-muted font-normal">
-                    Pricing
-                  </th>
-                  <th className="font-sans text-left pb-2 text-muted font-normal">
-                    Funding
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {memo.market_matrix.map((c, i) => (
-                  <tr key={i} className="border-b border-border">
-                    <td className="py-3">{c.competitor}</td>
-                    <td className="py-3 text-muted font-sans">{c.pricing}</td>
-                    <td className="py-3 text-muted font-sans">{c.funding}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <CompetitorTable competitors={memo.market_matrix} citationNumbers={competitorNumbers} />
         )}
       </section>
 

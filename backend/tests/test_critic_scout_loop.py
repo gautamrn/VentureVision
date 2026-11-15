@@ -16,7 +16,7 @@ def testLowCoverageTriggersAnotherScoutRound(fakeOpenAI, fakeTavily):
 
     order, finalState = runGraph()
 
-    assert order == ["planner", "scout", "critic", "scout", "critic", "writer"]
+    assert order == ["planner", "scout", "critic", "scout", "critic", "writer", "citation_audit"]
     assert fakeTavily.queries == [
         "dog walking app competitors",
         "Rover funding 2025",
@@ -70,7 +70,7 @@ def testIterationCapForcesExitToWriter(fakeOpenAI, fakeTavily, mode, maxIteratio
 
     order, finalState = runGraph(mode=mode)
 
-    assert order == ["planner"] + ["scout", "critic"] * (maxIterations + 1) + ["writer"]
+    assert order == ["planner"] + ["scout", "critic"] * (maxIterations + 1) + ["writer", "citation_audit"]
     assert len(fakeOpenAI.callsFor("CritiqueResult")) == maxIterations
     assert finalState["analysis_iteration"] == maxIterations
     assert finalState["is_validated"] is True
@@ -98,5 +98,5 @@ def testCriticFailureExitsLoopInsteadOfSpinning(fakeOpenAI, fakeTavily):
 
     order, finalState = runGraph()
 
-    assert order == ["planner", "scout", "critic", "writer"]
+    assert order == ["planner", "scout", "critic", "writer", "citation_audit"]
     assert finalState["coverage_score"] == 0.0

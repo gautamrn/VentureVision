@@ -1,6 +1,16 @@
+from datetime import datetime, timezone
 from typing import Literal
 
 from pydantic import BaseModel, Field, HttpUrl
+
+AnnotationType = Literal[
+    "strong",
+    "contradicted",
+    "needs_research",
+    "weak_claim",
+    "vague",
+    "unsubstantiated",
+]
 
 
 class EvidenceItem(BaseModel):
@@ -8,12 +18,20 @@ class EvidenceItem(BaseModel):
     title: str
     snippet: str
     source_url: HttpUrl
+    retrieved_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class Citation(BaseModel):
+    quote: str
+    source_url: HttpUrl
+    retrieved_at: datetime
 
 
 class MarketCompetitor(BaseModel):
     competitor: str
     pricing: str
     funding: str
+    citation: Citation | None = None
 
 
 class Subscores(BaseModel):
@@ -30,8 +48,16 @@ class InvestorQuestion(BaseModel):
 
 class PitchAnnotation(BaseModel):
     excerpt: str
-    annotation_type: str
+    annotation_type: AnnotationType
     note: str
+    citation: Citation | None = None
+    downgraded_from: AnnotationType | None = None
+
+
+class Groundedness(BaseModel):
+    cited_claims: int
+    total_claims: int
+    downgraded_claims: int
 
 
 class DealContext(BaseModel):
@@ -54,6 +80,7 @@ class MemoOutput(BaseModel):
     pitch_annotations: list[PitchAnnotation]
     deal_context: DealContext
     feature_suggestions: list[str]
+    groundedness: Groundedness | None = None
 
 
 class PitchRequest(BaseModel):

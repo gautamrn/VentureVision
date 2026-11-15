@@ -4,6 +4,7 @@ import {
   ScoutEventSchema,
   CriticEventSchema,
   WriterEventSchema,
+  CitationAuditEventSchema,
 } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
@@ -23,6 +24,9 @@ function parseEvent(eventName: string, rawData: string): AgentEvent | null {
     }
     if (eventName === "writer") {
       return { type: "writer", data: WriterEventSchema.parse(data) };
+    }
+    if (eventName === "citation_audit") {
+      return { type: "citation_audit", data: CitationAuditEventSchema.parse(data) };
     }
     if (eventName === "error") {
       return { type: "error", data };

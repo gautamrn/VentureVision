@@ -56,6 +56,9 @@ def serializeNodeOutput(nodeName: str, nodeState: dict) -> dict:
         }
 
     if nodeName == "writer":
+        return {"memoReady": nodeState.get("final_memo") is not None}
+
+    if nodeName == "citation_audit":
         memo = nodeState.get("final_memo")
         if memo is not None and hasattr(memo, "model_dump"):
             return {"memo": memo.model_dump(mode="json")}
@@ -141,7 +144,7 @@ async def analyzeStream(request: PitchRequest):
                     runMeta["iterations"] = nodeState.get("analysis_iteration", 0)
                 if nodeName == "scout":
                     runMeta["evidenceCount"] = len(nodeState.get("raw_evidence", []))
-                if nodeName == "writer":
+                if nodeName == "citation_audit":
                     memo = nodeState.get("final_memo")
                     if memo and hasattr(memo, "pitch_score"):
                         runMeta["pitchScore"] = memo.pitch_score

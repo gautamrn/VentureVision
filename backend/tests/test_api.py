@@ -34,6 +34,7 @@ def testAnalyzeReturnsCompletedMemo(client, fakeOpenAI, fakeTavily):
     assert body.iterations == 1
     assert body.memo.pitch_score == 71
     assert [str(u) for u in body.memo.citation_links] == ["https://example.com/dog-walking-app-competitors"]
+    assert body.memo.groundedness is not None
 
 
 def testAnalyzePassesModeThroughToAgents(client, fakeOpenAI, fakeTavily):

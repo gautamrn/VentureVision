@@ -3,6 +3,9 @@ from langchain_openai import ChatOpenAI
 
 from app.graph.state import AgentState
 from app.schemas.models import (
+    AnnotationType,
+    Citation,
+    EvidenceItem,
     MarketCompetitor,
     MemoOutput,
     Subscores,
@@ -12,16 +15,32 @@ from app.schemas.models import (
 )
 
 
+class AnnotationDraft(BaseModel):
+    excerpt: str
+    annotation_type: AnnotationType
+    note: str
+    evidence_ref: int | None
+    evidence_quote: str | None
+
+
+class CompetitorDraft(BaseModel):
+    competitor: str
+    pricing: str
+    funding: str
+    evidence_ref: int | None
+    evidence_quote: str | None
+
+
 class MemoSynthesis(BaseModel):
     pitch_score: int
     subscores: Subscores
     strengthen_suggestions: list[str]
     executive_summary: str
-    market_matrix: list[MarketCompetitor]
+    market_matrix: list[CompetitorDraft]
     risk_vectors: list[str]
     confidence_score: float
     investor_questions: list[InvestorQuestion]
-    pitch_annotations: list[PitchAnnotation]
+    pitch_annotations: list[AnnotationDraft]
     deal_context: DealContext
     feature_suggestions: list[str]
 
@@ -32,10 +51,27 @@ writer_llm = llm.with_structured_output(MemoSynthesis)
 EVIDENCE_RULES = """
 EVIDENCE RULES (non-negotiable):
 - Base every claim, score, and recommendation EXCLUSIVELY on the evidence provided below.
-- If a pitch claim has no supporting evidence, mark it as "unsubstantiated" in annotations AND include it as a risk vector.
+- If a pitch claim has no supporting evidence, give it this mode's no-evidence verdict in annotations AND include it as a risk vector.
 - Do not use phrases like "based on my knowledge", "typically", or "generally" — if you cannot point to a specific piece of evidence, say the data is missing.
 - Never invent competitor names, funding amounts, or market figures. Use only what evidence contains.
 - A single verified data point is worth more than paragraphs of reasoning. Evaluate substance, not word count.
+"""
+
+
+def verdictRules(noEvidenceVerdict: str) -> str:
+    return f"""
+VERDICT BOUNDARY (every pitch annotation):
+- "strong": an evidence item states the same fact, or a figure consistent with the claim.
+- "contradicted": an evidence item states the OPPOSITE fact, or a number that cannot be true at the same time as the claim, about the SAME subject (same metric, market, and period). Examples: the pitch says "no direct competitors" and evidence names a funded competitor doing the same thing; the pitch says "$50B market" and evidence says the same market is $4B.
+- "{noEvidenceVerdict}": no evidence item addresses the claim, or the evidence concerns a different subject, scope, or period, or it is thin or ambiguous.
+THE BOUNDARY: absence of evidence is never "contradicted". If you cannot quote one sentence from the evidence that is incompatible with the claim, the verdict is "{noEvidenceVerdict}", not "contradicted".
+
+CITATIONS:
+- Evidence items are numbered [E1], [E2], ... Every pitch annotation and every market_matrix row has evidence_ref (the item number: 3 for [E3]) and evidence_quote (one sentence copied VERBATIM from that item's Content).
+- "strong" and "contradicted" annotations MUST cite. Citations are verified against the evidence automatically; an uncited or misquoted "strong" or "contradicted" annotation is downgraded to "{noEvidenceVerdict}".
+- "{noEvidenceVerdict}" and "vague" annotations: set evidence_ref and evidence_quote to null.
+- market_matrix rows: cite the item that names the competitor (and its pricing or funding, if given); null if none.
+- Never paraphrase, merge sentences, or invent a quote.
 """
 
 SCORING_CALIBRATION = """
@@ -84,6 +120,7 @@ OUTPUT FIELDS:
    - competitor: Company name exactly as found in evidence
    - pricing: Exact figures if found, otherwise "not found in evidence"
    - funding: Exact figures if found, otherwise "not found in evidence"
+   - evidence_ref, evidence_quote: see CITATIONS
 
 6. risk_vectors: 3-5 things worth knowing about. Frame as context, not warnings: "There are some well-funded players in this space — [competitor] raised $Xm" or "This market is growing but regulation could be a factor." Landscape observations, not judgments.
 
@@ -95,9 +132,10 @@ OUTPUT FIELDS:
 
 9. pitch_annotations: Look through the founder's ORIGINAL IDEA TEXT and flag interesting parts:
    - excerpt: Exact text (verbatim, short)
-   - annotation_type: "strong" | "needs_research"
-   - note: For "strong": what our research found that supports this. For "needs_research": what would be worth looking into further. Do not use "weak_claim" or "vague" — this is brainstorming, not a pitch review.
-   Include at least 4 annotations. Be generous with "strong" when evidence supports the idea.
+   - annotation_type: "strong" | "contradicted" | "needs_research" (see VERDICT BOUNDARY)
+   - note: For "strong": what our research found that supports this. For "contradicted": what the evidence says instead. For "needs_research": what would be worth looking into further. Do not use "weak_claim", "vague", or "unsubstantiated" — this is brainstorming, not a pitch review.
+   - evidence_ref, evidence_quote: see CITATIONS
+   Include at least 4 annotations. Use "strong" whenever evidence supports the idea.
 
 10. deal_context: Context on where ideas like this typically sit.
     - typical_stage: e.g. "Early exploration" or "Pre-seed"
@@ -107,7 +145,7 @@ OUTPUT FIELDS:
 
 11. feature_suggestions: 3-5 features that competitors offer or that evidence suggests users want. Frame as inspiration: "Competitors like [X] offer [feature] — worth considering for your v1" or "Our research suggests demand for [capability] in this space."
 
-""" + EVIDENCE_RULES
+""" + EVIDENCE_RULES + verdictRules("needs_research")
 
 PITCH_LAB_CALIBRATION = """
 PITCH READINESS SCORING:
@@ -158,6 +196,7 @@ OUTPUT FIELDS:
    - competitor: Company name exactly as found in evidence
    - pricing: Exact figures if found, otherwise "not found in evidence"
    - funding: Exact figures if found, otherwise "not found in evidence"
+   - evidence_ref, evidence_quote: see CITATIONS
 
 6. risk_vectors: 3-5 gaps in the pitch that evidence exposes. Frame as "your pitch doesn't address this, but an investor will notice":
    - "Evidence shows [competitor] raised $Xm — your pitch doesn't mention how you compete with well-funded players. Add a differentiation statement."
@@ -172,12 +211,14 @@ OUTPUT FIELDS:
 
 9. pitch_annotations: THE MAIN DELIVERABLE. Walk through the founder's ORIGINAL PITCH TEXT and annotate it:
    - excerpt: Exact text from the pitch (verbatim, short phrase or sentence)
-   - annotation_type: "strong" | "weak_claim" | "vague" | "unsubstantiated"
+   - annotation_type: "strong" | "contradicted" | "weak_claim" | "vague" | "unsubstantiated" (see VERDICT BOUNDARY)
    - note: Specific, actionable feedback:
      - "strong": "Evidence backs this up — [source] confirms [data]. Lead with this in investor meetings."
-     - "weak_claim": "Evidence doesn't fully support this. Consider rephrasing to: '[suggested rewrite based on what evidence actually shows]'"
+     - "contradicted": "Evidence says the opposite — [source] reports [data]. Correct this before an investor checks it."
+     - "weak_claim": evidence addresses the same subject and points the same direction, but the claim overstates it (e.g. "fastest-growing" where evidence shows 12% growth). Cite it. "Evidence doesn't fully support this. Consider rephrasing to: '[suggested rewrite based on what evidence actually shows]'"
      - "vague": "Too generic for investors. Based on evidence, you could say: '[specific rewrite with data from evidence]'"
      - "unsubstantiated": "Our research found no evidence for this claim. Either cite a source, soften to a hypothesis ('we believe...'), or remove it."
+   - evidence_ref, evidence_quote: see CITATIONS
    Include at least 6 annotations. Be thorough — this is what the founder came here for. Mark claims as "strong" when evidence supports them. For every "vague" or "weak_claim", suggest a specific rewrite.
 
 10. deal_context: Where pitches like this typically sit in the funding landscape.
@@ -189,7 +230,18 @@ OUTPUT FIELDS:
 11. feature_suggestions: 3-5 features to mention in the pitch. Evidence shows competitors offer these or users want them — mentioning your approach to them makes the pitch more credible.
     - "Evidence shows [Competitor X] and [Competitor Y] both offer [feature] — addressing how you handle this strengthens your pitch."
 
-""" + EVIDENCE_RULES
+""" + EVIDENCE_RULES + verdictRules("unsubstantiated")
+
+
+def resolveCitation(
+    evidenceRef: int | None, evidenceQuote: str | None, evidence: list[EvidenceItem]
+) -> Citation | None:
+    if evidenceRef is None or not evidenceQuote or not evidenceQuote.strip():
+        return None
+    if not 1 <= evidenceRef <= len(evidence):
+        return None
+    item = evidence[evidenceRef - 1]
+    return Citation(quote=evidenceQuote.strip(), source_url=item.source_url, retrieved_at=item.retrieved_at)
 
 
 def writer_node(state: AgentState) -> dict:
@@ -200,8 +252,9 @@ def writer_node(state: AgentState) -> dict:
     prompt = PITCH_LAB_PROMPT if mode == "pitch_lab" else QUICK_CHECK_PROMPT
 
     evidence_text = "\n\n".join(
-        f"Source: {e.source_url}\nQuery: [{e.query}]\nTitle: {e.title}\nContent: {e.snippet}"
-        for e in evidence
+        f"[E{i}] Source: {e.source_url}\nRetrieved: {e.retrieved_at.date().isoformat()}\n"
+        f"Query: [{e.query}]\nTitle: {e.title}\nContent: {e.snippet}"
+        for i, e in enumerate(evidence, start=1)
     )
 
     try:
@@ -224,12 +277,28 @@ def writer_node(state: AgentState) -> dict:
         subscores=result.subscores,
         strengthen_suggestions=result.strengthen_suggestions,
         executive_summary=result.executive_summary,
-        market_matrix=result.market_matrix,
+        market_matrix=[
+            MarketCompetitor(
+                competitor=row.competitor,
+                pricing=row.pricing,
+                funding=row.funding,
+                citation=resolveCitation(row.evidence_ref, row.evidence_quote, evidence),
+            )
+            for row in result.market_matrix
+        ],
         risk_vectors=result.risk_vectors,
         confidence_score=result.confidence_score,
         citation_links=citation_links,
         investor_questions=result.investor_questions,
-        pitch_annotations=result.pitch_annotations,
+        pitch_annotations=[
+            PitchAnnotation(
+                excerpt=ann.excerpt,
+                annotation_type=ann.annotation_type,
+                note=ann.note,
+                citation=resolveCitation(ann.evidence_ref, ann.evidence_quote, evidence),
+            )
+            for ann in result.pitch_annotations
+        ],
         deal_context=result.deal_context,
         feature_suggestions=result.feature_suggestions,
     )
