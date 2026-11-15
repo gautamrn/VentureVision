@@ -161,6 +161,9 @@ export default function Home() {
           <p className="text-xs text-muted font-sans">
             Analysis takes 30–60 seconds. Results are grounded in real web sources.
           </p>
+          <Link href="/evals" className="font-sans text-xs text-foreground hover:underline mt-2 inline-block">
+            How often are the verdicts right? See the evals &rarr;
+          </Link>
         </div>
 
         {history.length > 0 && (

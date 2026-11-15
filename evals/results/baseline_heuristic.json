@@ -1,0 +1,27 @@
+{
+  "run_id": "2026-11-15T22-00-42Z_heuristic_a3761a",
+  "mode": "heuristic",
+  "dataset_version": 1,
+  "case_count": 36,
+  "overall_accuracy": 83.3,
+  "labels": [
+    {
+      "label": "supported",
+      "total": 12,
+      "correct": 12,
+      "accuracy": 100.0
+    },
+    {
+      "label": "unsupported",
+      "total": 12,
+      "correct": 11,
+      "accuracy": 91.7
+    },
+    {
+      "label": "contradicted",
+      "total": 12,
+      "correct": 7,
+      "accuracy": 58.3
+    }
+  ]
+}

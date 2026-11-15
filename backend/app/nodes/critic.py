@@ -8,15 +8,13 @@ from app.schemas.models import Citation, EvidenceItem, Groundedness, LlmCall
 from app.telemetry.budget import budgetExitReason, configuredBudgetUsd, spentUsd
 from app.telemetry.pricing import llmCostUsd, searchCostUsd
 from app.telemetry.usage import invokeStructured, structuredOutput
+from app.verification.grounding import quoteAppearsIn
 
 QUICK_MAX_ITERATIONS = 3
 DEEP_MAX_ITERATIONS = 4
 
 CITATION_REQUIRED_VERDICTS = {"strong", "contradicted"}
 NO_EVIDENCE_VERDICT = {"market_scan": "needs_research", "pitch_lab": "unsubstantiated"}
-MIN_QUOTE_WORDS = 3
-_EDGE_PUNCTUATION = " .,;:!?\"'()[]…-"
-_TYPOGRAPHIC = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201c": '"', "\u201d": '"', "\u2013": "-", "\u2014": "-"})
 
 
 class CritiqueResult(BaseModel):
@@ -92,19 +90,11 @@ def budgetStopReason(state: AgentState, criticCall: LlmCall, feedback: str, comp
     )
 
 
-def _normalize(text: str) -> str:
-    return " ".join(text.lower().translate(_TYPOGRAPHIC).split())
-
-
 def isCitationGrounded(citation: Citation | None, evidence: list[EvidenceItem]) -> bool:
     if citation is None:
         return False
-    quote = _normalize(citation.quote).strip(_EDGE_PUNCTUATION)
-    if len(quote.split()) < MIN_QUOTE_WORDS:
-        return False
     return any(
-        str(item.source_url) == str(citation.source_url)
-        and (quote in _normalize(item.snippet) or quote in _normalize(item.title))
+        str(item.source_url) == str(citation.source_url) and quoteAppearsIn(citation.quote, (item.snippet, item.title))
         for item in evidence
     )
 

@@ -1,0 +1,322 @@
+{
+  "run_id": "2026-11-15T22-00-42Z_heuristic_a3761a",
+  "mode": "heuristic",
+  "model": null,
+  "dataset_version": 1,
+  "dataset_sha256": "c7b484f9e911b89c",
+  "case_count": 36,
+  "started_at": "2026-11-15T22:00:42.805418Z",
+  "duration_ms": 3,
+  "cost_usd": 0.0,
+  "overall_accuracy": 83.3,
+  "labels": [
+    {
+      "label": "supported",
+      "total": 12,
+      "correct": 12,
+      "accuracy": 100.0
+    },
+    {
+      "label": "unsupported",
+      "total": 12,
+      "correct": 11,
+      "accuracy": 91.7
+    },
+    {
+      "label": "contradicted",
+      "total": 12,
+      "correct": 7,
+      "accuracy": 58.3
+    }
+  ],
+  "cases": [
+    {
+      "id": "sup-01",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "numbers agree (word overlap 0.75)",
+      "downgraded_from": null
+    },
+    {
+      "id": "sup-02",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "numbers agree (word overlap 0.60)",
+      "downgraded_from": null
+    },
+    {
+      "id": "sup-03",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "numbers agree (word overlap 0.60)",
+      "downgraded_from": null
+    },
+    {
+      "id": "sup-04",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "high word overlap (word overlap 0.83)",
+      "downgraded_from": null
+    },
+    {
+      "id": "sup-05",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "numbers agree (word overlap 1.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "sup-06",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "numbers agree (word overlap 1.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "sup-07",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "numbers agree (word overlap 0.83)",
+      "downgraded_from": null
+    },
+    {
+      "id": "sup-08",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "high word overlap (word overlap 1.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "sup-09",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "high word overlap (word overlap 0.62)",
+      "downgraded_from": null
+    },
+    {
+      "id": "sup-10",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "high word overlap (word overlap 1.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "sup-11",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "numbers agree (word overlap 0.86)",
+      "downgraded_from": null
+    },
+    {
+      "id": "sup-12",
+      "expected": "supported",
+      "predicted": "supported",
+      "correct": true,
+      "detail": "numbers agree (word overlap 1.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-01",
+      "expected": "contradicted",
+      "predicted": "unsupported",
+      "correct": false,
+      "detail": "evidence is off-topic (word overlap 0.33)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-02",
+      "expected": "contradicted",
+      "predicted": "unsupported",
+      "correct": false,
+      "detail": "related but not confirming (word overlap 0.43)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-03",
+      "expected": "contradicted",
+      "predicted": "contradicted",
+      "correct": true,
+      "detail": "claim says 'shrink', evidence says 'cagr' (word overlap 0.62)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-04",
+      "expected": "contradicted",
+      "predicted": "contradicted",
+      "correct": true,
+      "detail": "numbers disagree (word overlap 0.50)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-05",
+      "expected": "contradicted",
+      "predicted": "supported",
+      "correct": false,
+      "detail": "high word overlap (word overlap 0.78)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-06",
+      "expected": "contradicted",
+      "predicted": "contradicted",
+      "correct": true,
+      "detail": "numbers disagree (word overlap 0.80)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-07",
+      "expected": "contradicted",
+      "predicted": "contradicted",
+      "correct": true,
+      "detail": "claim says 'smallest', evidence says 'largest' (word overlap 0.89)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-08",
+      "expected": "contradicted",
+      "predicted": "contradicted",
+      "correct": true,
+      "detail": "claim negates ('no') what the evidence asserts (word overlap 0.78)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-09",
+      "expected": "contradicted",
+      "predicted": "contradicted",
+      "correct": true,
+      "detail": "numbers disagree (word overlap 0.83)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-10",
+      "expected": "contradicted",
+      "predicted": "contradicted",
+      "correct": true,
+      "detail": "numbers disagree (word overlap 0.88)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-11",
+      "expected": "contradicted",
+      "predicted": "unsupported",
+      "correct": false,
+      "detail": "evidence is off-topic (word overlap 0.20)",
+      "downgraded_from": null
+    },
+    {
+      "id": "con-12",
+      "expected": "contradicted",
+      "predicted": "supported",
+      "correct": false,
+      "detail": "numbers agree (word overlap 1.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-01",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "detail": "evidence is off-topic (word overlap 0.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-02",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "detail": "evidence is off-topic (word overlap 0.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-03",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "detail": "evidence is off-topic (word overlap 0.33)",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-04",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "detail": "evidence is off-topic (word overlap 0.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-05",
+      "expected": "unsupported",
+      "predicted": "contradicted",
+      "correct": false,
+      "detail": "numbers disagree (word overlap 0.38)",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-06",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "detail": "evidence is off-topic (word overlap 0.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-07",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "detail": "evidence is off-topic (word overlap 0.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-08",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "detail": "evidence is off-topic (word overlap 0.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-09",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "detail": "no evidence",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-10",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "detail": "evidence is off-topic (word overlap 0.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-11",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "detail": "evidence is off-topic (word overlap 0.00)",
+      "downgraded_from": null
+    },
+    {
+      "id": "uns-12",
+      "expected": "unsupported",
+      "predicted": "unsupported",
+      "correct": true,
+      "detail": "related but not confirming (word overlap 0.38)",
+      "downgraded_from": null
+    }
+  ]
+}

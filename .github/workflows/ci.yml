@@ -36,6 +36,9 @@ jobs:
       - name: Run pytest
         run: pytest
 
+      - name: Heuristic evals vs stored baseline
+        run: python ../evals/run_evals.py --mode heuristic --check-baseline --no-record
+
   frontend:
     name: Frontend lint, typecheck, build
     runs-on: ubuntu-latest

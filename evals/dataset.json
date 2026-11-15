@@ -1,0 +1,8 @@
+{
+  "name": "venturevision-claims",
+  "version": 1,
+  "updated": "2026-11-15",
+  "changelog": [
+    "v1: 36 hand-labeled seed cases (12 supported, 12 unsupported, 12 contradicted). Evidence is verbatim text from the real searches recorded in the three demo runs; claims are verbatim pitch sentences (seed-real) or written to test one verdict boundary (seed-constructed)."
+  ]
+}

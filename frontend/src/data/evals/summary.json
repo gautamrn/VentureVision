@@ -1,0 +1,219 @@
+{
+  "generated_at": "2026-11-15T22:00:42.818877Z",
+  "dataset": {
+    "name": "venturevision-claims",
+    "version": 1,
+    "updated": "2026-11-15",
+    "case_count": 36,
+    "label_counts": {
+      "supported": 12,
+      "unsupported": 12,
+      "contradicted": 12
+    },
+    "origin_counts": {
+      "seed-real": 14,
+      "seed-constructed": 22
+    },
+    "candidate_count": 0
+  },
+  "baseline": {
+    "run_id": "2026-11-15T22-00-42Z_heuristic_a3761a",
+    "mode": "heuristic",
+    "dataset_version": 1,
+    "case_count": 36,
+    "overall_accuracy": 83.3,
+    "labels": [
+      {
+        "label": "supported",
+        "total": 12,
+        "correct": 12,
+        "accuracy": 100.0
+      },
+      {
+        "label": "unsupported",
+        "total": 12,
+        "correct": 11,
+        "accuracy": 91.7
+      },
+      {
+        "label": "contradicted",
+        "total": 12,
+        "correct": 7,
+        "accuracy": 58.3
+      }
+    ]
+  },
+  "latest_heuristic": {
+    "run_id": "2026-11-15T22-00-42Z_heuristic_a3761a",
+    "mode": "heuristic",
+    "model": null,
+    "started_at": "2026-11-15T22:00:42.805418Z",
+    "dataset_version": 1,
+    "case_count": 36,
+    "overall_accuracy": 83.3,
+    "labels": [
+      {
+        "label": "supported",
+        "total": 12,
+        "correct": 12,
+        "accuracy": 100.0
+      },
+      {
+        "label": "unsupported",
+        "total": 12,
+        "correct": 11,
+        "accuracy": 91.7
+      },
+      {
+        "label": "contradicted",
+        "total": 12,
+        "correct": 7,
+        "accuracy": 58.3
+      }
+    ],
+    "cost_usd": 0.0,
+    "failures": [
+      {
+        "id": "con-01",
+        "origin": "seed-real",
+        "claim": "Meal-planning apps are a $3B global market growing over 12% a year.",
+        "pitch_excerpt": "Market: Meal-planning apps are a $3B global market growing over 12% a year, alongside a $100B+ US online grocery market.",
+        "evidence": [
+          {
+            "source_url": "https://www.snsinsider.com/reports/meal-planning-app-market-11549",
+            "title": "Meal Planning App Market Size, Share & Growth Report 2026-2035",
+            "text": "The Meal Planning App Market was valued at USD 1.47 Billion in 2025 and is expected to reach USD 3.87 Billion by 2035, growing at a CAGR of 10.18%."
+          }
+        ],
+        "expected": "contradicted",
+        "predicted": "unsupported",
+        "detail": "evidence is off-topic (word overlap 0.33)",
+        "downgraded_from": null,
+        "notes": "Same market and metric: evidence gives $1.47B (2025) and 10.18% CAGR, incompatible with $3B and over 12%. The demo run labelled this weak_claim."
+      },
+      {
+        "id": "con-02",
+        "origin": "seed-real",
+        "claim": "Thermalith is the first company to commercialize a sand-based thermal battery.",
+        "pitch_excerpt": "Thermalith is the first company to commercialize a sand-based thermal battery.",
+        "evidence": [
+          {
+            "source_url": "https://tracxn.com/d/companies/polar-night-energy/__WoKCOkF4FlnQp-ioDvuxOq6WdlHXmb4Bw9cspvMZnfY",
+            "title": "Polar Night Energy - 2026 Company Profile, Team, Funding & Competitors - Tracxn",
+            "text": "Manufacturer of sand battery based thermal energy storage systems."
+          }
+        ],
+        "expected": "contradicted",
+        "predicted": "unsupported",
+        "detail": "related but not confirming (word overlap 0.43)",
+        "downgraded_from": null,
+        "notes": "Another company (Polar Night Energy) already manufactures sand-battery thermal storage, so 'first to commercialize' cannot hold. The demo run labelled this unsubstantiated."
+      },
+      {
+        "id": "con-05",
+        "origin": "seed-constructed",
+        "claim": "Flaky tests cost teams only a few minutes of rerun time per day.",
+        "pitch_excerpt": "Engineers at companies with large CI pipelines lose up to 20% of their week to flaky tests, and teams learn to ignore red builds, which is how real regressions ship.",
+        "evidence": [
+          {
+            "source_url": "https://viral-patel.kit.com/posts/flaky-tests-the-silent-productivity-killer",
+            "title": "Flaky Tests: The Silent Productivity Killer",
+            "text": "Flaky tests cost teams over 4,200 hours of lost productivity per day when considering just the rerun time."
+          }
+        ],
+        "expected": "contradicted",
+        "predicted": "supported",
+        "detail": "high word overlap (word overlap 0.78)",
+        "downgraded_from": null,
+        "notes": "Evidence: over 4,200 hours per day of rerun time."
+      },
+      {
+        "id": "con-11",
+        "origin": "seed-constructed",
+        "claim": "CircleCI has never raised outside funding.",
+        "pitch_excerpt": "Product: Flakeguard is a GitHub App and CI plugin for GitHub Actions, CircleCI, and Buildkite.",
+        "evidence": [
+          {
+            "source_url": "https://www.businesswire.com/news/home/20210511005782/en/CircleCI-Reaches-%241.7-Billion-Valuation-with-%24100-Million-in-New-Financing",
+            "title": "CircleCI Reaches $1.7 Billion Valuation with $100 Million in New Financing",
+            "text": "CircleCI Reaches $1.7 Billion Valuation with $100 Million in New Financing"
+          }
+        ],
+        "expected": "contradicted",
+        "predicted": "unsupported",
+        "detail": "evidence is off-topic (word overlap 0.20)",
+        "downgraded_from": null,
+        "notes": "Evidence reports a $100M financing round."
+      },
+      {
+        "id": "con-12",
+        "origin": "seed-constructed",
+        "claim": "Lithium-ion batteries are cheaper than thermal storage for durations of 8 hours or more.",
+        "pitch_excerpt": "Technology: Sand is abundant, non-toxic, and costs under $40 per ton. Our storage medium costs under $15 per kWh of capacity, a fraction of lithium-ion batteries.",
+        "evidence": [
+          {
+            "source_url": "https://www.utilitydive.com/news/thermal-and-compressed-air-storage-cheaper-than-lithium-ion-batteries-for-8/717990",
+            "title": "Thermal and compressed air storage cheaper than lithium-ion batteries for 8-plus hour durations: BNEF | Utility Dive",
+            "text": "Thermal and compressed air storage cheaper than lithium-ion batteries for 8-plus hour durations: BNEF"
+          }
+        ],
+        "expected": "contradicted",
+        "predicted": "supported",
+        "detail": "numbers agree (word overlap 1.00)",
+        "downgraded_from": null,
+        "notes": "Reverses the comparison in the evidence for the same duration range. Word overlap is almost total, so this tests direction, not vocabulary."
+      },
+      {
+        "id": "uns-05",
+        "origin": "seed-real",
+        "claim": "The average US household throws away about 30% of the food it buys, roughly $1,500 a year.",
+        "pitch_excerpt": "Problem: The average US household throws away about 30% of the food it buys, roughly $1,500 a year.",
+        "evidence": [
+          {
+            "source_url": "https://copiaresources.com/2026/06/food-waste-statistics-2026",
+            "title": "Food Waste Statistics 2026 - Copia Resources",
+            "text": "The average American spends more than $762 per year on food that ends up wasted."
+          }
+        ],
+        "expected": "unsupported",
+        "predicted": "contradicted",
+        "detail": "numbers disagree (word overlap 0.38)",
+        "downgraded_from": null,
+        "notes": "Evidence is per person, the claim is per household, and the evidence has no share-of-food figure. Different unit, so not a contradiction. The demo run marked this strong."
+      }
+    ]
+  },
+  "latest_llm": null,
+  "history": [
+    {
+      "run_id": "2026-11-15T22-00-42Z_heuristic_a3761a",
+      "mode": "heuristic",
+      "model": null,
+      "started_at": "2026-11-15T22:00:42.805418Z",
+      "dataset_version": 1,
+      "case_count": 36,
+      "overall_accuracy": 83.3,
+      "labels": [
+        {
+          "label": "supported",
+          "total": 12,
+          "correct": 12,
+          "accuracy": 100.0
+        },
+        {
+          "label": "unsupported",
+          "total": 12,
+          "correct": 11,
+          "accuracy": 91.7
+        },
+        {
+          "label": "contradicted",
+          "total": 12,
+          "correct": 7,
+          "accuracy": 58.3
+        }
+      ],
+      "cost_usd": 0.0
+    }
+  ]
+}

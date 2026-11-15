@@ -227,6 +227,83 @@ export const MetricsSchema = z.object({
   recentRuns: z.array(RunRecordSchema),
 });
 
+export const EvalLabelSchema = z.enum(["supported", "unsupported", "contradicted"]);
+export const EvalModeSchema = z.enum(["heuristic", "llm"]);
+export const CaseOriginSchema = z.enum(["seed-real", "seed-constructed", "feedback"]);
+
+export const EvidenceSnippetSchema = z.object({
+  source_url: z.string().nullable(),
+  title: z.string(),
+  text: z.string(),
+});
+
+export const LabelScoreSchema = z.object({
+  label: EvalLabelSchema,
+  total: z.number(),
+  correct: z.number(),
+  accuracy: z.number(),
+});
+
+export const EvalRunSummarySchema = z.object({
+  run_id: z.string(),
+  mode: EvalModeSchema,
+  model: z.string().nullable(),
+  started_at: z.string(),
+  dataset_version: z.number(),
+  case_count: z.number(),
+  overall_accuracy: z.number(),
+  labels: z.array(LabelScoreSchema),
+  cost_usd: z.number(),
+});
+
+export const FailedCaseSchema = z.object({
+  id: z.string(),
+  origin: CaseOriginSchema,
+  claim: z.string(),
+  pitch_excerpt: z.string(),
+  evidence: z.array(EvidenceSnippetSchema),
+  expected: EvalLabelSchema,
+  predicted: EvalLabelSchema,
+  detail: z.string(),
+  downgraded_from: EvalLabelSchema.nullable(),
+  notes: z.string(),
+});
+
+export const LatestEvalRunSchema = EvalRunSummarySchema.extend({
+  failures: z.array(FailedCaseSchema),
+});
+
+export const EvalSummarySchema = z.object({
+  generated_at: z.string(),
+  dataset: z.object({
+    name: z.string(),
+    version: z.number(),
+    updated: z.string(),
+    case_count: z.number(),
+    label_counts: z.record(EvalLabelSchema, z.number()),
+    origin_counts: z.record(z.string(), z.number()),
+    candidate_count: z.number(),
+  }),
+  baseline: z
+    .object({
+      run_id: z.string(),
+      mode: EvalModeSchema,
+      dataset_version: z.number(),
+      case_count: z.number(),
+      overall_accuracy: z.number(),
+      labels: z.array(LabelScoreSchema),
+    })
+    .nullable(),
+  latest_heuristic: LatestEvalRunSchema.nullable(),
+  latest_llm: LatestEvalRunSchema.nullable(),
+  history: z.array(EvalRunSummarySchema),
+});
+
+export type EvalLabel = z.infer<typeof EvalLabelSchema>;
+export type EvalRunSummary = z.infer<typeof EvalRunSummarySchema>;
+export type LatestEvalRun = z.infer<typeof LatestEvalRunSchema>;
+export type FailedCase = z.infer<typeof FailedCaseSchema>;
+export type EvalSummary = z.infer<typeof EvalSummarySchema>;
 export type RunRecord = z.infer<typeof RunRecordSchema>;
 export type Metrics = z.infer<typeof MetricsSchema>;
 export type DemoRun = z.infer<typeof DemoRunSchema>;

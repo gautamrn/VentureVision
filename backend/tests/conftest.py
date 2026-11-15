@@ -38,6 +38,7 @@ from app.middleware import metrics, rateLimiter
 from app.nodes import critic, planner, scout, writer
 from app.shares.store import ShareStore, getShareStore
 from app.telemetry.usage import structuredOutput
+from app.verification import claimVerifier
 from tests.fakes import FakeOpenAI, FakeTavily
 
 _LOOPBACK_HOSTS = {"127.0.0.1", "::1", "localhost"}
@@ -93,6 +94,7 @@ def fakeOpenAI(monkeypatch):
     monkeypatch.setattr(planner, "planner_llm", structuredOutput(chat, planner.ResearchPlan))
     monkeypatch.setattr(critic, "critic_llm", structuredOutput(chat, critic.CritiqueResult))
     monkeypatch.setattr(writer, "writer_llm", structuredOutput(chat, writer.MemoSynthesis))
+    monkeypatch.setattr(claimVerifier, "verifier_llm", structuredOutput(chat, claimVerifier.ClaimVerdictDraft))
     yield fake
     assert not fake.unscripted, f"OpenAI called without a scripted reply for: {fake.unscripted}"
 
