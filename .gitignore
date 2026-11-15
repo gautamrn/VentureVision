@@ -16,15 +16,20 @@ __pycache__/
 *.pyo
 .venv/
 venv/
+env/
 *.egg-info/
 .mypy_cache/
 .pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
 # Node
 node_modules/
 
 # AI Context (Private)
 CLAUDE.local.md
+CLAUDE.md
 .claude/
 .cursorrules
 
@@ -37,8 +42,12 @@ claude.md
 
 # Build Outputs
 .next/
+out/
 dist/
 build/
+coverage/
+*.tsbuildinfo
+.vercel/
 *.log
 
 # IDE
