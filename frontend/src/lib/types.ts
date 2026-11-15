@@ -91,15 +91,52 @@ export const PlannerEventSchema = z.object({
   queryCount: z.number(),
 });
 
+export const RunEventSchema = z.object({
+  runId: z.string(),
+  attempt: z.number(),
+  retriesLeft: z.number(),
+  budgetUsd: z.number(),
+});
+
+export const EvidenceEventSchema = z.object({
+  round: z.number(),
+  query: z.string(),
+  status: z.enum(["ok", "error"]),
+  error: z.string().nullable(),
+  items: z.array(z.object({ title: z.string(), url: z.string() })),
+});
+
 export const ScoutEventSchema = z.object({
   evidenceCount: z.number(),
+  searches: z.number().optional(),
+  failedSearches: z.number().optional(),
 });
 
 export const CriticEventSchema = z.object({
   iteration: z.number(),
   isValidated: z.boolean(),
-  coverageScore: z.number(),
+  coverageScore: z.number().nullable(),
   feedback: z.string(),
+  budgetExitReason: z.string().nullish(),
+  iterationCapReached: z.boolean().optional(),
+});
+
+export const ErrorEventSchema = z.object({
+  message: z.string(),
+  node: z.string().nullish(),
+  kind: z.enum(["upstream_api", "bad_model_output", "internal", "http", "network"]).optional(),
+  retryable: z.boolean().optional(),
+  runId: z.string().nullish(),
+});
+
+export const CancelledEventSchema = z.object({
+  runId: z.string(),
+  node: z.string(),
+});
+
+export const CancelResponseSchema = z.object({
+  runId: z.string(),
+  status: z.literal("cancelling"),
 });
 
 export const WriterEventSchema = z.object({
@@ -176,16 +213,23 @@ export type InvestorQuestion = z.infer<typeof InvestorQuestionSchema>;
 export type PitchAnnotation = z.infer<typeof PitchAnnotationSchema>;
 export type DealContext = z.infer<typeof DealContextSchema>;
 export type MemoOutput = z.infer<typeof MemoOutputSchema>;
+export type RunEvent = z.infer<typeof RunEventSchema>;
+export type EvidenceEvent = z.infer<typeof EvidenceEventSchema>;
 export type PlannerEvent = z.infer<typeof PlannerEventSchema>;
 export type ScoutEvent = z.infer<typeof ScoutEventSchema>;
 export type CriticEvent = z.infer<typeof CriticEventSchema>;
 export type WriterEvent = z.infer<typeof WriterEventSchema>;
 export type CitationAuditEvent = z.infer<typeof CitationAuditEventSchema>;
+export type ErrorEvent = z.infer<typeof ErrorEventSchema>;
+export type CancelledEvent = z.infer<typeof CancelledEventSchema>;
 
 export type AgentEvent =
+  | { type: "run"; data: RunEvent }
   | { type: "planner"; data: PlannerEvent }
+  | { type: "evidence"; data: EvidenceEvent }
   | { type: "scout"; data: ScoutEvent }
   | { type: "critic"; data: CriticEvent }
   | { type: "writer"; data: WriterEvent }
   | { type: "citation_audit"; data: CitationAuditEvent }
-  | { type: "error"; data: { message: string } };
+  | { type: "cancelled"; data: CancelledEvent }
+  | { type: "error"; data: ErrorEvent };

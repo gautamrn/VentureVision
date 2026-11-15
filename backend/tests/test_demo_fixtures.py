@@ -19,3 +19,5 @@ def testDemoFixtureMatchesPitchAndCurrentMemoSchema(sample):
 
     memo = MemoOutput.model_validate(fixture["events"][-1]["data"]["memo"])
     assert memo.groundedness is not None
+    assert memo.telemetry is not None, "fixture predates run instrumentation; re-run scripts.recordDemoRuns"
+    assert any(e["event"] == "evidence" for e in fixture["events"])

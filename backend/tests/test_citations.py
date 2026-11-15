@@ -2,9 +2,10 @@ from datetime import datetime, timezone
 
 import pytest
 
+from app.graph.errors import describeFailure
 from app.nodes.critic import citation_audit_node
 from app.nodes.writer import writer_node
-from app.routers.analyze import serializeNodeOutput
+from app.runs.events import serializeNodeOutput
 from app.schemas.models import Citation, EvidenceItem, MarketCompetitor, MemoOutput, PitchAnnotation
 from tests.fakes import (
     SAMPLE_PITCH,
@@ -235,7 +236,9 @@ def testWriterPromptStatesContradictedBoundary(fakeOpenAI, mode, noEvidenceVerdi
 def testWriterRejectsUnknownVerdict(fakeOpenAI):
     fakeOpenAI.script("MemoSynthesis", memoSynthesis(annotations=[annotationDraft("refuted")]))
 
-    assert writer_node({"pitch": SAMPLE_PITCH, "mode": "market_scan", "raw_evidence": []})["final_memo"] is None
+    with pytest.raises(Exception) as raised:
+        writer_node({"pitch": SAMPLE_PITCH, "mode": "market_scan", "raw_evidence": []})
+    assert describeFailure("writer", raised.value)[0] == "bad_model_output"
 
 
 # All three verdicts through the full graph

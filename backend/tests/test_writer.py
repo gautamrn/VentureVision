@@ -1,3 +1,6 @@
+import pytest
+
+from app.graph.errors import describeFailure
 from app.nodes.writer import writer_node
 from app.schemas.models import EvidenceItem, MemoOutput
 from tests.fakes import SAMPLE_PITCH, memoSynthesis
@@ -71,23 +74,29 @@ def testWriterUsesPitchCoachPromptInPitchLabMode(fakeOpenAI):
     assert systemMessage.startswith("You are a pitch coach.")
 
 
-def testWriterReturnsNoMemoWhenOutputMissesRequiredFields(fakeOpenAI):
+def assertBadModelOutput(fakeOpenAI) -> None:
+    with pytest.raises(Exception) as raised:
+        writer_node(writerState([]))
+    assert describeFailure("writer", raised.value)[0] == "bad_model_output"
+
+
+def testWriterOutputMissingRequiredFieldsIsABadModelOutputFailure(fakeOpenAI):
     incomplete = memoSynthesis()
     del incomplete["deal_context"]
     fakeOpenAI.script("MemoSynthesis", incomplete)
 
-    assert writer_node(writerState([]))["final_memo"] is None
+    assertBadModelOutput(fakeOpenAI)
 
 
-def testWriterReturnsNoMemoWhenOutputHasWrongTypes(fakeOpenAI):
+def testWriterOutputWithWrongTypesIsABadModelOutputFailure(fakeOpenAI):
     wrongTypes = memoSynthesis()
     wrongTypes["subscores"]["market_size"] = "very large"
     fakeOpenAI.script("MemoSynthesis", wrongTypes)
 
-    assert writer_node(writerState([]))["final_memo"] is None
+    assertBadModelOutput(fakeOpenAI)
 
 
-def testWriterReturnsNoMemoWhenOutputIsNotJson(fakeOpenAI):
+def testWriterOutputThatIsNotJsonIsABadModelOutputFailure(fakeOpenAI):
     fakeOpenAI.script("MemoSynthesis", "I'm sorry, I can't help with that.")
 
-    assert writer_node(writerState([]))["final_memo"] is None
+    assertBadModelOutput(fakeOpenAI)

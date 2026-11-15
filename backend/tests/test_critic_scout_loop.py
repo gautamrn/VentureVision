@@ -1,5 +1,6 @@
 import pytest
 
+from app.graph.errors import NodeFailure
 from app.nodes import critic
 from app.nodes.critic import critic_node
 from tests.fakes import critique, memoSynthesis, researchPlan, runGraph
@@ -91,12 +92,12 @@ def testCriticAtCapValidatesWithoutCallingOpenAI(fakeOpenAI):
     assert fakeOpenAI.calls == []
 
 
-def testCriticFailureExitsLoopInsteadOfSpinning(fakeOpenAI, fakeTavily):
+def testCriticFailureStopsTheRunInsteadOfPassingUnjudgedEvidence(fakeOpenAI, fakeTavily):
     fakeOpenAI.script("ResearchPlan", researchPlan(["dog walking app competitors"]))
     fakeOpenAI.script("CritiqueResult", "not json at all")
-    fakeOpenAI.script("MemoSynthesis", memoSynthesis())
 
-    order, finalState = runGraph()
+    with pytest.raises(NodeFailure) as failure:
+        runGraph()
 
-    assert order == ["planner", "scout", "critic", "writer", "citation_audit"]
-    assert finalState["coverage_score"] == 0.0
+    assert (failure.value.node, failure.value.kind) == ("critic", "bad_model_output")
+    assert fakeOpenAI.callsFor("MemoSynthesis") == []

@@ -68,7 +68,7 @@ def testAnalyzeReturns502WhenWriterCannotProduceMemo(client, fakeOpenAI, fakeTav
     response = client.post("/analyze", json={"pitch": SAMPLE_PITCH})
 
     assert response.status_code == 502
-    assert response.json() == {"detail": "Analysis failed. Please try again."}
+    assert response.json() == {"detail": "The writer agent's model response did not match the expected schema."}
 
 
 def testAnalyzeRateLimitsPerClient(client, fakeOpenAI, fakeTavily):

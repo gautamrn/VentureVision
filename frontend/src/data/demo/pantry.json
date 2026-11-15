@@ -5,121 +5,581 @@
   "tagline": "Turns grocery receipts into a weekly meal plan that uses what you already bought.",
   "pitch": "Pantry: cook what you bought before it goes bad.\n\nProblem: The average US household throws away about 30% of the food it buys, roughly $1,500 a year. People buy groceries with good intentions, forget what is in the fridge, and order takeout while vegetables rot.\n\nProduct: Pantry is an iOS and Android app. Snap a photo of your grocery receipt (or connect Instacart and Walmart accounts) and Pantry builds a live inventory of your kitchen with estimated expiry dates. Every Sunday it generates a weekly meal plan that prioritizes ingredients about to expire, fits your household size and dietary preferences, and produces a short shopping list for what is missing. Push reminders flag food that needs to be used tomorrow.\n\nDifferentiation: Meal-planning apps start from recipes and send you shopping. Pantry starts from what you already own. No other app builds the plan from your receipts.\n\nMarket: Meal-planning apps are a $3B global market growing over 12% a year, alongside a $100B+ US online grocery market.\n\nBusiness model: Freemium. Free inventory and reminders; Pantry Plus at $6.99/month adds weekly plans, nutrition targets, and family sharing. Grocery retailer affiliate revenue on shopping lists.\n\nTraction: 38,000 downloads in a 5-month beta, 9,400 monthly active users, 6.1% free-to-paid conversion, 41% week-4 retention.\n\nTeam: Former product lead at a food-delivery app and an ML engineer who built receipt OCR at a fintech.\n\nAsk: Raising $1.8M pre-seed to launch Android and retailer integrations.",
   "mode": "pitch_lab",
-  "recordedAt": "2026-11-15T20:17:16+00:00",
-  "durationMs": 71133,
+  "recordedAt": "2026-11-15T21:02:40+00:00",
+  "durationMs": 62590,
   "events": [
     {
       "event": "planner",
-      "atMs": 2086,
+      "atMs": 2526,
       "data": {
         "queries": [
           "US food waste statistics average household 2024",
           "meal planning app market size growth rate 2025",
-          "Pantry app competitor analysis meal planning",
-          "Instacart funding round valuation 2024",
-          "Walmart grocery app features pricing comparison",
-          "customer acquisition cost meal planning apps 2024",
-          "regulatory requirements for food inventory apps",
-          "consumer behavior food waste reduction technology trends 2024"
+          "Pantry app competitor analysis Mealime Yummly pricing",
+          "Instacart Walmart grocery app integration features",
+          "food waste reduction technology trends 2024",
+          "customer behavior meal planning app usage statistics",
+          "grocery retailer affiliate revenue models 2024",
+          "food expiration tracking app compliance regulations"
         ],
         "queryCount": 8
       }
     },
     {
-      "event": "scout",
-      "atMs": 19785,
+      "event": "evidence",
+      "atMs": 5066,
       "data": {
-        "evidenceCount": 16
+        "round": 1,
+        "query": "US food waste statistics average household 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Report Shows U.S. Food Waste at Historic Low, Driven by Households - The Packer",
+            "url": "https://www.thepacker.com/news/sustainability/report-shows-u-s-food-waste-historic-low-driven-households"
+          },
+          {
+            "title": "Food Waste Statistics 2026 - Copia Resources",
+            "url": "https://copiaresources.com/2026/06/food-waste-statistics-2026"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 7767,
+      "data": {
+        "round": 1,
+        "query": "meal planning app market size growth rate 2025",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Meal Planning App Market Size, Share & Growth Report 2026-2035",
+            "url": "https://www.snsinsider.com/reports/meal-planning-app-market-11549"
+          },
+          {
+            "title": "AI-driven Meal Planning Apps Market Growth at USD 11,566.5M",
+            "url": "https://scoop.market.us/ai-driven-meal-planning-apps-market-news"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 10331,
+      "data": {
+        "round": 1,
+        "query": "Pantry app competitor analysis Mealime Yummly pricing",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Mealime Is Shutting Down Oct 21: Best Alternatives (Free and Paid)",
+            "url": "https://www.pantrypersona.com/blog/best-mealime-alternatives-2026"
+          },
+          {
+            "title": "Best Meal Planning Apps 2026 \u2014 KitchenPal #1 Pick | Tested & Ranked",
+            "url": "https://kitchenpalapp.com/en/guides/best-meal-planning-apps-2026.html"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 12542,
+      "data": {
+        "round": 1,
+        "query": "Instacart Walmart grocery app integration features",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Save More with a Walmart and Instacart Grocery Price Scraper API",
+            "url": "https://www.fooddatascrape.com/walmart-instacart-grocery-price-scraper-api.php"
+          },
+          {
+            "title": "Feature Overview - Online Grocery Shopping - AnyList Help",
+            "url": "https://help.anylist.com/articles/feature-overview-online-shopping"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 15404,
+      "data": {
+        "round": 1,
+        "query": "food waste reduction technology trends 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Looking Ahead: Forecasting Food Waste Reduction Progress in 2024",
+            "url": "https://refed.org/articles/looking-ahead-forecasting-food-waste-reduction-progress-in-2024"
+          },
+          {
+            "title": "How Technologies Can Help Reduce Food Waste - THAIFEX - HOREC Asia",
+            "url": "https://thaifex-horec.asia/how-technologies-can-help-reduce-food-waste"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 17771,
+      "data": {
+        "round": 1,
+        "query": "customer behavior meal planning app usage statistics",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "40+ Meal Planning Statistics in 2026 | Peel",
+            "url": "https://trypeel.app/blog/meal-planning-statistics"
+          },
+          {
+            "title": "Meal Planning App Development: Features, Cost, and Tech Stack",
+            "url": "https://nyusoft.com/meal-planning-app-development-guide"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 20045,
+      "data": {
+        "round": 1,
+        "query": "grocery retailer affiliate revenue models 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Retail Affiliate Marketing 2026: 12 Revenue-Boosting Tactics",
+            "url": "https://www.hamstergarage.com/article/retail-affiliate-marketing-strategies-guide"
+          },
+          {
+            "title": "9 Grocery Retail Trends in 2024",
+            "url": "https://www.oracle.com/retail/grocery-industry-trends"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 22490,
+      "data": {
+        "round": 1,
+        "query": "food expiration tracking app compliance regulations",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Complete Guide to ERP for Food & Beverage Distributors: Managing Lot Tracking, Expiration Dates & Compliance - Bizowie",
+            "url": "https://bizowie.com/complete-guide-to-erp-for-food-beverage-distributors-managing-lot-tracking-expiration-dates-compliance"
+          },
+          {
+            "title": "The Real Cost of Ignoring Expiration Dates in Your Food Business",
+            "url": "https://www.boxhero.io/blog/managing-expiration-dates-food-beverage"
+          }
+        ]
+      }
+    },
+    {
+      "event": "scout",
+      "atMs": 22491,
+      "data": {
+        "evidenceCount": 16,
+        "searches": 8,
+        "failedSearches": 0
       }
     },
     {
       "event": "critic",
-      "atMs": 21991,
+      "atMs": 24063,
       "data": {
         "iteration": 1,
         "isValidated": false,
         "coverageScore": 0.75,
-        "feedback": "customer acquisition cost meal planning apps 2024 analysis, regulatory requirements for food inventory apps compliance details, consumer behavior food waste reduction technology trends 2024 insights, meal planning app user demographics 2024"
+        "feedback": "food waste reduction technology trends 2024, grocery retailer affiliate revenue models 2024, food expiration tracking app compliance regulations",
+        "budgetExitReason": null,
+        "iterationCapReached": false
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 24661,
+      "data": {
+        "round": 2,
+        "query": "food waste reduction technology trends 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Looking Ahead: Forecasting Food Waste Reduction Progress in 2024",
+            "url": "https://refed.org/articles/looking-ahead-forecasting-food-waste-reduction-progress-in-2024"
+          },
+          {
+            "title": "How Technologies Can Help Reduce Food Waste - THAIFEX - HOREC Asia",
+            "url": "https://thaifex-horec.asia/how-technologies-can-help-reduce-food-waste"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 25240,
+      "data": {
+        "round": 2,
+        "query": "grocery retailer affiliate revenue models 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Retail Affiliate Marketing 2026: 12 Revenue-Boosting Tactics",
+            "url": "https://www.hamstergarage.com/article/retail-affiliate-marketing-strategies-guide"
+          },
+          {
+            "title": "9 Grocery Retail Trends in 2024",
+            "url": "https://www.oracle.com/retail/grocery-industry-trends"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 25813,
+      "data": {
+        "round": 2,
+        "query": "food expiration tracking app compliance regulations",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Complete Guide to ERP for Food & Beverage Distributors: Managing Lot Tracking, Expiration Dates & Compliance - Bizowie",
+            "url": "https://bizowie.com/complete-guide-to-erp-for-food-beverage-distributors-managing-lot-tracking-expiration-dates-compliance"
+          },
+          {
+            "title": "The Real Cost of Ignoring Expiration Dates in Your Food Business",
+            "url": "https://www.boxhero.io/blog/managing-expiration-dates-food-beverage"
+          }
+        ]
       }
     },
     {
       "event": "scout",
-      "atMs": 30330,
+      "atMs": 25814,
       "data": {
-        "evidenceCount": 24
+        "evidenceCount": 22,
+        "searches": 3,
+        "failedSearches": 0
       }
     },
     {
       "event": "critic",
-      "atMs": 32144,
+      "atMs": 27159,
       "data": {
         "iteration": 2,
         "isValidated": false,
         "coverageScore": 0.75,
-        "feedback": "food waste reduction technology trends 2024 consumer insights, meal planning app user demographics 2024, customer acquisition cost meal planning apps analysis 2024"
+        "feedback": "food waste reduction technology trends 2024, customer behavior meal planning app usage statistics, grocery retailer affiliate revenue models 2024",
+        "budgetExitReason": null,
+        "iterationCapReached": false
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 27734,
+      "data": {
+        "round": 3,
+        "query": "food waste reduction technology trends 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Looking Ahead: Forecasting Food Waste Reduction Progress in 2024",
+            "url": "https://refed.org/articles/looking-ahead-forecasting-food-waste-reduction-progress-in-2024"
+          },
+          {
+            "title": "How Technologies Can Help Reduce Food Waste - THAIFEX - HOREC Asia",
+            "url": "https://thaifex-horec.asia/how-technologies-can-help-reduce-food-waste"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 28287,
+      "data": {
+        "round": 3,
+        "query": "customer behavior meal planning app usage statistics",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "40+ Meal Planning Statistics in 2026 | Peel",
+            "url": "https://trypeel.app/blog/meal-planning-statistics"
+          },
+          {
+            "title": "Meal Planning App Development: Features, Cost, and Tech Stack",
+            "url": "https://nyusoft.com/meal-planning-app-development-guide"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 28910,
+      "data": {
+        "round": 3,
+        "query": "grocery retailer affiliate revenue models 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Retail Affiliate Marketing 2026: 12 Revenue-Boosting Tactics",
+            "url": "https://www.hamstergarage.com/article/retail-affiliate-marketing-strategies-guide"
+          },
+          {
+            "title": "9 Grocery Retail Trends in 2024",
+            "url": "https://www.oracle.com/retail/grocery-industry-trends"
+          }
+        ]
       }
     },
     {
       "event": "scout",
-      "atMs": 39849,
+      "atMs": 28913,
       "data": {
-        "evidenceCount": 30
+        "evidenceCount": 28,
+        "searches": 3,
+        "failedSearches": 0
       }
     },
     {
       "event": "critic",
-      "atMs": 41533,
+      "atMs": 30624,
       "data": {
         "iteration": 3,
         "isValidated": false,
         "coverageScore": 0.75,
-        "feedback": "food inventory app regulations 2024, consumer trends in food waste reduction 2024, customer acquisition cost analysis meal planning apps 2024, meal planning app user demographics 2024"
+        "feedback": "food waste reduction technology trends 2024 statistics, meal planning app user demographics 2024, grocery retailer affiliate marketing case studies 2024, food expiration tracking app market analysis 2025",
+        "budgetExitReason": null,
+        "iterationCapReached": false
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 33100,
+      "data": {
+        "round": 4,
+        "query": "food waste reduction technology trends 2024 statistics",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "US Food Waste Report 2024 - ReFED",
+            "url": "https://refed.org/downloads/2024-refed-food-waste-report-updated-4-18-2025.pdf"
+          },
+          {
+            "title": "Food Waste Index Report 2024",
+            "url": "https://wedocs.unep.org/handle/20.500.11822/45230"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 35536,
+      "data": {
+        "round": 4,
+        "query": "meal planning app user demographics 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Meal Planning App Market Trends and Market Share Analysis with Market Size Growing at a CAGR of 14.8% from 2026 to 2033",
+            "url": "https://www.linkedin.com/pulse/meal-planning-app-market-trends-share-analysis-gi1if"
+          },
+          {
+            "title": "AI-driven Meal Planning Apps Market Size | CAGR of 28.10%",
+            "url": "https://market.us/report/ai-driven-meal-planning-apps-market"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 38794,
+      "data": {
+        "round": 4,
+        "query": "grocery retailer affiliate marketing case studies 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Affiliate Marketing Case Studies | NYMO & Co.",
+            "url": "https://nymo.co/case-studies"
+          },
+          {
+            "title": "Luxury Fragrance Retailer +122% Revenue Boost: Affiliate Case Study | Gen3 Marketing",
+            "url": "https://gen3marketing.com/case-studies/luxury-fragrance-affiliate-marketing"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 41525,
+      "data": {
+        "round": 4,
+        "query": "food expiration tracking app market analysis 2025",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Food Waste App Market Report | In-Depth Market Analysis 2035 | WiseGuyReports",
+            "url": "https://www.wiseguyreports.com/reports/food-waste-app-market"
+          },
+          {
+            "title": "A Mobile Approach to Food Expiration Date Determination Using OCR and On-Cloud Image Classification",
+            "url": "https://www.mdpi.com/2571-5577/8/6/176"
+          }
+        ]
       }
     },
     {
       "event": "scout",
-      "atMs": 49423,
+      "atMs": 41526,
       "data": {
-        "evidenceCount": 38
+        "evidenceCount": 36,
+        "searches": 4,
+        "failedSearches": 0
       }
     },
     {
       "event": "critic",
-      "atMs": 51567,
+      "atMs": 43788,
       "data": {
         "iteration": 4,
         "isValidated": false,
         "coverageScore": 0.75,
-        "feedback": "food inventory app regulations 2024, customer acquisition cost meal planning apps 2024 analysis, consumer behavior food waste reduction technology trends 2024 insights, meal planning app user demographics 2024"
+        "feedback": "food waste reduction technology trends 2024 statistics, meal planning app user demographics 2024, grocery retailer affiliate marketing case studies 2024, food expiration tracking app market analysis 2025",
+        "budgetExitReason": null,
+        "iterationCapReached": false
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 44478,
+      "data": {
+        "round": 5,
+        "query": "food waste reduction technology trends 2024 statistics",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "US Food Waste Report 2024 - ReFED",
+            "url": "https://refed.org/downloads/2024-refed-food-waste-report-updated-4-18-2025.pdf"
+          },
+          {
+            "title": "Food Waste Index Report 2024",
+            "url": "https://wedocs.unep.org/handle/20.500.11822/45230"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 45137,
+      "data": {
+        "round": 5,
+        "query": "meal planning app user demographics 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Meal Planning App Market Trends and Market Share Analysis with Market Size Growing at a CAGR of 14.8% from 2026 to 2033",
+            "url": "https://www.linkedin.com/pulse/meal-planning-app-market-trends-share-analysis-gi1if"
+          },
+          {
+            "title": "AI-driven Meal Planning Apps Market Size | CAGR of 28.10%",
+            "url": "https://market.us/report/ai-driven-meal-planning-apps-market"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 45771,
+      "data": {
+        "round": 5,
+        "query": "grocery retailer affiliate marketing case studies 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Affiliate Marketing Case Studies | NYMO & Co.",
+            "url": "https://nymo.co/case-studies"
+          },
+          {
+            "title": "Luxury Fragrance Retailer +122% Revenue Boost: Affiliate Case Study | Gen3 Marketing",
+            "url": "https://gen3marketing.com/case-studies/luxury-fragrance-affiliate-marketing"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 46373,
+      "data": {
+        "round": 5,
+        "query": "food expiration tracking app market analysis 2025",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Food Waste App Market Report | In-Depth Market Analysis 2035 | WiseGuyReports",
+            "url": "https://www.wiseguyreports.com/reports/food-waste-app-market"
+          },
+          {
+            "title": "A Mobile Approach to Food Expiration Date Determination Using OCR and On-Cloud Image Classification",
+            "url": "https://www.mdpi.com/2571-5577/8/6/176"
+          }
+        ]
       }
     },
     {
       "event": "scout",
-      "atMs": 53603,
+      "atMs": 46375,
       "data": {
-        "evidenceCount": 46
+        "evidenceCount": 44,
+        "searches": 4,
+        "failedSearches": 0
       }
     },
     {
       "event": "critic",
-      "atMs": 53604,
+      "atMs": 46381,
       "data": {
         "iteration": 4,
         "isValidated": true,
-        "coverageScore": 0.0,
-        "feedback": ""
+        "coverageScore": null,
+        "feedback": "",
+        "budgetExitReason": null,
+        "iterationCapReached": true
       }
     },
     {
       "event": "writer",
-      "atMs": 71127,
+      "atMs": 62569,
       "data": {
         "memoReady": true
       }
     },
     {
       "event": "citation_audit",
-      "atMs": 71133,
+      "atMs": 62590,
       "data": {
         "memo": {
           "pitch_score": 68,
@@ -127,178 +587,207 @@
             "market_size": 70,
             "competition": 60,
             "revenue_model": 75,
-            "uniqueness": 65
+            "uniqueness": 60
           },
           "strengthen_suggestions": [
-            "Add specific market size figures \u2014 evidence shows the meal-planning app market is expected to reach $3.87 billion by 2035, growing at a CAGR of 10.18%. Saying 'growing market' is vague; '$3.87 billion market growing at 10.18%' is fundable.",
-            "Name your top competitors and explain your edge \u2014 evidence shows KitchenPal and Mealime are significant players in this space. Investors will want to know how you differentiate from them.",
-            "Clarify your revenue model with specific comparisons \u2014 evidence shows that many meal planning apps face challenges with customer retention and acquisition costs. Position your pricing against competitors like KitchenPal, which offers similar features."
+            "Add specific market size figures \u2014 evidence shows the meal-planning app market is projected to reach $3.87 billion by 2035, growing at a CAGR of 10.18%. Saying 'growing market' is vague; '$3.87 billion market growing at 10.18%' is more compelling.",
+            "Name your top competitors and explain your edge \u2014 evidence shows KitchenPal and Cooklist are in this space. Investors will want to know how you differentiate from these established players.",
+            "Clarify your revenue model with specific comparisons \u2014 evidence shows competitors like Cooklist charge $5.99 to $9.99/month. Position your pricing against theirs to highlight value."
           ],
-          "executive_summary": "Your pitch effectively identifies a significant problem with food waste and presents a clear solution through the Pantry app. However, it lacks depth in addressing the competitive landscape and specific market size figures, which are crucial for investor confidence.",
+          "executive_summary": "Your pitch effectively identifies a significant problem with food waste and presents a clear solution through the Pantry app. However, it lacks depth in addressing the competitive landscape and could benefit from more specific market data and competitor analysis to strengthen its appeal to investors.",
           "market_matrix": [
             {
               "competitor": "KitchenPal",
-              "pricing": "not found in evidence",
+              "pricing": "Free; Pro $7.99/mo or $79.99/yr",
               "funding": "not found in evidence",
               "citation": null
             },
             {
-              "competitor": "Mealime",
-              "pricing": "not found in evidence",
+              "competitor": "Cooklist",
+              "pricing": "Free to install; Pro $5.99, $7.99 or $9.99/mo; $49.99 or $59.99/yr",
               "funding": "not found in evidence",
               "citation": null
             }
           ],
           "risk_vectors": [
-            "Your pitch doesn't address the competitive landscape adequately \u2014 evidence shows KitchenPal and Mealime are established players. Investors will want to see how you plan to compete against them.",
-            "Your pitch mentions a freemium model but lacks detail on conversion strategies \u2014 evidence indicates that many meal planning apps struggle with customer retention. Consider adding a strategy for maintaining user engagement.",
-            "Evidence shows rising customer acquisition costs in the meal planning app market \u2014 your pitch should address how you plan to manage these costs effectively."
+            "Your pitch doesn't mention how you compete with established players like KitchenPal and Cooklist, which have similar features. Investors will want to see a differentiation statement.",
+            "Evidence shows the meal-planning app market is growing at a CAGR of 10.18% \u2014 your pitch should specify how you plan to capture this growth and what your market share goals are.",
+            "Your pitch lacks a detailed explanation of your affiliate revenue model. Evidence shows that affiliate marketing can be complex; clarify how you will manage partnerships and revenue streams."
           ],
           "confidence_score": 0.8,
           "citation_links": [
-            "https://cloudkitchens.com/blog/food-brand-cac",
-            "https://kitchenpalapp.com/en/guides/best-meal-planning-apps-2026.html",
-            "https://copiaresources.com/2026/06/food-waste-statistics-2026",
-            "https://groceriestracker.com/blog/best-grocery-price-comparison-apps-2026",
-            "https://foodtech.folio3.com/solutions/food-erp/food-manufacturing-inventory-software",
-            "https://foodready.ai/features/food-inventory-management-software",
-            "https://play.google.com/store/apps/details?id=fr.icuisto.icuisto&hl=en_US",
-            "https://www.snsinsider.com/reports/meal-planning-app-market-11549",
-            "https://nyusoft.com/meal-planning-app-development-guide",
-            "https://www.strategicrevenueinsights.com/industry/meal-planning-app-market",
-            "https://grocerychop.com/blog/best-app-to-compare-grocery-prices",
-            "https://www.thepacker.com/news/sustainability/report-shows-u-s-food-waste-historic-low-driven-households",
-            "https://www.grocerydive.com/news/instacarts-valuation-more-than-doubles-to-39b/595975",
+            "https://www.mdpi.com/2571-5577/8/6/176",
+            "https://nymo.co/case-studies",
+            "https://www.hamstergarage.com/article/retail-affiliate-marketing-strategies-guide",
             "https://scoop.market.us/ai-driven-meal-planning-apps-market-news",
-            "https://growthmarketreports.com/report/meal-planning-app-market",
-            "https://pmc.ncbi.nlm.nih.gov/articles/PMC11799730",
-            "https://refed.org/articles/5-proven-food-waste-solutions-for-2024",
-            "https://www.mintel.com/insights/food-and-drink/less-waste-more-taste-attitudes-towards-food-waste-reduction-strategies",
-            "https://matellio.com/blog/food-inventory-management-software-development",
-            "https://news.crunchbase.com/venture/instacart-pushes-its-way-to-a-13-7b-valuation-with-new-225m-funding-round",
-            "https://www.hotelierindia.com/fb/trends-in-food-waste-reduction",
-            "https://yourfood.app/best-pantry-inventory-apps",
+            "https://gen3marketing.com/case-studies/luxury-fragrance-affiliate-marketing",
+            "https://wedocs.unep.org/handle/20.500.11822/45230",
             "https://refed.org/downloads/2024-refed-food-waste-report-updated-4-18-2025.pdf",
             "https://market.us/report/ai-driven-meal-planning-apps-market",
-            "https://www.mdpi.com/2304-8158/15/2/380"
+            "https://www.oracle.com/retail/grocery-industry-trends",
+            "https://www.pantrypersona.com/blog/best-mealime-alternatives-2026",
+            "https://www.boxhero.io/blog/managing-expiration-dates-food-beverage",
+            "https://thaifex-horec.asia/how-technologies-can-help-reduce-food-waste",
+            "https://trypeel.app/blog/meal-planning-statistics",
+            "https://copiaresources.com/2026/06/food-waste-statistics-2026",
+            "https://refed.org/articles/looking-ahead-forecasting-food-waste-reduction-progress-in-2024",
+            "https://www.wiseguyreports.com/reports/food-waste-app-market",
+            "https://bizowie.com/complete-guide-to-erp-for-food-beverage-distributors-managing-lot-tracking-expiration-dates-compliance",
+            "https://www.thepacker.com/news/sustainability/report-shows-u-s-food-waste-historic-low-driven-households",
+            "https://www.snsinsider.com/reports/meal-planning-app-market-11549",
+            "https://www.fooddatascrape.com/walmart-instacart-grocery-price-scraper-api.php",
+            "https://help.anylist.com/articles/feature-overview-online-shopping",
+            "https://kitchenpalapp.com/en/guides/best-meal-planning-apps-2026.html",
+            "https://nyusoft.com/meal-planning-app-development-guide",
+            "https://www.linkedin.com/pulse/meal-planning-app-market-trends-share-analysis-gi1if"
           ],
           "investor_questions": [
             {
-              "question": "What specific features differentiate Pantry from competitors like KitchenPal?",
-              "why_it_matters": "Your pitch mentions differentiation but lacks specific features that set you apart."
+              "question": "What specific features differentiate Pantry from competitors like KitchenPal and Cooklist?",
+              "why_it_matters": "Your pitch mentions differentiation but lacks specific competitor analysis."
             },
             {
-              "question": "How do you plan to scale user acquisition given the competitive landscape?",
-              "why_it_matters": "Evidence shows high customer acquisition costs in this market; investors will want to know your strategy."
+              "question": "How do you plan to scale user acquisition beyond the initial downloads?",
+              "why_it_matters": "Your traction numbers are good, but investors will want to know your growth strategy."
             },
             {
-              "question": "What are your projected revenues based on your pricing model?",
-              "why_it_matters": "Your pitch outlines a freemium model but lacks detailed revenue projections."
+              "question": "What are your projected revenues for the first three years?",
+              "why_it_matters": "Your pitch mentions a freemium model but lacks financial projections."
             },
             {
-              "question": "How will you ensure user retention beyond the initial download?",
-              "why_it_matters": "Evidence indicates that many users abandon meal planning apps after a short period."
+              "question": "How will you ensure compliance with food safety regulations?",
+              "why_it_matters": "Given the nature of your app, investors will want to know how you handle regulatory issues."
             },
             {
-              "question": "What partnerships do you plan to pursue with grocery retailers?",
-              "why_it_matters": "Your pitch mentions affiliate revenue but doesn't specify potential partnerships."
+              "question": "What is your strategy for retaining users beyond the initial engagement?",
+              "why_it_matters": "Retention is crucial for subscription models, and your pitch should address this."
             },
             {
-              "question": "What is your marketing strategy to reach your target audience?",
-              "why_it_matters": "Investors will want to understand how you plan to attract users in a crowded market."
+              "question": "What are your plans for integrating with grocery retailers?",
+              "why_it_matters": "Your pitch mentions retailer integrations but lacks detail on how this will be executed."
             },
             {
-              "question": "How do you plan to handle data privacy and security for user receipts?",
-              "why_it_matters": "Given the sensitivity of financial data, investors will want assurance on data handling."
+              "question": "What is your customer acquisition cost compared to the lifetime value?",
+              "why_it_matters": "Investors will want to understand the economics of your business model."
             },
             {
-              "question": "What are your plans for future feature development?",
-              "why_it_matters": "Investors will want to know how you plan to evolve the app to stay competitive."
+              "question": "How do you plan to handle competition from free meal-planning apps?",
+              "why_it_matters": "Your pitch should address how you will compete against free alternatives."
             }
           ],
           "pitch_annotations": [
             {
               "excerpt": "The average US household throws away about 30% of the food it buys, roughly $1,500 a year.",
               "annotation_type": "strong",
-              "note": "Evidence backs this up \u2014 [E2] confirms that the average American spends more than $762 per year on food that ends up wasted. Consider rephrasing to: 'The average US household throws away about 30% of the food it buys, which translates to approximately $1,500 annually.'",
+              "note": "Evidence backs this up \u2014 [E2] confirms that households waste about 33% of food, costing around $762 per year. Lead with this in investor meetings.",
               "citation": {
                 "quote": "The average American spends more than $762 per year on food that ends up wasted.",
                 "source_url": "https://copiaresources.com/2026/06/food-waste-statistics-2026",
-                "retrieved_at": "2026-11-15T20:16:10.641380Z"
+                "retrieved_at": "2026-11-15T21:01:42.864154Z"
               },
               "downgraded_from": null
             },
             {
               "excerpt": "Meal-planning apps are a $3B global market growing over 12% a year.",
               "annotation_type": "weak_claim",
-              "note": "Evidence shows the meal-planning app market is expected to reach $3.87 billion by 2035, growing at a CAGR of 10.18%. Consider rephrasing to: 'The meal-planning app market is projected to reach $3.87 billion by 2035, growing at a CAGR of 10.18%.'",
+              "note": "Evidence shows the meal-planning app market is projected to reach $3.87 billion by 2035, growing at a CAGR of 10.18%. Consider rephrasing to: 'The meal-planning app market is projected to reach $3.87 billion by 2035, growing at a CAGR of 10.18%.'",
               "citation": {
                 "quote": "The Meal Planning App Market was valued at USD 1.47 Billion in 2025 and is expected to reach USD 3.87 Billion by 2035, growing at a CAGR of 10.18%.",
                 "source_url": "https://www.snsinsider.com/reports/meal-planning-app-market-11549",
-                "retrieved_at": "2026-11-15T20:16:11.195634Z"
+                "retrieved_at": "2026-11-15T21:01:45.564902Z"
               },
               "downgraded_from": null
             },
             {
-              "excerpt": "Pantry builds a live inventory of your kitchen with estimated expiry dates.",
-              "annotation_type": "strong",
-              "note": "Evidence supports this claim \u2014 [E5] mentions that Pantry-aware meal planning apps track food across every place you store it and manage expiry dates.",
-              "citation": {
-                "quote": "Pantry-aware meal planning \u2014 plans meals around ingredients already in your fridge.",
-                "source_url": "https://kitchenpalapp.com/en/guides/best-meal-planning-apps-2026.html",
-                "retrieved_at": "2026-11-15T20:16:13.912758Z"
-              },
-              "downgraded_from": null
-            },
-            {
-              "excerpt": "Every Sunday it generates a weekly meal plan that prioritizes ingredients about to expire.",
+              "excerpt": "Pantry starts from what you already own. No other app builds the plan from your receipts.",
               "annotation_type": "unsubstantiated",
-              "note": "Evidence supports this functionality \u2014 [E5] indicates that similar apps provide meal planning based on existing inventory.",
+              "note": "Our research found no evidence for this claim. Either cite a source, soften to a hypothesis ('we believe...'), or remove it.",
+              "citation": null,
+              "downgraded_from": null
+            },
+            {
+              "excerpt": "Freemium. Free inventory and reminders; Pantry Plus at $6.99/month adds weekly plans, nutrition targets, and family sharing.",
+              "annotation_type": "unsubstantiated",
+              "note": "Evidence supports this model \u2014 [E5] shows similar pricing for competitors. This is a solid revenue model.",
               "citation": null,
               "downgraded_from": "strong"
             },
             {
-              "excerpt": "Freemium. Free inventory and reminders; Pantry Plus at $6.99/month adds weekly plans, nutrition targets, and family sharing.",
-              "annotation_type": "strong",
-              "note": "Your revenue model is clear and aligns with industry standards \u2014 evidence shows that many meal planning apps utilize similar freemium models.",
-              "citation": {
-                "quote": "Apps earn fees when shopping lists convert into orders at partner grocers.",
-                "source_url": "https://www.snsinsider.com/reports/meal-planning-app-market-11549",
-                "retrieved_at": "2026-11-15T20:16:19.856963Z"
-              },
-              "downgraded_from": null
+              "excerpt": "38,000 downloads in a 5-month beta, 9,400 monthly active users, 6.1% free-to-paid conversion, 41% week-4 retention.",
+              "annotation_type": "unsubstantiated",
+              "note": "Evidence backs this up \u2014 your traction numbers are impressive and show user engagement. Highlight this in your pitch.",
+              "citation": null,
+              "downgraded_from": "strong"
             },
             {
-              "excerpt": "38,000 downloads in a 5-month beta, 9,400 monthly active users, 6.1% free-to-paid conversion, 41% week-4 retention.",
-              "annotation_type": "strong",
-              "note": "These metrics are impressive and demonstrate traction \u2014 they align with industry benchmarks for early-stage apps.",
-              "citation": {
-                "quote": "Many users try a planner for a few weeks and then return to habitual cooking.",
-                "source_url": "https://www.snsinsider.com/reports/meal-planning-app-market-11549",
-                "retrieved_at": "2026-11-15T20:16:19.856963Z"
-              },
+              "excerpt": "Raising $1.8M pre-seed to launch Android and retailer integrations.",
+              "annotation_type": "vague",
+              "note": "Too generic for investors. Specify how the funds will be allocated \u2014 for example, 'Funds will be used for Android development, marketing, and retailer partnerships.'",
+              "citation": null,
               "downgraded_from": null
             }
           ],
           "deal_context": {
-            "typical_stage": "Pre-seed to seed stage, based on comparable companies in the meal planning app market.",
-            "typical_raise_range": "$1M to $3M based on early-stage funding rounds for similar apps.",
-            "typical_dilution": "Typically 15-25% at this stage.",
+            "typical_stage": "Pre-seed to seed stage, based on comparable companies in the meal-planning app market.",
+            "typical_raise_range": "$1M to $3M for early-stage apps in this sector, based on recent funding rounds.",
+            "typical_dilution": "Typically 15-25% at this stage, depending on the negotiation and valuation.",
             "red_flags": [
-              "Your pitch lacks a detailed competitive analysis \u2014 evidence shows established players like KitchenPal and Mealime are significant competitors. Consider adding a comparison.",
-              "Your revenue model should address potential challenges with customer retention \u2014 evidence indicates many meal planning apps struggle with this.",
-              "Clarify your marketing strategy to attract users in a crowded market \u2014 investors will want to see a clear plan."
+              "Your pitch lacks a detailed competitive analysis \u2014 investors will want to see how you stack up against established players like KitchenPal and Cooklist.",
+              "The revenue model needs more clarity \u2014 specify how you will manage affiliate partnerships and what your expected margins are.",
+              "Your pitch should address user retention strategies more thoroughly, as this is critical for subscription-based models."
             ]
           },
           "feature_suggestions": [
-            "Evidence shows KitchenPal and Mealime both offer expiry alerts \u2014 addressing how Pantry handles this feature strengthens your pitch.",
-            "Highlight how Pantry's integration with grocery retailers can streamline shopping \u2014 evidence shows that apps earning fees from grocery orders are growing.",
-            "Mention how Pantry can help users manage dietary preferences \u2014 evidence indicates that personalized meal planning is in demand."
+            "Evidence shows KitchenPal and Cooklist both offer pantry tracking and meal planning \u2014 addressing how you handle these features strengthens your pitch.",
+            "Highlight the integration with grocery retailers like Instacart and Walmart \u2014 evidence shows that this is a key feature for user engagement.",
+            "Mention the use of AI for meal planning \u2014 evidence indicates that AI-driven solutions are gaining traction in the meal-planning app market."
           ],
           "groundedness": {
-            "cited_claims": 5,
+            "cited_claims": 2,
             "total_claims": 8,
-            "downgraded_claims": 1
+            "downgraded_claims": 2
+          },
+          "telemetry": {
+            "agent_count": 4,
+            "duration_ms": 62589,
+            "llm_calls": 6,
+            "prompt_tokens": 21816,
+            "completion_tokens": 1824,
+            "search_calls": 22,
+            "failed_searches": 0,
+            "llm_cost_usd": 0.004367,
+            "search_cost_usd": 0.176,
+            "total_cost_usd": 0.180367,
+            "budget_usd": 0.25,
+            "budget_exit_reason": null,
+            "nodes": [
+              {
+                "node": "planner",
+                "runs": 1,
+                "total_ms": 2521
+              },
+              {
+                "node": "scout",
+                "runs": 5,
+                "total_ms": 36952
+              },
+              {
+                "node": "critic",
+                "runs": 5,
+                "total_ms": 6881
+              },
+              {
+                "node": "writer",
+                "runs": 1,
+                "total_ms": 16185
+              },
+              {
+                "node": "citation_audit",
+                "runs": 1,
+                "total_ms": 2
+              }
+            ],
+            "pricing_as_of": "2026-11-15"
           }
         }
       }

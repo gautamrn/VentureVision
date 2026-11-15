@@ -1,5 +1,8 @@
+import pytest
+
+from app.graph.errors import NodeFailure
 from app.graph.workflow import routeAfterCritic
-from tests.fakes import SAMPLE_PITCH, critique, memoSynthesis, researchPlan, runGraph
+from tests.fakes import critique, memoSynthesis, researchPlan, runGraph
 
 
 def testRouteAfterCriticSendsValidatedStateToWriter():
@@ -60,18 +63,21 @@ def testPitchLabKeepsFullPlan(fakeOpenAI, fakeTavily):
     assert fakeTavily.queries == sixQueries
 
 
-def testPlannerFallsBackToPitchDerivedQueriesWhenOpenAIOutputIsUnusable(fakeOpenAI, fakeTavily):
+def testUnusablePlannerOutputFailsTheRunInsteadOfInventingQueries(fakeOpenAI, fakeTavily):
     fakeOpenAI.script("ResearchPlan", "not json at all")
-    fakeOpenAI.script("CritiqueResult", critique(0.9, True))
-    fakeOpenAI.script("MemoSynthesis", memoSynthesis())
 
-    order, _ = runGraph()
+    with pytest.raises(NodeFailure) as failure:
+        runGraph()
 
-    topic = " ".join(SAMPLE_PITCH.split()[:6])
-    assert order == ["planner", "scout", "critic", "writer", "citation_audit"]
-    assert fakeTavily.queries == [
-        f"{topic} market size",
-        f"{topic} competitors funding",
-        f"{topic} revenue model",
-        f"{topic} technology feasibility",
-    ]
+    assert (failure.value.node, failure.value.kind) == ("planner", "bad_model_output")
+    assert fakeTavily.queries == []
+
+
+def testEmptyPlanIsAFailureNotAnEmptyResearchRound(fakeOpenAI, fakeTavily):
+    fakeOpenAI.script("ResearchPlan", researchPlan(["  "]))
+
+    with pytest.raises(NodeFailure) as failure:
+        runGraph()
+
+    assert failure.value.node == "planner"
+    assert fakeTavily.queries == []

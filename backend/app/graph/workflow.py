@@ -1,3 +1,6 @@
+from langgraph.checkpoint.base import BaseCheckpointSaver
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.checkpoint.serde.jsonplus import JsonPlusSerializer
 from langgraph.graph import StateGraph, START, END
 
 from app.graph.instrumentation import instrumentNode
@@ -14,7 +17,7 @@ def routeAfterCritic(state: AgentState) -> str:
     return "scout"
 
 
-def buildGraph():
+def buildGraph(checkpointer: BaseCheckpointSaver | None = None):
     graph = StateGraph(AgentState)
 
     graph.add_node("planner", instrumentNode("planner", planner_node))
@@ -39,7 +42,10 @@ def buildGraph():
     graph.add_edge("writer", "citation_audit")
     graph.add_edge("citation_audit", END)
 
-    return graph.compile()
+    return graph.compile(checkpointer=checkpointer)
 
 
 ventureGraph = buildGraph()
+# Checkpointed per thread_id (= runId) so a failed run can resume at the node that failed.
+# Checkpoints never leave process memory, so pickling state msgpack can't encode (HttpUrl) is safe.
+resumableGraph = buildGraph(checkpointer=MemorySaver(serde=JsonPlusSerializer(pickle_fallback=True)))

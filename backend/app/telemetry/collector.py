@@ -25,6 +25,10 @@ def currentCollector() -> NodeCollector:
     return _current.get() or NodeCollector(node="standalone")
 
 
+def emitProgress(eventType: str, **payload: Any) -> None:
+    currentCollector().emit({"type": eventType, **payload})
+
+
 @contextmanager
 def collecting(collector: NodeCollector) -> Iterator[NodeCollector]:
     token = _current.set(collector)

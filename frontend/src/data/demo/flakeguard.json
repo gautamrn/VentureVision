@@ -5,12 +5,12 @@
   "tagline": "Detects and quarantines flaky tests before they block a merge.",
   "pitch": "Flakeguard: stop flaky tests from blocking your merges.\n\nProblem: Flaky tests pass and fail on the same code. Every red build triggers a rerun, a Slack thread, and an engineer digging through logs to decide whether the failure is real. Engineers at companies with large CI pipelines lose up to 20% of their week to flaky tests, and teams learn to ignore red builds, which is how real regressions ship.\n\nProduct: Flakeguard is a GitHub App and CI plugin for GitHub Actions, CircleCI, and Buildkite. It ingests JUnit test reports from every run, scores each test's flakiness from its pass/fail history on unchanged code, and automatically quarantines tests above a threshold so they stop blocking merges while still running in the background. Each quarantined test gets a ticket with the failure signatures, the commits where it started flaking, and the likely cause (timing, test order, shared state, or network).\n\nWhy now: Monorepos and parallel CI have multiplied test counts. A 5,000-test suite with a 0.1% flake rate per test fails most runs.\n\nMarket: The DevOps tools market is worth over $10B, and no existing tool automatically quarantines flaky tests; today teams maintain skip lists by hand.\n\nBusiness model: $15 per active developer per month, free for open source. Land with one team, expand across the org.\n\nTraction: 14 design partners, 3 paying teams, $4,200 MRR, quarantining 1,900 tests across 2.3M CI runs.\n\nTeam: Ex-staff engineers from a large CI provider's build infrastructure team.\n\nAsk: Raising a $2.5M seed to build the test-ownership graph and expand to Jenkins and GitLab CI.",
   "mode": "pitch_lab",
-  "recordedAt": "2026-11-15T20:16:05+00:00",
-  "durationMs": 24920,
+  "recordedAt": "2026-11-15T21:01:37+00:00",
+  "durationMs": 39558,
   "events": [
     {
       "event": "planner",
-      "atMs": 2012,
+      "atMs": 2517,
       "data": {
         "queries": [
           "DevOps tools market size 2025 revenue report",
@@ -18,55 +18,219 @@
           "CircleCI funding round valuation 2024",
           "Buildkite pricing model comparison 2024",
           "GitHub Actions user adoption statistics 2024",
-          "customer acquisition cost for CI/CD tools",
-          "regulatory compliance requirements for software testing tools",
-          "trends in monorepo usage and its effect on CI testing"
+          "regulatory compliance requirements for CI/CD tools",
+          "customer behavior trends in DevOps tools adoption 2024",
+          "test automation metrics average cost per developer"
         ],
         "queryCount": 8
       }
     },
     {
-      "event": "scout",
-      "atMs": 6269,
+      "event": "evidence",
+      "atMs": 4567,
       "data": {
-        "evidenceCount": 16
+        "round": 1,
+        "query": "DevOps tools market size 2025 revenue report",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "DevOps Market Size Worth $12.85 Billion by 2025 | CAGR: 18.60%: Grand View Research, Inc.",
+            "url": "https://www.prnewswire.com/news-releases/devops-market-size-worth-1285-billion-by-2025--cagr-1860-grand-view-research-inc-300613736.html"
+          },
+          {
+            "title": "Global $108.26 Billion DevOps Market Review 2025-2035: Analysis of Revenue Opportunities Distributed Over Key Segments",
+            "url": "https://finance.yahoo.com/news/global-108-26-billion-devops-151000861.html"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 6622,
+      "data": {
+        "round": 1,
+        "query": "flaky tests impact on CI pipeline productivity statistics",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Flaky Tests: The Silent Productivity Killer",
+            "url": "https://viral-patel.kit.com/posts/flaky-tests-the-silent-productivity-killer"
+          },
+          {
+            "title": "Measuring the Cost of Flaky Tests: A Practical Metric - TECHVZERO",
+            "url": "https://techvzero.com/measuring-cost-flaky-tests-practical-metric"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 8876,
+      "data": {
+        "round": 1,
+        "query": "CircleCI funding round valuation 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "CircleCI Revenue 2024: $55.7M Est., $315M Raised",
+            "url": "https://getlatka.com/companies/circleci"
+          },
+          {
+            "title": "CircleCI Reaches $1.7 Billion Valuation with $100 Million in New Financing",
+            "url": "https://www.businesswire.com/news/home/20210511005782/en/CircleCI-Reaches-%241.7-Billion-Valuation-with-%24100-Million-in-New-Financing"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 11487,
+      "data": {
+        "round": 1,
+        "query": "Buildkite pricing model comparison 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Buildkite vs GitHub Actions | CI platform comparison | Buildkite",
+            "url": "https://buildkite.com/resources/comparison/buildkite-vs-github-actions"
+          },
+          {
+            "title": "Feature Comparison | Buildkite Pricing | Buildkite",
+            "url": "https://buildkite.com/pricing/feature-comparison"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 13894,
+      "data": {
+        "round": 1,
+        "query": "GitHub Actions user adoption statistics 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "Beyond the YAML File: Understanding Real-World GitHub Actions Workflow Adoption",
+            "url": "https://arxiv.org/html/2604.17662v1"
+          },
+          {
+            "title": "Let\u2019s talk about GitHub Actions - The GitHub Blog",
+            "url": "https://github.blog/news-insights/product-news/lets-talk-about-github-actions"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 16232,
+      "data": {
+        "round": 1,
+        "query": "regulatory compliance requirements for CI/CD tools",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "CI/CD Compliance for Regulated Industries | DevOpser",
+            "url": "https://devopser.io/services/customizable-cicd-pipelines-regulatory-compliance.html"
+          },
+          {
+            "title": "DevSecOps Governance: Automate Compliance Checks in Your CI/CD Pipeline",
+            "url": "https://www.youtube.com/watch?v=H29TnrbFMgc&vl=en-US"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 18607,
+      "data": {
+        "round": 1,
+        "query": "customer behavior trends in DevOps tools adoption 2024",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "2024 DevOps Trends For QA - Tricentis",
+            "url": "https://www.testim.io/blog/2024-devops-trends-for-qa"
+          },
+          {
+            "title": "DevOps Trends 2024: Unlocking the Future of Product Delivery",
+            "url": "https://www.youtube.com/watch?v=U_XHfxDFi0o"
+          }
+        ]
+      }
+    },
+    {
+      "event": "evidence",
+      "atMs": 20851,
+      "data": {
+        "round": 1,
+        "query": "test automation metrics average cost per developer",
+        "status": "ok",
+        "error": null,
+        "items": [
+          {
+            "title": "The cost of automated end-to-end testing",
+            "url": "https://medium.com/@john.gluck/the-cost-of-automated-testing-69e0730d891e"
+          },
+          {
+            "title": "Test Automation Pricing 2026: Models, Rates, and TCO",
+            "url": "https://contextqa.com/blog/test-automation-pricing"
+          }
+        ]
+      }
+    },
+    {
+      "event": "scout",
+      "atMs": 20853,
+      "data": {
+        "evidenceCount": 16,
+        "searches": 8,
+        "failedSearches": 0
       }
     },
     {
       "event": "critic",
-      "atMs": 7500,
+      "atMs": 22363,
       "data": {
         "iteration": 1,
         "isValidated": true,
-        "coverageScore": 1.0,
-        "feedback": ""
+        "coverageScore": 0.9,
+        "feedback": "",
+        "budgetExitReason": null,
+        "iterationCapReached": false
       }
     },
     {
       "event": "writer",
-      "atMs": 24918,
+      "atMs": 39551,
       "data": {
         "memoReady": true
       }
     },
     {
       "event": "citation_audit",
-      "atMs": 24920,
+      "atMs": 39558,
       "data": {
         "memo": {
-          "pitch_score": 75,
+          "pitch_score": 72,
           "subscores": {
             "market_size": 80,
-            "competition": 70,
-            "revenue_model": 80,
-            "uniqueness": 70
+            "competition": 60,
+            "revenue_model": 75,
+            "uniqueness": 80
           },
           "strengthen_suggestions": [
-            "Add specific market size figures \u2014 evidence shows the DevOps market is projected to reach $13.29 billion by 2025 and $108.26 billion by 2035. Saying 'over $10B market' is vague; '$13.29B market growing at 21% CAGR' is more compelling.",
+            "Add specific market size figures \u2014 evidence shows the DevOps tools market is projected to reach $12.85 billion by 2025 with a CAGR of 18.6%. Saying 'over $10B' is vague; '$12.85B market growing at 18.6%' is more compelling.",
             "Name your top competitors and explain your differentiation \u2014 evidence shows CircleCI and Buildkite are established players in CI/CD. Investors will want to know how you stand out against these well-funded competitors.",
-            "Clarify your revenue model with comparable pricing \u2014 evidence shows Buildkite charges $30 per active user/month. Position your pricing against theirs to highlight your value proposition."
+            "Clarify your revenue model with a comparison \u2014 evidence shows Buildkite charges $30 per active user/month. Position your pricing against theirs to highlight your value proposition."
           ],
-          "executive_summary": "Your pitch effectively identifies a significant problem in CI/CD processes and presents a clear solution. However, it lacks detailed market size figures and competitive analysis, which are crucial for investor confidence.",
+          "executive_summary": "Your pitch effectively identifies the problem of flaky tests and presents a clear solution with Flakeguard. However, it lacks detailed market size figures and competitive analysis, which are crucial for investor confidence.",
           "market_matrix": [
             {
               "competitor": "CircleCI",
@@ -75,7 +239,7 @@
               "citation": {
                 "quote": "CircleCI is a cloud-based Continuous Integration/Continuous Delivery (CI/CD) platform that helps developers automate the process of building, testing, and deploying their software applications.",
                 "source_url": "https://getlatka.com/companies/circleci",
-                "retrieved_at": "2026-11-15T20:15:44.182904Z"
+                "retrieved_at": "2026-11-15T21:01:07.113237Z"
               }
             },
             {
@@ -85,161 +249,177 @@
               "citation": {
                 "quote": "Buildkite vs GitHub Actions | CI platform comparison | Buildkite.",
                 "source_url": "https://buildkite.com/resources/comparison/buildkite-vs-github-actions",
-                "retrieved_at": "2026-11-15T20:15:44.718349Z"
+                "retrieved_at": "2026-11-15T21:01:09.724225Z"
               }
             }
           ],
           "risk_vectors": [
-            "Your pitch doesn't address how you compete with established players like CircleCI, which has raised $315M \u2014 investors will want to see a clear differentiation statement.",
-            "Evidence shows that flaky tests cost teams over 24,000 hours of wasted time daily \u2014 your pitch should quantify the potential time savings Flakeguard offers to strengthen your value proposition.",
-            "Your pitch mentions a $15 per developer pricing model but lacks context on customer acquisition costs \u2014 evidence shows CAC for similar tools can be high, so clarify your strategy for acquiring customers."
+            "Your pitch doesn't address how you compete with established players like CircleCI, which has raised $315M \u2014 add a differentiation statement to clarify your unique value proposition.",
+            "Evidence shows that flaky tests cost teams over 4,200 hours of lost productivity per day \u2014 your pitch should quantify the impact of flaky tests more explicitly to strengthen your case.",
+            "Your pitch mentions a $15 per active developer per month pricing model, but doesn't compare it to competitors like Buildkite, which charges $30 per user/month \u2014 include this comparison to highlight your competitive pricing."
           ],
           "confidence_score": 0.8,
           "citation_links": [
-            "https://sqmagazine.co.uk/github-statistics",
-            "https://www.zendesk.com/blog/sales/sales-performance-metrics/customer-acquisition-cost",
-            "https://circleci.com/blog/monorepo-dev-practices",
-            "https://pie.inc/blog/flaky-tests-cicd",
-            "https://www.businesswire.com/news/home/20210511005782/en/CircleCI-Reaches-%241.7-Billion-Valuation-with-%24100-Million-in-New-Financing",
-            "https://buildkite.com/resources/blog/continuous-integration-for-monorepos",
-            "https://viral-patel.kit.com/posts/flaky-tests-the-silent-productivity-killer",
-            "https://buildkite.com/resources/comparison/buildkite-vs-github-actions",
-            "https://focus-digital.co/average-customer-acquisition-cost-for-software-companies",
-            "https://www.grandviewresearch.com/industry-analysis/development-to-operations-devops-market",
             "https://buildkite.com/pricing/feature-comparison",
-            "https://finance.yahoo.com/news/global-108-26-billion-devops-151000861.html",
-            "https://getlatka.com/companies/circleci",
-            "https://www.testrail.com/blog/testing-regulated-industries",
+            "https://medium.com/@john.gluck/the-cost-of-automated-testing-69e0730d891e",
             "https://github.blog/news-insights/product-news/lets-talk-about-github-actions",
-            "https://www.xtivia.com/blog/software-testing-practices-based-on-industry-best-practices-and-regulatory-compliance"
+            "https://www.prnewswire.com/news-releases/devops-market-size-worth-1285-billion-by-2025--cagr-1860-grand-view-research-inc-300613736.html",
+            "https://techvzero.com/measuring-cost-flaky-tests-practical-metric",
+            "https://arxiv.org/html/2604.17662v1",
+            "https://www.businesswire.com/news/home/20210511005782/en/CircleCI-Reaches-%241.7-Billion-Valuation-with-%24100-Million-in-New-Financing",
+            "https://viral-patel.kit.com/posts/flaky-tests-the-silent-productivity-killer",
+            "https://finance.yahoo.com/news/global-108-26-billion-devops-151000861.html",
+            "https://www.youtube.com/watch?v=H29TnrbFMgc&vl=en-US",
+            "https://contextqa.com/blog/test-automation-pricing",
+            "https://devopser.io/services/customizable-cicd-pipelines-regulatory-compliance.html",
+            "https://www.youtube.com/watch?v=U_XHfxDFi0o",
+            "https://getlatka.com/companies/circleci",
+            "https://buildkite.com/resources/comparison/buildkite-vs-github-actions",
+            "https://www.testim.io/blog/2024-devops-trends-for-qa"
           ],
           "investor_questions": [
             {
               "question": "What specific metrics do you have on the effectiveness of Flakeguard in reducing flaky tests?",
-              "why_it_matters": "Your pitch mentions quarantining tests but lacks data on how this impacts overall CI efficiency."
+              "why_it_matters": "Your pitch mentions quarantining tests but lacks data on how this impacts overall productivity."
             },
             {
-              "question": "How do you plan to scale your customer base beyond the initial design partners?",
-              "why_it_matters": "Investors will want to know your go-to-market strategy and how you plan to acquire new customers."
+              "question": "How do you plan to scale beyond your current 14 design partners?",
+              "why_it_matters": "Investors will want to know your strategy for acquiring more customers."
             },
             {
-              "question": "What are the key features that differentiate Flakeguard from competitors like CircleCI and Buildkite?",
-              "why_it_matters": "Your pitch needs to clearly articulate your unique selling proposition."
+              "question": "What are the key features that differentiate Flakeguard from competitors?",
+              "why_it_matters": "Your pitch mentions uniqueness but doesn't specify how you stand out."
             },
             {
-              "question": "Can you provide more details on your traction and growth metrics?",
-              "why_it_matters": "While you mention MRR and design partners, investors will want to see a growth trajectory."
+              "question": "What is your customer acquisition cost and lifetime value?",
+              "why_it_matters": "Understanding your financial metrics is crucial for investors."
             },
             {
-              "question": "What is your plan for expanding to Jenkins and GitLab CI?",
-              "why_it_matters": "Your ask mentions expansion plans, but specifics will help investors understand your roadmap."
-            },
-            {
-              "question": "How do you handle data privacy and compliance in your tool?",
-              "why_it_matters": "Given the regulatory landscape, investors will want assurance that your tool meets necessary compliance standards."
-            },
-            {
-              "question": "What is your customer acquisition cost and how does it compare to your pricing model?",
-              "why_it_matters": "Understanding CAC is crucial for evaluating the sustainability of your business model."
-            },
-            {
-              "question": "What feedback have you received from your design partners?",
-              "why_it_matters": "Investors will want to know how your product is being received in the market."
+              "question": "How do you plan to expand to Jenkins and GitLab CI?",
+              "why_it_matters": "Your pitch mentions expansion plans but lacks details on execution."
             }
           ],
           "pitch_annotations": [
             {
               "excerpt": "Flakeguard: stop flaky tests from blocking your merges.",
-              "annotation_type": "unsubstantiated",
-              "note": "This is a clear and concise problem statement that sets the stage for your pitch.",
-              "citation": null,
-              "downgraded_from": "strong"
-            },
-            {
-              "excerpt": "Flaky tests pass and fail on the same code.",
               "annotation_type": "strong",
-              "note": "This accurately describes the issue and aligns with evidence showing that flaky tests are a significant problem in CI/CD environments.",
+              "note": "Evidence supports the need for solutions to flaky tests \u2014 [E3] shows that flaky tests cost teams significant productivity.",
               "citation": {
-                "quote": "CI/CD Pipeline Impact Research indicates that 13% of failed builds are due to flaky tests.",
+                "quote": "Flaky tests cost teams over 4,200 hours of lost productivity per day when considering just the rerun time.",
                 "source_url": "https://viral-patel.kit.com/posts/flaky-tests-the-silent-productivity-killer",
-                "retrieved_at": "2026-11-15T20:15:43.655089Z"
+                "retrieved_at": "2026-11-15T21:01:04.859425Z"
               },
               "downgraded_from": null
             },
             {
               "excerpt": "Engineers at companies with large CI pipelines lose up to 20% of their week to flaky tests.",
-              "annotation_type": "weak_claim",
-              "note": "Evidence shows that flaky tests cost teams over 24,000 hours of wasted time daily, which translates to significant productivity loss. Consider rephrasing to: 'Flaky tests can lead to substantial productivity losses, with teams spending significant time on reruns.'",
+              "annotation_type": "strong",
+              "note": "Evidence backs this claim \u2014 [E4] indicates significant time lost due to flaky tests.",
               "citation": {
-                "quote": "When factoring in the median recovery time of 64 minutes from failed builds, the impact escalates to over 24,000 hours of wasted time daily.",
-                "source_url": "https://viral-patel.kit.com/posts/flaky-tests-the-silent-productivity-killer",
-                "retrieved_at": "2026-11-15T20:15:43.655089Z"
+                "quote": "Over the course of a 12-week quarter, that adds up to $28,800 in lost productivity.",
+                "source_url": "https://techvzero.com/measuring-cost-flaky-tests-practical-metric",
+                "retrieved_at": "2026-11-15T21:01:04.859425Z"
               },
               "downgraded_from": null
             },
             {
-              "excerpt": "The DevOps tools market is worth over $10B.",
+              "excerpt": "The DevOps tools market is worth over $10B, and no existing tool automatically quarantines flaky tests; today teams maintain skip lists by hand.",
               "annotation_type": "weak_claim",
-              "note": "While your claim is directionally correct, evidence shows the market is projected to reach $13.29 billion by 2025. Consider stating: 'The DevOps tools market is projected to reach $13.29 billion by 2025, growing at a CAGR of 21%.'",
+              "note": "Evidence shows the market is projected to reach $12.85 billion by 2025 \u2014 consider rephrasing to: 'The DevOps tools market is projected to reach $12.85 billion by 2025.'",
               "citation": {
-                "quote": "The global DevOps market is projected to expand significantly, growing from USD 13.29 billion this year to USD 108.26 billion by 2035.",
-                "source_url": "https://finance.yahoo.com/news/global-108-26-billion-devops-151000861.html",
-                "retrieved_at": "2026-11-15T20:15:43.118935Z"
+                "quote": "DevOps Market Size Worth $12.85 Billion by 2025 | CAGR: 18.60%.",
+                "source_url": "https://www.prnewswire.com/news-releases/devops-market-size-worth-1285-billion-by-2025--cagr-1860-grand-view-research-inc-300613736.html",
+                "retrieved_at": "2026-11-15T21:01:02.803929Z"
               },
               "downgraded_from": null
-            },
-            {
-              "excerpt": "no existing tool automatically quarantines flaky tests; today teams maintain skip lists by hand.",
-              "annotation_type": "unsubstantiated",
-              "note": "This is a strong claim that highlights your product's unique value proposition, supported by evidence of existing practices.",
-              "citation": null,
-              "downgraded_from": "strong"
             },
             {
               "excerpt": "$15 per active developer per month, free for open source.",
               "annotation_type": "weak_claim",
-              "note": "Your pricing model is clear, but evidence shows Buildkite charges $30 per active user/month. Consider positioning your pricing competitively against theirs to strengthen your pitch.",
+              "note": "Your pricing model is clear, but evidence shows competitors like Buildkite charge $30 per user/month \u2014 consider positioning your pricing against theirs.",
               "citation": {
                 "quote": "Buildkite vs GitHub Actions | CI platform comparison | Buildkite.",
                 "source_url": "https://buildkite.com/resources/comparison/buildkite-vs-github-actions",
-                "retrieved_at": "2026-11-15T20:15:44.718349Z"
+                "retrieved_at": "2026-11-15T21:01:09.724225Z"
               },
               "downgraded_from": null
             },
             {
               "excerpt": "14 design partners, 3 paying teams, $4,200 MRR, quarantining 1,900 tests across 2.3M CI runs.",
               "annotation_type": "unsubstantiated",
-              "note": "This traction statement is compelling and provides concrete metrics that investors look for.",
+              "note": "Strong traction metrics \u2014 evidence supports the impact of your solution.",
               "citation": null,
               "downgraded_from": "strong"
             },
             {
               "excerpt": "Raising a $2.5M seed to build the test-ownership graph and expand to Jenkins and GitLab CI.",
               "annotation_type": "unsubstantiated",
-              "note": "Your ask is clear and specific, which is important for investors to understand your funding needs.",
+              "note": "Your ask is clear, but lacks detail on how the funds will be allocated \u2014 consider breaking down the use of funds for clarity.",
               "citation": null,
-              "downgraded_from": "strong"
+              "downgraded_from": null
             }
           ],
           "deal_context": {
             "typical_stage": "Seed stage, based on comparable companies like CircleCI and Buildkite.",
-            "typical_raise_range": "$2M - $5M, based on funding rounds of similar CI/CD tools.",
-            "typical_dilution": "15-25% at this stage.",
+            "typical_raise_range": "$2M to $5M based on similar funding rounds in the CI/CD space.",
+            "typical_dilution": "20-25% at this stage is common.",
             "red_flags": [
-              "Your pitch lacks a detailed competitive analysis \u2014 investors will want to see how you differentiate from established players like CircleCI and Buildkite.",
-              "There is no mention of customer acquisition costs \u2014 investors will want to understand how you plan to acquire customers and at what cost.",
-              "Your pitch does not address potential regulatory compliance issues \u2014 given the nature of CI/CD tools, this is a critical area to cover."
+              "Your pitch lacks a detailed competitive analysis \u2014 investors will want to see how you stack up against established players like CircleCI and Buildkite.",
+              "The market size claim is vague \u2014 provide specific figures to strengthen your market opportunity.",
+              "Your revenue model could benefit from a comparison to competitors to highlight your pricing strategy."
             ]
           },
           "feature_suggestions": [
-            "Evidence shows CircleCI and Buildkite both offer detailed reporting on test performance \u2014 addressing how Flakeguard provides insights into test flakiness will strengthen your pitch.",
-            "Highlight how Flakeguard integrates with existing CI/CD workflows, as evidence shows that seamless integration is a key factor for adoption in CI tools.",
-            "Mention any unique features that enhance user experience, such as automated ticketing for quarantined tests, which could set you apart from competitors."
+            "Evidence shows CircleCI and Buildkite both offer robust CI/CD features \u2014 addressing how Flakeguard integrates with these platforms strengthens your pitch.",
+            "Highlight the automated ticketing system for quarantined tests \u2014 this feature addresses a pain point that competitors may not fully cover.",
+            "Mention the ability to analyze failure signatures \u2014 evidence shows that understanding test failures is crucial for teams managing large CI pipelines."
           ],
           "groundedness": {
             "cited_claims": 6,
-            "total_claims": 10,
-            "downgraded_claims": 4
+            "total_claims": 8,
+            "downgraded_claims": 1
+          },
+          "telemetry": {
+            "agent_count": 4,
+            "duration_ms": 39558,
+            "llm_calls": 3,
+            "prompt_tokens": 9244,
+            "completion_tokens": 1431,
+            "search_calls": 8,
+            "failed_searches": 0,
+            "llm_cost_usd": 0.002245,
+            "search_cost_usd": 0.064,
+            "total_cost_usd": 0.066245,
+            "budget_usd": 0.25,
+            "budget_exit_reason": null,
+            "nodes": [
+              {
+                "node": "planner",
+                "runs": 1,
+                "total_ms": 2487
+              },
+              {
+                "node": "scout",
+                "runs": 1,
+                "total_ms": 18334
+              },
+              {
+                "node": "critic",
+                "runs": 1,
+                "total_ms": 1508
+              },
+              {
+                "node": "writer",
+                "runs": 1,
+                "total_ms": 17187
+              },
+              {
+                "node": "citation_audit",
+                "runs": 1,
+                "total_ms": 1
+              }
+            ],
+            "pricing_as_of": "2026-11-15"
           }
         }
       }

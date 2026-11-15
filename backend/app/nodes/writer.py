@@ -258,19 +258,16 @@ def writer_node(state: AgentState) -> dict:
         for i, e in enumerate(evidence, start=1)
     )
 
-    try:
-        result, _ = invokeStructured(
-            writer_llm,
-            [
-                ("system", prompt),
-                (
-                    "human",
-                    f"Startup Pitch:\n{pitch}\n\nResearch Evidence:\n{evidence_text}",
-                ),
-            ],
-        )
-    except Exception:
-        return {"final_memo": None}
+    result, _ = invokeStructured(
+        writer_llm,
+        [
+            ("system", prompt),
+            (
+                "human",
+                f"Startup Pitch:\n{pitch}\n\nResearch Evidence:\n{evidence_text}",
+            ),
+        ],
+    )
 
     citation_links = list({str(e.source_url) for e in evidence})
 

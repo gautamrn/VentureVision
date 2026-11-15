@@ -81,13 +81,14 @@ def testStreamedMemoAndAdminMetricsReportTheSameRunCost(client, fakeOpenAI, fake
 
 
 def testFailedSearchIsRecordedButNotBilled(fakeTavily):
-    fakeTavily.search = lambda query, **kwargs: (_ for _ in ()).throw(ConnectionError("tavily down"))
+    fakeTavily.failingQueries.add("broken query")
 
     with collecting(NodeCollector(node="scout")) as collector:
-        scout_node({"research_plan": ["q"], "critique_feedback": "", "raw_evidence": []})
+        scout_node({"research_plan": ["broken query", "ok query"], "critique_feedback": "", "raw_evidence": []})
 
-    [call] = collector.searchCalls
-    assert (call.error, call.credits, call.cost_usd) == ("ConnectionError", 0, 0.0)
+    failed, succeeded = collector.searchCalls
+    assert (failed.error, failed.credits, failed.cost_usd) == ("ConnectionError", 0, 0.0)
+    assert succeeded.error is None and succeeded.cost_usd == searchCostUsd(1)
 
 
 def testRunawayCriticLoopIsStoppedByTheBudgetCap(client, fakeOpenAI, fakeTavily, monkeypatch):

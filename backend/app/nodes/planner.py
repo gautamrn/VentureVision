@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from langchain_openai import ChatOpenAI
 
 from app.graph.state import AgentState
-from app.telemetry.usage import invokeStructured, structuredOutput
+from app.telemetry.usage import ModelOutputError, invokeStructured, structuredOutput
 
 
 class ResearchPlan(BaseModel):
@@ -63,24 +63,16 @@ def planner_node(state: AgentState) -> dict:
     mode = state.get("mode", "market_scan")
     prompt = SYSTEM_PROMPT_PITCH_LAB if mode == "pitch_lab" else SYSTEM_PROMPT_QUICK
 
-    try:
-        result, _ = invokeStructured(
-            planner_llm,
-            [
-                ("system", prompt),
-                ("human", f"Here is the startup pitch:\n\n{pitch}"),
-            ],
-        )
-        queries = result.queries
-    except Exception:
-        words = pitch.split()[:6]
-        topic = " ".join(words)
-        queries = [
-            f"{topic} market size",
-            f"{topic} competitors funding",
-            f"{topic} revenue model",
-            f"{topic} technology feasibility",
-        ]
+    result, _ = invokeStructured(
+        planner_llm,
+        [
+            ("system", prompt),
+            ("human", f"Here is the startup pitch:\n\n{pitch}"),
+        ],
+    )
+    queries = [q for q in result.queries if q.strip()]
+    if not queries:
+        raise ModelOutputError("planner returned no search queries")
 
     if mode != "pitch_lab":
         queries = queries[:4]

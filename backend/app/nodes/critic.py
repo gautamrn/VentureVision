@@ -56,35 +56,27 @@ def critic_node(state: AgentState) -> dict:
         f"- [{e.query}] {e.title}: {e.snippet[:200]}" for e in evidence
     )
 
-    try:
-        result, call = invokeStructured(
-            critic_llm,
-            [
-                ("system", SYSTEM_PROMPT),
-                (
-                    "human",
-                    f"Research Plan:\n{chr(10).join(plan)}\n\nEvidence Collected:\n{evidence_text}",
-                ),
-            ],
-        )
-        update = {
-            "is_validated": result.is_sufficient,
-            "critique_feedback": result.feedback,
-            "coverage_score": result.coverage_score,
-            "analysis_iteration": iteration + 1,
-        }
-        if not result.is_sufficient:
-            reason = budgetStopReason(state, call, result.feedback, completedRounds=iteration + 1)
-            if reason:
-                update.update(is_validated=True, budget_exit_reason=reason)
-        return update
-    except Exception:
-        return {
-            "is_validated": True,
-            "critique_feedback": "",
-            "coverage_score": 0.0,
-            "analysis_iteration": iteration + 1,
-        }
+    result, call = invokeStructured(
+        critic_llm,
+        [
+            ("system", SYSTEM_PROMPT),
+            (
+                "human",
+                f"Research Plan:\n{chr(10).join(plan)}\n\nEvidence Collected:\n{evidence_text}",
+            ),
+        ],
+    )
+    update = {
+        "is_validated": result.is_sufficient,
+        "critique_feedback": result.feedback,
+        "coverage_score": result.coverage_score,
+        "analysis_iteration": iteration + 1,
+    }
+    if not result.is_sufficient:
+        reason = budgetStopReason(state, call, result.feedback, completedRounds=iteration + 1)
+        if reason:
+            update.update(is_validated=True, budget_exit_reason=reason)
+    return update
 
 
 def budgetStopReason(state: AgentState, criticCall: LlmCall, feedback: str, completedRounds: int) -> str | None:

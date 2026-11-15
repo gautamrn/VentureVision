@@ -21,10 +21,15 @@ os.environ["LANGCHAIN_TRACING_V2"] = "false"
 os.environ["LANGSMITH_TRACING"] = "false"
 
 import socket
+import threading
+import time
 
+import httpx
 import pytest
+import uvicorn
 from fastapi.testclient import TestClient
 from langchain_openai import ChatOpenAI
+from sse_starlette.sse import AppStatus
 from tavily import TavilyClient
 
 from app.main import app
@@ -56,6 +61,12 @@ def resetRateLimiter():
     rateLimiter._requests.clear()
     yield
     rateLimiter._requests.clear()
+
+
+@pytest.fixture(autouse=True)
+def resetSseExitEvent():
+    # sse-starlette binds this module-level event to the first event loop; each TestClient has its own.
+    AppStatus.should_exit_event = None
 
 
 @pytest.fixture(autouse=True)
@@ -108,3 +119,19 @@ def liveClients(monkeypatch):
 @pytest.fixture
 def client():
     return TestClient(app)
+
+
+@pytest.fixture
+def liveServer():
+    """The app on a real loopback uvicorn server. TestClient buffers a whole streamed response
+    before returning it, so incremental SSE delivery, cancellation, and disconnects need this."""
+    server = uvicorn.Server(uvicorn.Config(app, host="127.0.0.1", port=0, log_level="warning", lifespan="off"))
+    thread = threading.Thread(target=server.run, daemon=True)
+    thread.start()
+    while not server.started:
+        time.sleep(0.01)
+    port = server.servers[0].sockets[0].getsockname()[1]
+    with httpx.Client(base_url=f"http://127.0.0.1:{port}", timeout=10) as http:
+        yield http
+    server.should_exit = True
+    thread.join(timeout=5)

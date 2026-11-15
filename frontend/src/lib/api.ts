@@ -1,14 +1,37 @@
-import { z } from "zod";
 import {
   AgentEvent,
-  PlannerEventSchema,
-  ScoutEventSchema,
-  CriticEventSchema,
-  WriterEventSchema,
+  CancelResponseSchema,
+  CancelledEventSchema,
   CitationAuditEventSchema,
+  CriticEventSchema,
+  ErrorEventSchema,
+  EvidenceEventSchema,
+  PlannerEventSchema,
+  RunEventSchema,
+  ScoutEventSchema,
+  WriterEventSchema,
 } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
+
+const EVENT_SCHEMAS = {
+  run: RunEventSchema,
+  planner: PlannerEventSchema,
+  evidence: EvidenceEventSchema,
+  scout: ScoutEventSchema,
+  critic: CriticEventSchema,
+  writer: WriterEventSchema,
+  citation_audit: CitationAuditEventSchema,
+  cancelled: CancelledEventSchema,
+  error: ErrorEventSchema,
+} as const;
+
+export function toAgentEvent(eventName: string, data: unknown): AgentEvent | null {
+  if (!(eventName in EVENT_SCHEMAS)) return null;
+  const type = eventName as keyof typeof EVENT_SCHEMAS;
+  const parsed = EVENT_SCHEMAS[type].safeParse(data);
+  return parsed.success ? ({ type, data: parsed.data } as AgentEvent) : null;
+}
 
 function parseEvent(eventName: string, rawData: string): AgentEvent | null {
   try {
@@ -18,57 +41,55 @@ function parseEvent(eventName: string, rawData: string): AgentEvent | null {
   }
 }
 
-export function toAgentEvent(eventName: string, data: unknown): AgentEvent | null {
-  try {
-    if (eventName === "planner") {
-      return { type: "planner", data: PlannerEventSchema.parse(data) };
-    }
-    if (eventName === "scout") {
-      return { type: "scout", data: ScoutEventSchema.parse(data) };
-    }
-    if (eventName === "critic") {
-      return { type: "critic", data: CriticEventSchema.parse(data) };
-    }
-    if (eventName === "writer") {
-      return { type: "writer", data: WriterEventSchema.parse(data) };
-    }
-    if (eventName === "citation_audit") {
-      return { type: "citation_audit", data: CitationAuditEventSchema.parse(data) };
-    }
-    if (eventName === "error") {
-      return { type: "error", data: z.object({ message: z.string() }).parse(data) };
-    }
-  } catch {
-    return null;
-  }
-  return null;
+async function httpErrorEvent(response: Response): Promise<AgentEvent> {
+  const body = await response.json().catch(() => null);
+  const detail = typeof body?.detail === "string" ? body.detail : null;
+  const messages: Record<number, string> = {
+    404: detail ?? "This run is no longer on the server.",
+    409: detail ?? "This run cannot be retried.",
+    422: "Pitch must be between 40 and 5,000 characters.",
+    429: detail ?? "Rate limit exceeded. Please try again later.",
+    503: "Server is busy. Please try again in a minute.",
+  };
+  return {
+    type: "error",
+    data: {
+      message: messages[response.status] ?? `The analysis server returned HTTP ${response.status}.`,
+      kind: "http",
+      retryable: false,
+    },
+  };
 }
 
-export async function streamAnalysis(
-  pitch: string,
-  mode: string,
+function isAbort(error: unknown): boolean {
+  return error instanceof DOMException && error.name === "AbortError";
+}
+
+async function streamEvents(
+  path: string,
+  body: unknown,
   onEvent: (event: AgentEvent) => void,
-  onDone: () => void
+  signal: AbortSignal
 ): Promise<void> {
-  const response = await fetch(`${API_URL}/analyze/stream`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ pitch, mode }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal,
+    });
+  } catch (error) {
+    if (isAbort(error)) return;
+    onEvent({
+      type: "error",
+      data: { message: `Could not reach the analysis server at ${API_URL}.`, kind: "network", retryable: false },
+    });
+    return;
+  }
 
   if (!response.ok || !response.body) {
-    if (response.status === 429) {
-      const body = await response.json().catch(() => null);
-      const detail = body?.detail ?? "Rate limit exceeded. Please try again later.";
-      onEvent({ type: "error", data: { message: detail } });
-    } else if (response.status === 503) {
-      onEvent({ type: "error", data: { message: "Server is busy. Please try again in a minute." } });
-    } else if (response.status === 422) {
-      onEvent({ type: "error", data: { message: "Pitch must be between 40 and 5,000 characters." } });
-    } else {
-      onEvent({ type: "error", data: { message: "Failed to connect to analysis server." } });
-    }
-    onDone();
+    onEvent(await httpErrorEvent(response));
     return;
   }
 
@@ -77,27 +98,50 @@ export async function streamAnalysis(
   let buffer = "";
   let currentEvent = "";
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
 
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
 
-    for (const line of lines) {
-      if (line.startsWith("event: ")) {
-        currentEvent = line.slice(7).trim();
-      } else if (line.startsWith("data: ")) {
-        const rawData = line.slice(6).trim();
-        if (currentEvent) {
-          const parsed = parseEvent(currentEvent, rawData);
-          if (parsed) onEvent(parsed);
-          currentEvent = "";
+      for (const line of lines) {
+        if (line.startsWith("event: ")) {
+          currentEvent = line.slice(7).trim();
+        } else if (line.startsWith("data: ")) {
+          if (currentEvent) {
+            const parsed = parseEvent(currentEvent, line.slice(6).trim());
+            if (parsed) onEvent(parsed);
+            currentEvent = "";
+          }
         }
       }
     }
+  } catch (error) {
+    if (!isAbort(error)) throw error;
   }
+}
 
-  onDone();
+export function startAnalysis(
+  pitch: string,
+  mode: string,
+  onEvent: (event: AgentEvent) => void,
+  signal: AbortSignal
+): Promise<void> {
+  return streamEvents("/analyze/stream", { pitch, mode }, onEvent, signal);
+}
+
+export function retryRun(runId: string, onEvent: (event: AgentEvent) => void, signal: AbortSignal): Promise<void> {
+  return streamEvents(`/runs/${encodeURIComponent(runId)}/retry`, {}, onEvent, signal);
+}
+
+export async function cancelRun(runId: string): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_URL}/runs/${encodeURIComponent(runId)}/cancel`, { method: "POST" });
+    return response.ok && CancelResponseSchema.safeParse(await response.json()).success;
+  } catch {
+    return false;
+  }
 }

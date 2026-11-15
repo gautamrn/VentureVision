@@ -18,8 +18,9 @@ FIXTURE_DIR = REPO_DIR / "frontend" / "src" / "data" / "demo"
 
 load_dotenv(REPO_DIR / ".env")
 
-from app.graph.workflow import ventureGraph  # noqa: E402
-from app.routers.analyze import buildInitialState, serializeNodeOutput  # noqa: E402
+from app.routers.analyze import buildInitialState  # noqa: E402
+from app.runs.executor import executeAttempt, registry  # noqa: E402
+from app.telemetry.budget import configuredBudgetUsd  # noqa: E402
 from scripts.demoPitches import DEMO_PITCHES  # noqa: E402
 
 DEMO_MODE = "pitch_lab"
@@ -28,16 +29,13 @@ DEMO_MODE = "pitch_lab"
 def recordRun(sample: dict) -> dict:
     events = []
     startedAt = time.monotonic()
-    for chunk in ventureGraph.stream(buildInitialState(sample["pitch"], DEMO_MODE)):
-        nodeName, nodeState = next(iter(chunk.items()))
-        events.append(
-            {
-                "event": nodeName,
-                "atMs": int((time.monotonic() - startedAt) * 1000),
-                "data": serializeNodeOutput(nodeName, nodeState),
-            }
-        )
-        print(f"  {events[-1]['atMs']:>6} ms  {nodeName}")
+
+    def capture(name: str, payload: dict) -> None:
+        events.append({"event": name, "atMs": int((time.monotonic() - startedAt) * 1000), "data": payload})
+        print(f"  {events[-1]['atMs']:>6} ms  {name}")
+
+    handle = registry.start(DEMO_MODE, configuredBudgetUsd())
+    executeAttempt(handle, buildInitialState(sample["pitch"], DEMO_MODE, handle.budgetUsd), capture)
 
     memo = events[-1]["data"].get("memo") if events and events[-1]["event"] == "citation_audit" else None
     if memo is None:
@@ -62,9 +60,14 @@ def main(sampleIds: list[str]) -> None:
     for sample in samples:
         print(f"Recording {sample['id']} ({DEMO_MODE})")
         fixture = recordRun(sample)
-        groundedness = fixture["events"][-1]["data"]["memo"]["groundedness"]
+        memo = fixture["events"][-1]["data"]["memo"]
         (FIXTURE_DIR / f"{sample['id']}.json").write_text(json.dumps(fixture, indent=2) + "\n", encoding="utf-8")
-        print(f"  wrote {sample['id']}.json in {fixture['durationMs'] / 1000:.1f}s, groundedness {groundedness}")
+        telemetry = memo["telemetry"]
+        print(
+            f"  wrote {sample['id']}.json in {fixture['durationMs'] / 1000:.1f}s, groundedness {memo['groundedness']}, "
+            f"cost ${telemetry['total_cost_usd']:.4f} ({telemetry['search_calls']} searches, "
+            f"{telemetry['prompt_tokens'] + telemetry['completion_tokens']} tokens)"
+        )
 
 
 if __name__ == "__main__":

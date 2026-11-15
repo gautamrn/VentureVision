@@ -98,9 +98,16 @@ class FakeTavily:
     def __init__(self) -> None:
         self.queries: list[str] = []
         self.emptyQueries: set[str] = set()
+        self.failingQueries: set[str] = set()
+        self.failAll = False
+        self.beforeSearch: Any = None
 
     def search(self, query: str, **kwargs: Any) -> dict:
         self.queries.append(query)
+        if self.beforeSearch:
+            self.beforeSearch(query)
+        if self.failAll or query in self.failingQueries:
+            raise ConnectionError(f"tavily unreachable for {query!r}")
         if query in self.emptyQueries:
             return {"answer": "", "results": []}
 

@@ -1,38 +1,36 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import Link from "next/link";
-import AgentStatus, { type Status } from "./AgentStatus";
+import AgentTimeline from "./AgentTimeline";
 import PitchScore from "./PitchScore";
 import MemoDocument from "./MemoDocument";
-import { statusForEvent } from "@/lib/agentEvents";
-import type { MemoOutput } from "@/lib/types";
+import { initialTimeline, timelineReducer } from "@/lib/timeline";
 import type { ParsedDemoRun } from "@/data/demo/loadDemoRun";
 
 const REPLAY_TARGET_MS = 9000;
 
 export default function DemoReplay({ run }: { run: ParsedDemoRun }) {
-  const [status, setStatus] = useState<Status>({ phase: "planner" });
-  const [memo, setMemo] = useState<MemoOutput | null>(null);
+  const [timeline, dispatch] = useReducer(timelineReducer, undefined, initialTimeline);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const speedup = Math.max(1, run.durationMs / REPLAY_TARGET_MS);
 
   useEffect(() => {
+    dispatch({ type: "started", at: Date.now() });
     timers.current = run.events.map(({ atMs, event }) =>
-      setTimeout(() => {
-        setStatus(statusForEvent(event));
-        if (event.type === "citation_audit") setMemo(event.data.memo);
-      }, atMs / speedup)
+      setTimeout(() => dispatch({ type: "event", event, at: Date.now() }), atMs / speedup)
     );
     return () => timers.current.forEach(clearTimeout);
   }, [run, speedup]);
 
   function skipToMemo() {
     timers.current.forEach(clearTimeout);
-    setStatus({ phase: "done" });
-    setMemo(run.memo);
+    const at = Date.now();
+    for (const { event } of run.events) dispatch({ type: "event", event, at });
   }
+
+  const memo = timeline.memo;
 
   return (
     <main className="min-h-screen bg-background px-6 py-16">
@@ -59,21 +57,20 @@ export default function DemoReplay({ run }: { run: ParsedDemoRun }) {
         </div>
 
         {!memo && (
-          <div className="flex items-start justify-between gap-6">
-            <div className="flex-1">
-              <AgentStatus status={status} />
-            </div>
+          <div className="flex justify-end mb-3">
             <button
               type="button"
               onClick={skipToMemo}
-              className="font-sans text-xs text-muted hover:text-foreground border border-border px-3 py-1.5 rounded-sm shrink-0"
+              className="font-sans text-xs text-muted hover:text-foreground border border-border px-3 py-1.5 rounded-sm"
             >
               Skip to memo
             </button>
           </div>
         )}
 
-        {memo ? (
+        <AgentTimeline timeline={timeline} />
+
+        {memo && (
           <>
             <PitchScore pitchScore={memo.pitch_score} subscores={memo.subscores} />
             <MemoDocument memo={memo} pitch={run.pitch} source={{ kind: "demo", recordedAt: run.recordedAt }} />
@@ -83,12 +80,6 @@ export default function DemoReplay({ run }: { run: ParsedDemoRun }) {
               </Link>
             </div>
           </>
-        ) : (
-          <div className="space-y-4">
-            <div className="h-4 w-3/4 bg-border" />
-            <div className="h-4 w-full bg-border" />
-            <div className="h-4 w-5/6 bg-border" />
-          </div>
         )}
       </div>
     </main>

@@ -68,6 +68,12 @@ class RunAccumulator:
         if memo is not None:
             self.pitchScore = memo.pitch_score
 
+    def addPartial(self, node: str, llmCalls: list[LlmCall], searchCalls: list[SearchCall], durationMs: int) -> None:
+        """Telemetry from a node attempt that raised: its spend is real even though its update was discarded."""
+        self.llmCalls.extend(llmCalls)
+        self.searchCalls.extend(searchCalls)
+        self.nodeTimings.append(NodeTiming(node=node, duration_ms=durationMs))
+
     def summarize(self, durationMs: int, budgetUsd: float) -> RunTelemetry:
         return summarizeRun(
             llmCalls=self.llmCalls,
