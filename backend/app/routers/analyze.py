@@ -156,7 +156,7 @@ async def analyze(request: PitchRequest):
 @router.post("/analyze/stream", dependencies=[Depends(rateLimitGuard)])
 async def analyzeStream(request: PitchRequest):
     try:
-        handle = registry.start(request.mode, configuredBudgetUsd())
+        handle = registry.start(request.mode, configuredBudgetUsd(), request.pitch)
     except RunBusyError as exc:
         raise HTTPException(status_code=503, detail=str(exc))
     return streamAttempt(handle, buildInitialState(request.pitch, request.mode, handle.budgetUsd))

@@ -6,7 +6,9 @@ load_dotenv()
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from app.middleware.bodyLimit import limitRequestBody
 from app.routers.analyze import router as analyzeRouter
+from app.routers.shares import router as sharesRouter
 
 app = FastAPI(
     title="VentureVision",
@@ -31,7 +33,11 @@ async def securityHeaders(request: Request, call_next):
     response.headers["X-Frame-Options"] = "DENY"
     return response
 
+
+app.middleware("http")(limitRequestBody)
+
 app.include_router(analyzeRouter)
+app.include_router(sharesRouter)
 
 
 @app.get("/health")

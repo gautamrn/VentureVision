@@ -6,7 +6,9 @@ import { cancelRun, retryRun, startAnalysis } from "@/lib/api";
 import AgentTimeline from "@/components/AgentTimeline";
 import PitchScore from "@/components/PitchScore";
 import MemoDocument from "@/components/MemoDocument";
-import type { AgentEvent } from "@/lib/types";
+import PrintHeader from "@/components/PrintHeader";
+import ShareActions from "@/components/ShareActions";
+import type { AgentEvent, ShareSeal } from "@/lib/types";
 import { savePitchResult } from "@/lib/pitchHistory";
 import { initialTimeline, timelineReducer } from "@/lib/timeline";
 
@@ -17,6 +19,7 @@ export default function AnalyzePage() {
   const [timeline, dispatch] = useReducer(timelineReducer, undefined, initialTimeline);
   const [pitch, setPitch] = useState<string>("");
   const [mode, setMode] = useState<string>("market_scan");
+  const [seal, setSeal] = useState<ShareSeal | null>(null);
   const hasStarted = useRef(false);
   const abortRef = useRef<AbortController | null>(null);
   const pitchRef = useRef({ pitch: "", mode: "market_scan" });
@@ -25,7 +28,8 @@ export default function AnalyzePage() {
   function handleEvent(event: AgentEvent) {
     dispatch({ type: "event", event, at: Date.now() });
     if (event.type === "citation_audit") {
-      savePitchResult(pitchRef.current.pitch, event.data.memo, pitchRef.current.mode);
+      setSeal(event.data.seal ?? null);
+      savePitchResult(pitchRef.current.pitch, event.data.memo, pitchRef.current.mode, event.data.seal);
     }
   }
 
@@ -96,9 +100,10 @@ export default function AnalyzePage() {
   const memo = timeline.memo;
 
   return (
-    <main className="min-h-screen bg-background px-6 py-16">
+    <main className="min-h-screen bg-background px-6 py-16 print:p-0 print:min-h-0">
       <div className="w-full max-w-2xl mx-auto">
-        <div className="mb-12">
+        {memo && <PrintHeader label="Investment memo" title={pitch.slice(0, 160)} runDates={[seal?.generated_at]} />}
+        <div className="mb-12 print:hidden">
           <button onClick={leave} className="text-xs font-sans text-muted tracking-widest uppercase mb-8 block">
             ← VentureVision
           </button>
@@ -120,6 +125,7 @@ export default function AnalyzePage() {
 
         {memo && (
           <>
+            <ShareActions kind="memo" memos={[{ pitch, mode, memo, seal }]} />
             <PitchScore pitchScore={memo.pitch_score} subscores={memo.subscores} />
             <MemoDocument memo={memo} pitch={pitch} source={{ kind: "live" }} />
           </>

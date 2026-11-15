@@ -10,7 +10,7 @@ WINDOW_SECONDS = 3600
 # 0 trusts only the socket peer; entries left of the trusted hops are client-controlled.
 TRUSTED_PROXY_HOPS = int(os.getenv("TRUSTED_PROXY_HOPS", "0"))
 
-_requests: dict[str, list[float]] = {}
+_requests: dict[tuple[str, str], list[float]] = {}
 _lock = threading.Lock()
 
 
@@ -24,23 +24,28 @@ def clientIpFor(request: Request) -> str:
     return forwarded[-TRUSTED_PROXY_HOPS]
 
 
-async def rateLimitGuard(request: Request) -> None:
-    clientIp = clientIpFor(request)
-    now = time.time()
-    cutoff = now - WINDOW_SECONDS
+def rateLimit(bucket: str, maxRequests: int, windowSeconds: int = WINDOW_SECONDS):
+    async def guard(request: Request) -> None:
+        key = (bucket, clientIpFor(request))
+        now = time.time()
+        cutoff = now - windowSeconds
 
-    with _lock:
-        timestamps = _requests.get(clientIp, [])
-        timestamps = [t for t in timestamps if t > cutoff]
+        with _lock:
+            timestamps = [t for t in _requests.get(key, []) if t > cutoff]
 
-        if len(timestamps) >= MAX_REQUESTS:
-            retryAfter = int(timestamps[0] - cutoff) + 1
-            _requests[clientIp] = timestamps
-            raise HTTPException(
-                status_code=429,
-                detail=f"Rate limit exceeded. Try again in {retryAfter} seconds.",
-                headers={"Retry-After": str(retryAfter)},
-            )
+            if len(timestamps) >= maxRequests:
+                retryAfter = int(timestamps[0] - cutoff) + 1
+                _requests[key] = timestamps
+                raise HTTPException(
+                    status_code=429,
+                    detail=f"Rate limit exceeded. Try again in {retryAfter} seconds.",
+                    headers={"Retry-After": str(retryAfter)},
+                )
 
-        timestamps.append(now)
-        _requests[clientIp] = timestamps
+            timestamps.append(now)
+            _requests[key] = timestamps
+
+    return guard
+
+
+rateLimitGuard = rateLimit("analyze", MAX_REQUESTS)

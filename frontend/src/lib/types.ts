@@ -143,8 +143,35 @@ export const WriterEventSchema = z.object({
   memoReady: z.boolean(),
 });
 
+export const ShareSealSchema = z.object({
+  generated_at: z.string(),
+  signature: z.string(),
+});
+
 export const CitationAuditEventSchema = z.object({
   memo: MemoOutputSchema,
+  seal: ShareSealSchema.optional(),
+});
+
+export const AnalysisModeSchema = z.enum(["market_scan", "pitch_lab"]);
+
+export const SharedMemoSchema = z.object({
+  pitch: z.string(),
+  mode: AnalysisModeSchema,
+  generated_at: z.string(),
+  memo: MemoOutputSchema,
+});
+
+export const ShareViewSchema = z.object({
+  share_id: z.string(),
+  kind: z.enum(["memo", "compare"]),
+  created_at: z.string(),
+  memos: z.array(SharedMemoSchema).min(1),
+});
+
+export const ShareCreatedSchema = z.object({
+  share_id: z.string(),
+  created_at: z.string(),
 });
 
 export const DemoRunSchema = z.object({
@@ -203,7 +230,11 @@ export const MetricsSchema = z.object({
 export type RunRecord = z.infer<typeof RunRecordSchema>;
 export type Metrics = z.infer<typeof MetricsSchema>;
 export type DemoRun = z.infer<typeof DemoRunSchema>;
-export type RunSource = { kind: "demo"; recordedAt: string } | { kind: "live" };
+export type RunSource = { kind: "demo"; recordedAt: string } | { kind: "live" } | { kind: "shared"; generatedAt: string };
+export type ShareSeal = z.infer<typeof ShareSealSchema>;
+export type SharedMemo = z.infer<typeof SharedMemoSchema>;
+export type ShareView = z.infer<typeof ShareViewSchema>;
+export type AnalysisMode = z.infer<typeof AnalysisModeSchema>;
 export type Citation = z.infer<typeof CitationSchema>;
 export type Groundedness = z.infer<typeof GroundednessSchema>;
 export type RunTelemetry = z.infer<typeof RunTelemetrySchema>;

@@ -1,4 +1,4 @@
-import type { MemoOutput } from "./types";
+import type { MemoOutput, ShareSeal } from "./types";
 
 const STORAGE_KEY = "vv_pitch_history";
 const MAX_ENTRIES = 20;
@@ -10,6 +10,8 @@ export interface PitchHistoryEntry {
   mode: string;
   date: string;
   memo: MemoOutput;
+  /** Server signature that makes the memo shareable; absent for analyses saved before sharing existed. */
+  seal?: ShareSeal;
 }
 
 export function getPitchHistory(): PitchHistoryEntry[] {
@@ -23,7 +25,7 @@ export function getPitchHistory(): PitchHistoryEntry[] {
   }
 }
 
-export function savePitchResult(pitch: string, memo: MemoOutput, mode: string = "market_scan"): void {
+export function savePitchResult(pitch: string, memo: MemoOutput, mode: string = "market_scan", seal?: ShareSeal): void {
   const history = getPitchHistory();
 
   const entry: PitchHistoryEntry = {
@@ -31,8 +33,9 @@ export function savePitchResult(pitch: string, memo: MemoOutput, mode: string = 
     pitch,
     pitchScore: memo.pitch_score,
     mode,
-    date: new Date().toISOString(),
+    date: seal?.generated_at ?? new Date().toISOString(),
     memo,
+    seal,
   };
 
   history.unshift(entry);

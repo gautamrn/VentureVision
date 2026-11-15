@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import PitchScore from "@/components/PitchScore";
-import MemoDocument from "@/components/MemoDocument";
+import CompareMemos from "@/components/CompareMemos";
+import PrintHeader from "@/components/PrintHeader";
+import ShareActions from "@/components/ShareActions";
 import {
   getPitchHistory,
   type PitchHistoryEntry,
@@ -32,9 +33,16 @@ export default function ComparePage() {
   if (history.length < 2) return null;
 
   return (
-    <main className="min-h-screen bg-background px-6 py-16">
+    <main className="min-h-screen bg-background px-6 py-16 print:p-0 print:min-h-0">
       <div className="w-full max-w-6xl mx-auto">
-        <div className="mb-12">
+        {left && right && (
+          <PrintHeader
+            label="Comparison"
+            title={`${left.pitch.slice(0, 50)}… vs ${right.pitch.slice(0, 50)}…`}
+            runDates={[left.date, right.date]}
+          />
+        )}
+        <div className="mb-12 print:hidden">
           <button
             onClick={() => router.push("/")}
             className="text-xs font-sans text-muted tracking-widest uppercase mb-8 block"
@@ -49,7 +57,7 @@ export default function ComparePage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 print:hidden">
           <div>
             <label className="font-sans text-xs uppercase tracking-widest text-muted mb-2 block">
               Left
@@ -85,22 +93,13 @@ export default function ComparePage() {
         </div>
 
         {left && right && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="border-r border-border pr-8">
-              <PitchScore
-                pitchScore={left.memo.pitch_score}
-                subscores={left.memo.subscores}
-              />
-              <MemoDocument memo={left.memo} pitch={left.pitch} source={{ kind: "live" }} />
-            </div>
-            <div>
-              <PitchScore
-                pitchScore={right.memo.pitch_score}
-                subscores={right.memo.subscores}
-              />
-              <MemoDocument memo={right.memo} pitch={right.pitch} source={{ kind: "live" }} />
-            </div>
-          </div>
+          <>
+            <ShareActions key={`${left.id}:${right.id}`} kind="compare" memos={[left, right]} />
+            <CompareMemos
+              left={{ pitch: left.pitch, memo: left.memo, source: { kind: "live" }, runDate: left.date }}
+              right={{ pitch: right.pitch, memo: right.memo, source: { kind: "live" }, runDate: right.date }}
+            />
+          </>
         )}
       </div>
     </main>

@@ -134,8 +134,10 @@ export default function PitchAnnotations({ pitch, annotations, citationNumbers }
                     Downgraded from {colorsFor(ann.downgraded_from).label}: no verifiable citation in the evidence.
                   </p>
                 )}
-                {number != null && ann.citation && expanded.has(i) && (
-                  <CitationQuote number={number} citation={ann.citation} />
+                {number != null && ann.citation && (
+                  <div className={expanded.has(i) ? "" : "hidden print:block"}>
+                    <CitationQuote number={number} citation={ann.citation} />
+                  </div>
                 )}
               </div>
             </li>

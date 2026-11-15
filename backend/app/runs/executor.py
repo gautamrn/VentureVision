@@ -6,6 +6,7 @@ from app.graph.workflow import resumableGraph
 from app.middleware.metrics import recordRun
 from app.runs.events import serializeNodeOutput
 from app.runs.registry import RunHandle, RunRegistry, RunStatus
+from app.shares.sealing import sealMemo
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +33,10 @@ def executeAttempt(handle: RunHandle, graphInput: dict | None, emit: Emit) -> No
                 handle.accumulator.apply(update)
                 if nodeName == "citation_audit" and update.get("final_memo") is not None:
                     memo = update["final_memo"].model_copy(update={"telemetry": handle.telemetry()})
-                    update = {**update, "final_memo": memo}
+                    payload = serializeNodeOutput(nodeName, {**update, "final_memo": memo})
+                    payload["seal"] = sealMemo(handle.pitch, handle.mode, memo).model_dump(mode="json")
+                    emit(nodeName, payload)
+                    continue
                 emit(nodeName, serializeNodeOutput(nodeName, update))
         status = "succeeded"
     except RunCancelled as exc:

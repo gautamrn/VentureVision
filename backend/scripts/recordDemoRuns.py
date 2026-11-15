@@ -31,10 +31,12 @@ def recordRun(sample: dict) -> dict:
     startedAt = time.monotonic()
 
     def capture(name: str, payload: dict) -> None:
-        events.append({"event": name, "atMs": int((time.monotonic() - startedAt) * 1000), "data": payload})
+        # Seals are signed with the recording machine's key, which means nothing to the deployed server.
+        data = {k: v for k, v in payload.items() if k != "seal"}
+        events.append({"event": name, "atMs": int((time.monotonic() - startedAt) * 1000), "data": data})
         print(f"  {events[-1]['atMs']:>6} ms  {name}")
 
-    handle = registry.start(DEMO_MODE, configuredBudgetUsd())
+    handle = registry.start(DEMO_MODE, configuredBudgetUsd(), sample["pitch"])
     executeAttempt(handle, buildInitialState(sample["pitch"], DEMO_MODE, handle.budgetUsd), capture)
 
     memo = events[-1]["data"].get("memo") if events and events[-1]["event"] == "citation_audit" else None

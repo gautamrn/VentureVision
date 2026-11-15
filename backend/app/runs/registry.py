@@ -28,6 +28,7 @@ class RunHandle:
     runId: str
     mode: str
     budgetUsd: float
+    pitch: str = ""
     startedAt: float = field(default_factory=time.time)
     control: RunControl = field(default_factory=RunControl)
     accumulator: RunAccumulator = field(default_factory=RunAccumulator)
@@ -68,12 +69,12 @@ class RunRegistry:
         with self._lock:
             return self._active
 
-    def start(self, mode: str, budgetUsd: float) -> RunHandle:
+    def start(self, mode: str, budgetUsd: float, pitch: str = "") -> RunHandle:
         self.sweep()
         with self._lock:
             if self._active >= MAX_ACTIVE_RUNS:
                 raise RunBusyError("Server busy. Try again in a minute.")
-            handle = RunHandle(runId=secrets.token_urlsafe(16), mode=mode, budgetUsd=budgetUsd)
+            handle = RunHandle(runId=secrets.token_urlsafe(16), mode=mode, budgetUsd=budgetUsd, pitch=pitch)
             self._runs[handle.runId] = handle
             self._active += 1
             return handle

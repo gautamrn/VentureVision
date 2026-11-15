@@ -5,6 +5,8 @@ import Link from "next/link";
 import AgentTimeline from "./AgentTimeline";
 import PitchScore from "./PitchScore";
 import MemoDocument from "./MemoDocument";
+import PrintHeader from "./PrintHeader";
+import ShareActions from "./ShareActions";
 import { initialTimeline, timelineReducer } from "@/lib/timeline";
 import type { ParsedDemoRun } from "@/data/demo/loadDemoRun";
 
@@ -33,9 +35,12 @@ export default function DemoReplay({ run }: { run: ParsedDemoRun }) {
   const memo = timeline.memo;
 
   return (
-    <main className="min-h-screen bg-background px-6 py-16">
+    <main className="min-h-screen bg-background px-6 py-16 print:p-0 print:min-h-0">
       <div className="w-full max-w-2xl mx-auto">
-        <div className="mb-10">
+        {memo && (
+          <PrintHeader label="Investment memo · demo data" title={`${run.title}: ${run.tagline}`} runDates={[run.recordedAt]} />
+        )}
+        <div className="mb-10 print:hidden">
           <Link href="/" className="text-xs font-sans text-muted tracking-widest uppercase mb-8 block">
             &larr; VentureVision
           </Link>
@@ -72,9 +77,10 @@ export default function DemoReplay({ run }: { run: ParsedDemoRun }) {
 
         {memo && (
           <>
+            <ShareActions kind="memo" memos={[{ pitch: run.pitch, mode: run.mode, memo }]} printOnly />
             <PitchScore pitchScore={memo.pitch_score} subscores={memo.subscores} />
             <MemoDocument memo={memo} pitch={run.pitch} source={{ kind: "demo", recordedAt: run.recordedAt }} />
-            <div className="border-t border-border pt-6 mt-4">
+            <div className="border-t border-border pt-6 mt-4 print:hidden">
               <Link href="/#live" className="font-sans text-sm text-foreground hover:underline">
                 Run your own pitch live &rarr;
               </Link>

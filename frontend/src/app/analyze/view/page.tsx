@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import PitchScore from "@/components/PitchScore";
 import MemoDocument from "@/components/MemoDocument";
+import PrintHeader from "@/components/PrintHeader";
+import ShareActions from "@/components/ShareActions";
 import { getPitchById, type PitchHistoryEntry } from "@/lib/pitchHistory";
 
 export default function ViewAnalysisPage() {
@@ -27,9 +29,10 @@ export default function ViewAnalysisPage() {
   if (!entry) return null;
 
   return (
-    <main className="min-h-screen bg-background px-6 py-16">
+    <main className="min-h-screen bg-background px-6 py-16 print:p-0 print:min-h-0">
       <div className="w-full max-w-2xl mx-auto">
-        <div className="mb-12">
+        <PrintHeader label="Investment memo" title={entry.pitch.slice(0, 160)} runDates={[entry.date]} />
+        <div className="mb-12 print:hidden">
           <button
             onClick={() => router.push("/")}
             className="text-xs font-sans text-muted tracking-widest uppercase mb-8 block"
@@ -44,6 +47,7 @@ export default function ViewAnalysisPage() {
           </p>
         </div>
 
+        <ShareActions kind="memo" memos={[entry]} />
         <PitchScore
           pitchScore={entry.memo.pitch_score}
           subscores={entry.memo.subscores}

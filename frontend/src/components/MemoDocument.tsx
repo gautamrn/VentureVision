@@ -32,7 +32,7 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="inline-flex items-center gap-1 text-xs font-sans text-muted hover:text-foreground"
+      className="inline-flex items-center gap-1 text-xs font-sans text-muted hover:text-foreground print:hidden"
     >
       {copied ? <Check size={10} /> : <Clipboard size={10} />}
       {label ?? (copied ? "Copied" : "Copy")}
@@ -99,10 +99,11 @@ function CompetitorTable({
         <tbody>
           {competitors.map((c, i) => {
             const number = citationNumbers[i];
-            const isOpen = number != null && c.citation && expanded.has(i);
+            const hasQuote = number != null && c.citation;
+            const isOpen = hasQuote && expanded.has(i);
             return (
               <Fragment key={i}>
-                <tr className={isOpen ? "" : "border-b border-border"}>
+                <tr className={isOpen ? "" : hasQuote ? "border-b border-border print:border-b-0" : "border-b border-border"}>
                   <td className="py-3">
                     {c.competitor}
                     {number != null && (
@@ -112,8 +113,8 @@ function CompetitorTable({
                   <td className="py-3 text-muted font-sans">{c.pricing}</td>
                   <td className="py-3 text-muted font-sans">{c.funding}</td>
                 </tr>
-                {isOpen && c.citation && (
-                  <tr className="border-b border-border">
+                {hasQuote && c.citation && number != null && (
+                  <tr className={isOpen ? "border-b border-border" : "hidden print:table-row border-b border-border"}>
                     <td colSpan={3} className="pb-3">
                       <CitationQuote number={number} citation={c.citation} />
                     </td>

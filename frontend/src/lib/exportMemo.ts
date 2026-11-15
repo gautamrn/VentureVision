@@ -1,6 +1,6 @@
 import type { Citation, MemoOutput, RunSource } from "./types";
 import { retrievalDate } from "./citations";
-import { formatDuration, formatUsd } from "./formatRun";
+import { AI_DISCLAIMER, formatDuration, formatRunDate, formatUsd } from "./formatRun";
 
 function citationLine(citation: Citation | null | undefined): string | null {
   if (!citation) return null;
@@ -14,7 +14,9 @@ export function memoToMarkdown(memo: MemoOutput, source: RunSource): string {
   lines.push(
     source.kind === "demo"
       ? `Demo data: recorded pipeline run from ${source.recordedAt.slice(0, 10)}`
-      : "Live run"
+      : source.kind === "shared"
+        ? `Shared analysis, run ${formatRunDate(source.generatedAt)}. ${AI_DISCLAIMER}`
+        : "Live run"
   );
   if (memo.groundedness) {
     const { cited_claims, total_claims, downgraded_claims } = memo.groundedness;

@@ -17,6 +17,7 @@ LIVE_KEYS = {
 os.environ["OPENAI_API_KEY"] = "test-openai-key"
 os.environ["TAVILY_API_KEY"] = "test-tavily-key"
 os.environ["ADMIN_KEY"] = "test-admin-key"
+os.environ["SHARE_SIGNING_KEY"] = "test-share-signing-key"
 os.environ["LANGCHAIN_TRACING_V2"] = "false"
 os.environ["LANGSMITH_TRACING"] = "false"
 
@@ -35,6 +36,7 @@ from tavily import TavilyClient
 from app.main import app
 from app.middleware import metrics, rateLimiter
 from app.nodes import critic, planner, scout, writer
+from app.shares.store import ShareStore, getShareStore
 from app.telemetry.usage import structuredOutput
 from tests.fakes import FakeOpenAI, FakeTavily
 
@@ -67,6 +69,14 @@ def resetRateLimiter():
 def resetSseExitEvent():
     # sse-starlette binds this module-level event to the first event loop; each TestClient has its own.
     AppStatus.should_exit_event = None
+
+
+@pytest.fixture(autouse=True)
+def shareStore(tmp_path):
+    store = ShareStore(tmp_path / "shares.sqlite3")
+    app.dependency_overrides[getShareStore] = lambda: store
+    yield store
+    app.dependency_overrides.pop(getShareStore, None)
 
 
 @pytest.fixture(autouse=True)

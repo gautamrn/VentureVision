@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Literal
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, model_validator
 
 AnnotationType = Literal[
     "strong",
@@ -129,9 +129,58 @@ class MemoOutput(BaseModel):
     telemetry: RunTelemetry | None = None
 
 
+AnalysisMode = Literal["market_scan", "pitch_lab"]
+ShareKind = Literal["memo", "compare"]
+
+
 class PitchRequest(BaseModel):
     pitch: str = Field(..., min_length=40, max_length=5000)
-    mode: Literal["market_scan", "pitch_lab"] = "market_scan"
+    mode: AnalysisMode = "market_scan"
+
+
+class ShareSeal(BaseModel):
+    """Server signature over (pitch, mode, generated_at, memo): proof this server produced the memo."""
+
+    generated_at: datetime
+    signature: str = Field(..., min_length=64, max_length=64)
+
+
+class SealedMemo(BaseModel):
+    pitch: str = Field(..., min_length=1, max_length=5000)
+    mode: AnalysisMode
+    memo: MemoOutput
+    seal: ShareSeal
+
+
+class ShareRequest(BaseModel):
+    kind: ShareKind
+    memos: list[SealedMemo] = Field(..., min_length=1, max_length=2)
+
+    @model_validator(mode="after")
+    def memoCountMatchesKind(self) -> "ShareRequest":
+        expected = 1 if self.kind == "memo" else 2
+        if len(self.memos) != expected:
+            raise ValueError(f"a {self.kind} share needs exactly {expected} memo(s)")
+        return self
+
+
+class SharedMemo(BaseModel):
+    pitch: str
+    mode: AnalysisMode
+    generated_at: datetime
+    memo: MemoOutput
+
+
+class ShareCreated(BaseModel):
+    share_id: str
+    created_at: datetime
+
+
+class ShareView(BaseModel):
+    share_id: str
+    kind: ShareKind
+    created_at: datetime
+    memos: list[SharedMemo]
 
 
 class RunResponse(BaseModel):

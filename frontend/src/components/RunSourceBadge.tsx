@@ -13,7 +13,7 @@ export default function RunSourceBadge({ source }: { source: RunSource }) {
   }
   return (
     <span className="font-sans text-[11px] uppercase tracking-widest px-2 py-0.5 border border-foreground text-foreground rounded-sm shrink-0">
-      Live run
+      {source.kind === "shared" ? "Shared analysis" : "Live run"}
     </span>
   );
 }

@@ -23,6 +23,7 @@ env/
 .ruff_cache/
 .coverage
 htmlcov/
+backend/data/
 
 # Node
 node_modules/

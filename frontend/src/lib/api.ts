@@ -9,7 +9,12 @@ import {
   PlannerEventSchema,
   RunEventSchema,
   ScoutEventSchema,
+  ShareCreatedSchema,
+  ShareViewSchema,
   WriterEventSchema,
+  type MemoOutput,
+  type ShareSeal,
+  type ShareView,
 } from "./types";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
@@ -135,6 +140,57 @@ export function startAnalysis(
 
 export function retryRun(runId: string, onEvent: (event: AgentEvent) => void, signal: AbortSignal): Promise<void> {
   return streamEvents(`/runs/${encodeURIComponent(runId)}/retry`, {}, onEvent, signal);
+}
+
+export interface ShareableMemo {
+  pitch: string;
+  mode: string;
+  memo: MemoOutput;
+  seal: ShareSeal;
+}
+
+export type CreateShareResult = { ok: true; shareId: string } | { ok: false; message: string };
+
+export async function createShare(kind: "memo" | "compare", memos: ShareableMemo[]): Promise<CreateShareResult> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}/shares`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kind, memos }),
+    });
+  } catch {
+    return { ok: false, message: `Could not reach the server at ${API_URL}.` };
+  }
+  const body: unknown = await response.json().catch(() => null);
+  if (!response.ok) {
+    const detail = (body as { detail?: unknown } | null)?.detail;
+    return { ok: false, message: typeof detail === "string" ? detail : `The server returned HTTP ${response.status}.` };
+  }
+  const parsed = ShareCreatedSchema.safeParse(body);
+  return parsed.success
+    ? { ok: true, shareId: parsed.data.share_id }
+    : { ok: false, message: "The server's response was not a valid share." };
+}
+
+export type FetchShareResult =
+  | { status: "found"; share: ShareView }
+  | { status: "not_found" }
+  | { status: "error"; message: string };
+
+export async function fetchShare(shareId: string): Promise<FetchShareResult> {
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}/shares/${encodeURIComponent(shareId)}`, { cache: "no-store" });
+  } catch {
+    return { status: "error", message: "The analysis server could not be reached." };
+  }
+  if (response.status === 404) return { status: "not_found" };
+  if (!response.ok) return { status: "error", message: `The analysis server returned HTTP ${response.status}.` };
+  const parsed = ShareViewSchema.safeParse(await response.json().catch(() => null));
+  return parsed.success
+    ? { status: "found", share: parsed.data }
+    : { status: "error", message: "The shared memo did not match the expected format." };
 }
 
 export async function cancelRun(runId: string): Promise<boolean> {
